@@ -1,2 +1,2 @@
 # SeatSync
-Table reservation system for small cafes
+Table reservation platform for cafés and restaurants
