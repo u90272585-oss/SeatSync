@@ -49,3 +49,14 @@ main { max-width: 1280px; margin: auto; padding: 40px 32px 64px; }
 [hidden] { display: none !important; }
 @media(max-width:900px) { .home-hero { gap: 28px; }.hero-photo { min-height: 280px; }.home-hero h1 { font-size: 42px; }.site-footer { margin: 0 32px; }.venue-grid { gap: 14px; }.venue-body { padding: 16px; }.search-fields { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media(max-width:600px) { .header-inner { padding: 14px 18px; gap: 10px; }.brand { font-size: 22px; gap: 6px; }.brand-symbol { width: 42px; height: 42px; background-size: 430.08px 247.17px; background-position: -70.35px -171.36px; }.site-nav { gap: 10px; }.site-nav .desktop-link { display: none; }.header-link { font-size: 12px; }main { padding: 25px 18px 40px; }.home-hero { grid-template-columns: 1fr; padding: 10px 0 28px; gap: 25px; }.home-hero h1 { font-size: clamp(34px,9vw,46px); letter-spacing: -1.5px; margin: 13px 0 17px; }.hero-copy>p { font-size: 14px; }.hero-note { margin-top: 16px; }.hero-photo { min-height: 0; border-radius: 50px 18px 18px 18px; }.hero-caption { padding: 13px 16px; left: 15px; right: 15px; font-size: 10px; }.hero-caption strong { font-size: 12px; }.search-panel { padding: 20px 16px; }.search-fields { gap: 16px 12px; }.search-field:first-child { grid-column: 1/-1; }.search-field:nth-child(2) { grid-column: 1/-1; }.home-section { margin-top: 38px; }.section-title { display: block; }.section-title h2 { font-size: 25px; }.section-title p { margin-top: 10px; }.venue-grid,.how-grid { grid-template-columns: 1fr; }.venue-card .brand-photo { aspect-ratio: 2; }.venue-body { padding: 20px; }.how-grid { gap: 26px; padding: 24px; }.how-step { display: grid; grid-template-columns: 34px 1fr; column-gap: 15px; }.how-step h3 { margin: 5px 0 10px; }.how-step p { grid-column: 2; }.site-footer { margin: 0 18px; align-items: flex-start; flex-direction: column; gap: 12px; } }
+
+/* Account access stays visible and reachable at every screen size. */
+.account-link { max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--primary); background:var(--soft); border-radius:24px; padding:0 15px; }
+@media(max-width:650px){
+ .site-header .header-inner{flex-wrap:wrap;gap:8px 14px;}
+ .site-header .site-nav{margin-left:auto;gap:10px;flex-wrap:wrap;}
+ .site-header .account-link{max-width:120px;padding:0 12px;}
+ .booking-experience .header-inner nav{margin-left:auto;flex-wrap:wrap;gap:10px;}
+ .booking-experience .header-inner>.demo-badge{display:none;}
+ .booking-experience .confirmation-actions{flex-wrap:wrap;}
+}

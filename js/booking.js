@@ -67,6 +67,8 @@ form.addEventListener('submit', event => {
     return;
   }
   const booking = new URLSearchParams({ venue: venueId, date: dateInput.value, time: timeInput.value, guests: guestsInput.value, table: form.elements.table.value });
+  const existingId = params.get('id');
+  booking.set('id', /^[a-zA-Z0-9-]{10,80}$/.test(existingId || '') ? existingId : crypto.randomUUID());
   location.href = `confirmation.html?${booking.toString()}`;
 });
 update();

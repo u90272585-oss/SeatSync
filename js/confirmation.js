@@ -30,6 +30,26 @@ if (valid) {
   document.querySelector('#confirmed-guests').textContent = `${guests} ${guests === '1' ? 'guest' : 'guests'}`;
   document.querySelector('#confirmed-table').textContent = `${table.name} · Table ${tableId}`;
   document.querySelector('#edit-booking').href = `booking.html?${new URLSearchParams({ venue: venueId, date, time, guests, table: tableId })}`;
+  const requestedId = params.get('id');
+  const bookingId = /^[a-zA-Z0-9-]{10,80}$/.test(requestedId || '') ? requestedId : crypto.randomUUID();
+  params.set('id', bookingId);
+  history.replaceState(null, '', `confirmation.html?${params}`);
+  document.querySelector('#edit-booking').href += `&id=${encodeURIComponent(bookingId)}`;
+  const status = document.querySelector('#save-status');
+  const savedLink = document.querySelector('#saved-bookings-link');
+  if (window.SeatSyncAccount.profile()) {
+    try {
+      window.SeatSyncAccount.saveBooking({id:bookingId,venue:venueId,date,time,guests,table:tableId});
+      status.textContent = 'Saved to My bookings in this browser. No payment was made.';
+    } catch {
+      status.textContent = 'Your browser could not save this booking. The details are still shown here; keep this page open and check your browser storage settings.';
+    }
+  } else {
+    status.textContent = 'Want to keep this plan? Open a demo profile to save it in My bookings.';
+    savedLink.textContent = 'Sign in & save booking';
+    savedLink.href = `account.html?${new URLSearchParams({next:`confirmation.html?${params}`})}`;
+    document.querySelectorAll('[data-account-link]').forEach(link => { link.href = savedLink.href; });
+  }
   document.querySelector('#back-booking').href = document.querySelector('#edit-booking').href;
   document.querySelector('#confirmation').hidden = false;
 } else {
