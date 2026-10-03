@@ -37,7 +37,7 @@
       if (!user) return false;
       const all = records();
       const index = all.findIndex(b => b.id === booking.id && b.email === user.email);
-      const record = {...booking, email: user.email};
+      const record = {...booking, email: user.email, name: user.name};
       if (index >= 0) all[index] = record; else all.push(record);
       localStorage.setItem(bookingsKey, JSON.stringify(all));
       return true;

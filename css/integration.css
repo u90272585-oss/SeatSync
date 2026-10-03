@@ -1,0 +1,19 @@
+/* Integration only: retain Darina's page design and connect shared flows. */
+.team-home .logo { display:inline-flex;align-items:center;gap:4px;white-space:nowrap; }
+.team-logo { width:42px;height:42px;flex-shrink:0;margin-right:5px;border-radius:12px;background:url('../assets/images/seatsync-brandbook.png') -70.35px -171.36px / 430.08px 247.17px no-repeat; }
+.team-actions { display:flex;align-items:center;gap:12px; }
+.team-account { display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 15px;border-radius:24px;background:#eee9fc;color:#5b3fa3;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.team-home .navbar { gap:18px;height:auto;min-height:80px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap; }
+.team-home .nav { gap:18px;flex-wrap:wrap; }
+.team-home .footer-links { flex-wrap:wrap; }
+.category-book { display:block;margin-top:16px;font-size:13px;font-weight:600;color:#5b3fa3;min-height:44px; }
+@media(max-width:850px){.team-home .navbar{justify-content:space-between}.team-home .nav{display:flex;order:3;width:100%;justify-content:center;font-size:12px;gap:16px}.team-home .nav a{font-size:12px;min-height:32px}.team-home .team-actions{margin-left:auto}.team-home .table-preview{min-width:0}.team-home .table-card{max-width:100%}}
+@media(max-width:500px){.team-home .container{width:calc(100% - 32px)}.team-home .logo{font-size:21px}.team-home .team-actions{width:100%;justify-content:space-between}.team-home .nav{justify-content:flex-start;gap:12px}.team-home .about-box{padding:25px}.team-home .hero h1{font-size:clamp(34px,9vw,43px)}.team-home .table-card{padding:20px}.team-home .table-circle{width:48px;height:48px}.team-home .table-row{gap:6px}.team-home .preview-top{gap:10px}.team-home .footer-content{flex-wrap:wrap;gap:24px}.team-home .footer-links{gap:15px}}
+.team-home .hero-content { grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px; }
+.team-home .table-card { width:100%;max-width:410px; }
+.team-home .hero h1 { font-size:clamp(38px,4.8vw,60px); }
+.team-home .preview-glow { max-width:100%; }
+@media(max-width:1000px){.team-home .nav{order:3;width:100%;justify-content:center}.team-home .team-actions{margin-left:auto}}
+@media(max-width:850px){.team-home .hero-content{grid-template-columns:1fr}.team-home .hero{padding:50px 0}}
+
+.team-home .background-shape { max-width:100%;right:0; }

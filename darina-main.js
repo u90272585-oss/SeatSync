@@ -1,42 +1,11 @@
-// SeatSync - Darina's homepage
-
-
-// Smooth scrolling
-
-document
-    .querySelectorAll('a[href^="#"]')
-    .forEach(link => {
-
-        link.addEventListener("click", function(event) {
-
-            const target =
-                document.querySelector(
-                    this.getAttribute("href")
-                );
-
-            if (target) {
-
-                event.preventDefault();
-
-                target.scrollIntoView({
-                    behavior: "smooth"
-                });
-
-            }
-
-        });
-
-    });
-
-
-// Current year
-
-const copyright =
-    document.querySelector(".copyright");
-
-if (copyright) {
-
-    copyright.textContent =
-        `© ${new Date().getFullYear()} SeatSync`;
-
-}
+"use strict";
+// Darina's homepage: section navigation and copyright.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', event => {
+    const id = link.getAttribute('href').slice(1);
+    const target = id ? document.getElementById(id) : null;
+    if (target) { event.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
+  });
+});
+const copyright = document.querySelector('.copyright');
+if (copyright) copyright.textContent = `© ${new Date().getFullYear()} SeatSync`;
