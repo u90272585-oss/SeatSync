@@ -1,2 +1,183 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Booking confirmation — SeatSync</title><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/booking.css"><link rel="stylesheet" href="../css/account.css"><script src="../js/account.js" defer></script><script src="../js/venues.js" defer></script><script src="../js/confirmation.js" defer></script></head><body class="booking-experience"><header class="site-header"><div class="header-inner"><a class="brand" href="../index.html"><span class="brand-symbol" aria-hidden="true"></span><span class="brand-word">Seat<span>Sync</span></span></a><nav aria-label="Main navigation"><a class="header-link" href="../index.html">Restaurants</a><a class="header-link current" href="booking.html">Book a table</a><a class="header-link account-link" data-account-link href="account.html">Sign in</a></nav><span class="demo-badge">Homework demo</span></div></header><main><a class="back-link" href="booking.html" id="back-booking">← Back to booking</a><ol class="steps centered" aria-label="Booking progress"><li class="active"><span>✓</span> Choose & select</li><li class="active" aria-current="step"><span>2</span> Confirmation</li></ol><noscript><p class="error">Enable JavaScript to display your booking details. <a href="booking.html">Start a booking</a></p></noscript><section id="confirmation" class="confirmation-wrap" hidden><div class="success-mark" aria-hidden="true">✓</div><span class="eyebrow">Good food. Better moments.</span><h1>Your table is booked!</h1><p class="muted">Your demo booking is ready. Here’s what to look forward to.</p><div class="panel confirmation-card"><div class="ticket-heading"><div><span class="eyebrow">Almaty · Demo venue</span><h2 id="venue-name">SeatSync Café</h2></div><span class="demo-badge">Demo confirmation</span></div><dl class="booking-details confirmation-details"><div><dt>Date</dt><dd id="confirmed-date"></dd></div><div><dt>Time</dt><dd id="confirmed-time"></dd></div><div><dt>Guests</dt><dd id="confirmed-guests"></dd></div><div><dt>Table</dt><dd id="confirmed-table"></dd></div></dl><div class="fee-row"><span>SeatSync service fee</span><strong>100 ₸</strong></div><div class="demo-payment"><strong>No money charged</strong><span>Payment is simulated. This page does not confirm a real payment or a reservation with the venue.</span></div><div class="ticket-note"><strong>A little time, just for you.</strong><p class="muted">Enjoy a 90-minute visit. Food and drinks are paid for separately at the venue.</p></div></div><p id="save-status" class="notice" role="status"></p><div class="confirmation-actions"><a id="saved-bookings-link" class="button" href="my-bookings.html">My bookings</a><a class="button" href="../index.html">Back to Home →</a><a id="edit-booking" class="button button-secondary" href="booking.html">Edit booking</a></div><p class="demo-note">See you soon — in the full SeatSync experience.</p></section><section id="empty-state" class="confirmation-wrap" hidden><div class="success-mark" aria-hidden="true">?</div><h1>Let’s find you a seat.</h1><p class="muted">These booking details are missing, invalid, or in the past. Start a new booking to continue.</p><a class="button" href="booking.html">Choose a table →</a></section></main><footer class="site-footer"><a class="brand" href="../index.html">SeatSync</a><span>Good food. Better moments.</span><span>Demo experience · No real reservation</span></footer></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Booking confirmation — SeatSync</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/booking.css" />
+    <link rel="stylesheet" href="../css/account.css" />
+    <script src="../js/account.js" defer></script>
+    <script src="../js/venues.js" defer></script>
+    <script src="../js/confirmation.js" defer></script>
+    <link rel="stylesheet" href="../css/brand-elements.css" />
+  </head>
+  <body class="booking-experience">
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html">
+          <span class="brand-symbol" aria-hidden="true"></span>
+          <span class="brand-word">
+            Seat
+            <span>Sync</span>
+          </span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a class="header-link" href="../index.html#venues">Restaurants</a>
+          <a class="header-link current" href="booking.html">Book a table</a>
+          <a
+            class="header-link account-link"
+            data-account-link
+            href="account.html"
+          >
+            Sign in
+          </a>
+        </nav>
+        <span class="demo-badge">Homework demo</span>
+      </div>
+    </header>
+    <main>
+      <a class="back-link" href="booking.html" id="back-booking">
+        ← Back to booking
+      </a>
+      <ol class="steps centered" aria-label="Booking progress">
+        <li class="active">
+          <span>✓</span>
+          Choose & select
+        </li>
+        <li class="active" aria-current="step">
+          <span>2</span>
+          Confirmation
+        </li>
+      </ol>
+      <noscript>
+        <p class="error">
+          Enable JavaScript to display your booking details.
+          <a href="booking.html">Start a booking</a>
+        </p>
+      </noscript>
+      <section id="confirmation" class="confirmation-wrap" hidden>
+        <div class="success-mark" aria-hidden="true">✓</div>
+        <span class="eyebrow">Good food. Better moments.</span>
+        <h1>Your table is booked!</h1>
+        <p class="muted">
+          Your demo booking is ready. Here’s what to look forward to.
+        </p>
+        <div class="panel confirmation-card">
+          <div class="ticket-heading">
+            <div>
+              <span class="eyebrow">
+                <img
+                  class="brand-icon"
+                  src="../assets/icons/location.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="24"
+                  height="24"
+                />
+                Almaty · Demo venue
+              </span>
+              <h2 id="venue-name">SeatSync Café</h2>
+            </div>
+            <span class="demo-badge">Demo confirmation</span>
+          </div>
+          <dl class="booking-details confirmation-details">
+            <div>
+              <dt>
+                <img
+                  class="brand-icon"
+                  src="../assets/icons/booking.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="24"
+                  height="24"
+                />
+                Date
+              </dt>
+              <dd id="confirmed-date"></dd>
+            </div>
+            <div>
+              <dt>Time</dt>
+              <dd id="confirmed-time"></dd>
+            </div>
+            <div>
+              <dt>
+                <img
+                  class="brand-icon"
+                  src="../assets/icons/people.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="24"
+                  height="24"
+                />
+                Guests
+              </dt>
+              <dd id="confirmed-guests"></dd>
+            </div>
+            <div>
+              <dt>
+                <img
+                  class="brand-icon"
+                  src="../assets/icons/restaurant.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="24"
+                  height="24"
+                />
+                Table
+              </dt>
+              <dd id="confirmed-table"></dd>
+            </div>
+          </dl>
+          <div class="fee-row">
+            <span>SeatSync service fee</span>
+            <strong>100 ₸</strong>
+          </div>
+          <div class="demo-payment">
+            <strong>No money charged</strong>
+            <span>
+              Payment is simulated. This page does not confirm a real payment or
+              a reservation with the venue.
+            </span>
+          </div>
+          <div class="ticket-note">
+            <strong>A little time, just for you.</strong>
+            <p class="muted">
+              Enjoy a 90-minute visit. Food and drinks are paid for separately
+              at the venue.
+            </p>
+          </div>
+        </div>
+        <p id="save-status" class="notice" role="status"></p>
+        <div class="confirmation-actions">
+          <a id="saved-bookings-link" class="button" href="my-bookings.html">
+            My bookings
+          </a>
+          <a class="button" href="../index.html">Back to Home →</a>
+          <a
+            id="edit-booking"
+            class="button button-secondary"
+            href="booking.html"
+          >
+            Edit booking
+          </a>
+        </div>
+        <p class="demo-note">See you soon — in the full SeatSync experience.</p>
+      </section>
+      <section id="empty-state" class="confirmation-wrap" hidden>
+        <div class="success-mark" aria-hidden="true">?</div>
+        <h1>Let’s find you a seat.</h1>
+        <p class="muted">
+          These booking details are missing, invalid, or in the past. Start a
+          new booking to continue.
+        </p>
+        <a class="button" href="booking.html">Choose a table →</a>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <a class="brand" href="../index.html">SeatSync</a>
+      <span>Good food. Better moments.</span>
+      <span>Demo experience · No real reservation</span>
+    </footer>
+  </body>
+</html>

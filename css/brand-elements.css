@@ -1,0 +1,96 @@
+/* Shared brandbook-inspired icons and sample venue cards. */
+.brand-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+  flex-shrink: 0;
+  object-fit: contain;
+  margin-right: 6px;
+}
+.venue-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.venue-name-row h2 {
+  margin: 0;
+}
+.change-venue {
+  display: inline-block;
+  color: #5b3fa3;
+  font-size: 13px;
+  padding: 12px 0;
+  text-underline-offset: 4px;
+}
+.sample-venues {
+  padding: 70px 0;
+  scroll-margin-top: 110px;
+}
+.sample-venue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.sample-venue-card {
+  background: white;
+  border: 1px solid #e5def4;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 8px 28px #5b3fa30b;
+}
+.sample-venue-photo {
+  aspect-ratio: 620/375;
+  background: url("../assets/images/seatsync-brandbook.png") 98.0392% 9.975% /
+    330.3226% 313.8667% no-repeat;
+  background-color: #ede7fa;
+}
+.sample-venue-body {
+  padding: 24px;
+}
+.sample-venue-type {
+  font-size: 12px;
+  color: #5b3fa3;
+}
+.sample-venue-body h3 {
+  font-size: 23px;
+  margin: 14px 0 10px;
+}
+.sample-venue-body p {
+  color: #716986;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.sample-venue-location {
+  margin: 16px 0;
+}
+.sample-venue-body a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 46px;
+  padding: 12px 18px;
+  background: #5b3fa3;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+}
+.sample-venue-body a:hover {
+  background: #493084;
+}
+.sample-venue-body a:focus-visible {
+  outline: 3px solid #4f7cff;
+  outline-offset: 4px;
+}
+@media (max-width: 850px) {
+  .sample-venue-grid {
+    grid-template-columns: 1fr;
+    max-width: 540px;
+    margin: auto;
+  }
+  .sample-venues {
+    padding: 45px 0;
+  }
+}

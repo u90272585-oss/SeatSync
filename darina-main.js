@@ -1,5 +1,5 @@
 "use strict";
-// Darina's homepage: section navigation and copyright.
+
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {
     const id = link.getAttribute('href').slice(1);
