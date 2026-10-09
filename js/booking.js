@@ -82,12 +82,27 @@ function update() {
 }
 form.addEventListener('change', event => {
   error.hidden = true;
+  if (blockCancelledEdit()) return;
   if (event.target === venueInput) {
     for (const input of form.elements.table) input.checked = false;
   }
   update();
   saveDraft();
 });
+function blockCancelledEdit() {
+  if (!window.SeatSyncBookingStorage.isCancelled(initial.get('id')) && initial.get('status') !== 'cancelled') return false;
+  error.textContent = 'This booking was cancelled. ';
+  const restart = document.createElement('a');
+  restart.href = 'booking.html?new=1';
+  restart.textContent = 'Start a new booking';
+  error.append(restart);
+  error.hidden = false;
+  form.querySelector('[type="submit"]').disabled = true;
+  return true;
+}
+window.addEventListener('storage', blockCancelledEdit);
+window.addEventListener('pageshow', blockCancelledEdit);
+
 function bookingDetails() {
   return { venue: venueInput.value, date: dateInput.value, time: timeInput.value,
     guests: guestsInput.value, table: form.elements.table.value };
@@ -95,6 +110,7 @@ function bookingDetails() {
 
 form.addEventListener('submit', event => {
   event.preventDefault();
+  if (blockCancelledEdit()) return;
   const problem = rules.validate(bookingDetails());
   for (const input of [venueInput, dateInput, timeInput, guestsInput, ...form.elements.table]) {
     input.removeAttribute('aria-invalid');
@@ -106,9 +122,17 @@ form.addEventListener('submit', event => {
     if (input) { input.setAttribute('aria-invalid', 'true'); input.focus(); }
     return;
   }
+  const consent = form.elements.terms;
+  if (!consent.checked) {
+    error.textContent = 'Please read and accept the booking and cancellation terms.';
+    error.hidden = false;
+    consent.focus();
+    return;
+  }
   const booking = new URLSearchParams(bookingDetails());
   const existingId = initial.get('id');
   booking.set('id', /^[a-zA-Z0-9-]{10,80}$/.test(existingId || '') ? existingId : crypto.randomUUID());
   location.href = `confirmation.html?${booking.toString()}`;
 });
 update();
+blockCancelledEdit();

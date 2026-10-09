@@ -34,14 +34,14 @@ window.SeatSyncBooking = (() => {
     const current = nowInAlmaty(now);
     return `${date}T${time}` > `${current.date}T${current.time}`;
   }
-  function validate(booking, now = new Date()) {
+  function validate(booking, now = new Date(), allowPast = false) {
     if (!booking || !Object.hasOwn(window.SEATSYNC_VENUES, booking.venue || '')) {
       return { field: 'venue', message: 'Please choose a café or restaurant.' };
     }
-    if (!isDate(booking.date) || booking.date < nowInAlmaty(now).date) {
+    if (!isDate(booking.date) || (!allowPast && booking.date < nowInAlmaty(now).date)) {
       return { field: 'date', message: 'Please choose today or a future date.' };
     }
-    if (!times.includes(booking.time) || !isFuture(booking.date, booking.time, now)) {
+    if (!times.includes(booking.time) || (!allowPast && !isFuture(booking.date, booking.time, now))) {
       return { field: 'time', message: 'Choose a future time between 09:00 and 18:30 (Almaty time).' };
     }
     if (!/^[1-6]$/.test(String(booking.guests))) {

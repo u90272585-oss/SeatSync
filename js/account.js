@@ -37,7 +37,8 @@
       if (!user) return false;
       const all = records();
       const index = all.findIndex(b => b.id === booking.id && b.email === user.email);
-      const record = {...booking, email: user.email};
+      const cancelled = all[index]?.status === 'cancelled' || window.SeatSyncBookingStorage?.isCancelled(booking.id);
+      const record = {...booking, status: cancelled ? 'cancelled' : booking.status || 'confirmed', email: user.email};
       if (index >= 0) all[index] = record; else all.push(record);
       localStorage.setItem(bookingsKey, JSON.stringify(all));
       return true;
@@ -110,17 +111,22 @@
     document.querySelector('#bookings-count').textContent = `${bookings.length} ${bookings.length === 1 ? 'booking' : 'bookings'}`;
     for (const booking of bookings) {
       const card = document.querySelector('#booking-template').content.cloneNode(true);
-      const when = new Date(`${booking.date}T${booking.time}`);
-      const upcoming = when > new Date();
+      const when = new Date(`${booking.date}T12:00:00Z`);
+      const upcoming = window.SeatSyncBooking.isFuture(booking.date, booking.time);
+      const cancelled = booking.status === 'cancelled' || window.SeatSyncBookingStorage.isCancelled(booking.id);
       card.querySelector('[data-venue]').textContent = window.SEATSYNC_VENUES[booking.venue].name;
-      card.querySelector('[data-date]').textContent = when.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+      card.querySelector('[data-date]').textContent = when.toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'long',year:'numeric'});
       card.querySelector('[data-time]').textContent = booking.time;
       card.querySelector('[data-guests]').textContent = `${booking.guests} ${Number(booking.guests) === 1 ? 'guest' : 'guests'}`;
       card.querySelector('[data-table]').textContent = `Table ${booking.table}`;
-      card.querySelector('[data-status]').textContent = upcoming ? 'Upcoming · Demo' : 'Past · Demo';
+      card.querySelector('[data-status]').textContent = cancelled ? 'Cancelled · Demo' : upcoming ? 'Upcoming · Demo' : 'Past · Demo';
       const edit = card.querySelector('[data-edit]');
-      edit.hidden = !upcoming;
+      edit.hidden = !upcoming || cancelled;
       edit.href = `booking.html?${new URLSearchParams({venue:booking.venue,date:booking.date,time:booking.time,guests:booking.guests,table:booking.table,id:booking.id})}`;
+      const manage = card.querySelector('[data-manage]');
+      manage.hidden = !upcoming && !cancelled;
+      manage.textContent = cancelled ? 'View cancellation' : 'View / Cancel booking';
+      manage.href = `confirmation.html?${new URLSearchParams({venue:booking.venue,date:booking.date,time:booking.time,guests:booking.guests,table:booking.table,id:booking.id,status:cancelled ? 'cancelled' : 'confirmed'})}`;
       bookingList.append(card);
     }
   }

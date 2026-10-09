@@ -37,3 +37,19 @@ test('handles missing, malformed and blocked storage', () => {
   assert.equal(blocked.readReceipt(), null);
   assert.equal(blocked.saveReceipt(receipt), false);
 });
+
+test('cancellation survives a new receipt and cannot be overwritten by an active save', () => {
+  const { storage } = setup();
+  assert.equal(storage.cancel(receipt), true);
+  assert.equal(storage.isCancelled(receipt.id), true);
+  assert.equal(storage.readReceipt().status, 'cancelled');
+  storage.saveReceipt({ ...receipt, id: 'another-booking' });
+  assert.equal(storage.isCancelled(receipt.id), true);
+  storage.saveReceipt({ ...receipt, status: 'confirmed' });
+  assert.equal(storage.readReceipt().status, 'cancelled');
+});
+test('blocked cancellation reports failure instead of claiming persistence', () => {
+  const { storage } = setup(true);
+  assert.equal(storage.cancel(receipt), false);
+  assert.equal(storage.isCancelled(receipt.id), false);
+});

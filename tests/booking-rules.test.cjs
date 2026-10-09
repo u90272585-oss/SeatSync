@@ -40,3 +40,10 @@ test('uses the venue timezone across midnight', () => {
   assert.equal(rules.nowInAlmaty(midnight).time, '00:05');
   assert.equal(rules.validate(booking, midnight).field, 'date');
 });
+
+test('cancelled history accepts past visits but still rejects malformed data', () => {
+  const past = { ...booking, date: '2025-10-09' };
+  assert.equal(rules.validate(past, now, true), null);
+  assert.equal(rules.validate({ ...past, date: '2025-02-30' }, now, true).field, 'date');
+  assert.equal(rules.validate({ ...past, table: '8' }, now, true).field, 'table');
+});

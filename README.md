@@ -37,3 +37,34 @@ For manual checking: book a table for two, change to six guests (the small table
 clear), select table 5, confirm, reload, edit and confirm again. Check My bookings with
 a demo profile: the same booking ID should appear once. Also try a past date, occupied
 table IDs 7/8 in a URL, a malformed URL, blocked storage and a narrow mobile viewport.
+
+### Booking terms, cancellation and Help
+
+Before confirming, guests must explicitly accept the proposed demo terms: a 100 ₸
+service fee, no extra fee for editing the same booking, no additional cancellation
+fee, and no service-fee refund for guest cancellations. The proposed policy provides
+a service-fee refund if the venue cancels or the booking cannot be fulfilled. These
+are prototype terms, not the actual policies of the named venues. No payment/refund
+integration or venue-initiated cancellation workflow is implemented.
+
+Cancellation is available before the visit, with an informational warning when less
+than 24 hours remain. Confirmation asks the user to choose Keep booking or Cancel
+booking. Cancelled bookings remain in profile history and cannot be edited. The
+`seatsync.booking.cancelled.v1` localStorage key keeps cancelled IDs independently
+of the latest receipt, so opening an older confirmation URL cannot reactivate a
+cancelled booking in the same browser. Past cancelled bookings remain viewable.
+
+If storage is blocked, the cancellation is represented in the updated URL and a
+message explains that older links may still show an active booking. This is only a
+frontend demo: clearing storage, using a different browser or manually changing
+local data bypasses local state; reliable cancellation needs a backend.
+
+`js/booking-help.js` adds a keyboard-accessible Help dialog to booking, confirmation
+and My bookings. It contains FAQs and navigation, not live chat. No messages are
+sent and no unverified venue contacts are invented. `css/booking-actions.css` styles
+the terms, consent checkbox, cancellation dialog and Help panel.
+
+Manual checks: try submitting without consent; cancel and choose Keep booking;
+confirm cancellation; reload both the updated and original URLs; create a second
+booking and revisit the first; check Cancelled in My bookings; try an old edit link;
+open Help, expand a question and close with Escape. Repeat with storage blocked.
