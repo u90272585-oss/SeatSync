@@ -12,7 +12,7 @@
       message.textContent = rows.length ? `${rows.length} saved demo booking(s). Refresh or book in another tab to see changes.` : 'No saved website bookings yet. Sign in to a demo profile, then confirm a booking.';
       rows.forEach(b => {
         const tr = document.createElement('tr');
-        [window.SEATSYNC_VENUES[b.venue].name,b.date,b.time,b.name || 'Demo guest',b.guests,`Table ${b.table}`].forEach(value => {
+        [window.SEATSYNC_VENUES[b.venue].name,b.date,b.time,b.name || 'Demo guest',b.guests,`Table ${b.table}`,b.status || 'Pending'].forEach(value => {
           const td = document.createElement('td'); td.textContent = String(value ?? ''); tr.append(td);
         });
         tbody.append(tr);
@@ -21,5 +21,6 @@
   }
   document.querySelector('#refresh-live').addEventListener('click',render);
   window.addEventListener('storage',event => { if (event.key === key) render(); });
+  window.addEventListener('seatsync-bookings-updated', render);
   render();
 })();
