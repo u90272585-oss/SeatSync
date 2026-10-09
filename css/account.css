@@ -1,0 +1,285 @@
+.account-main {
+  max-width: 1050px;
+  padding-top: 45px;
+  min-height: 75vh;
+}
+.account-main h1 {
+  font-size: clamp(30px, 4vw, 43px);
+  letter-spacing: -1.5px;
+  margin: 12px 0 16px;
+  overflow-wrap: anywhere;
+}
+.account-main h2 {
+  font-size: 21px;
+  letter-spacing: -0.5px;
+  margin: 0 0 18px;
+}
+.account-card {
+  padding: 30px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.signin-card {
+  max-width: 560px;
+  margin: auto;
+}
+.notice {
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--soft);
+  font-size: 13px;
+  margin: 22px 0;
+  color: #594878;
+}
+.notice p {
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+.account-card form {
+  display: grid;
+  gap: 10px;
+}
+.account-card label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+.account-card input {
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  border: 1px solid #ded9e9;
+  border-radius: 10px;
+  padding: 12px;
+  font: inherit;
+  font-size: 16px;
+  background: #fdfcff;
+  color: var(--ink);
+}
+.account-card input[readonly] {
+  background: #f2f0f7;
+  color: var(--muted);
+}
+.account-card form .button {
+  margin-top: 15px;
+}
+.privacy-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 18px 0;
+  line-height: 1.7;
+}
+.text-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  text-underline-offset: 4px;
+}
+.form-message {
+  padding: 12px;
+  background: var(--soft);
+  border-radius: 8px;
+  font-size: 13px;
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.account-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.account-heading > div {
+  min-width: 0;
+}
+.account-tabs {
+  display: flex;
+  gap: 26px;
+  border-bottom: 1px solid var(--line);
+  margin: 20px 0 30px;
+}
+.account-tabs a {
+  padding: 12px 0;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+.account-tabs [aria-current] {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+}
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+}
+.empty-card {
+  text-align: center;
+  padding: 50px 24px;
+}
+.list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.saved-bookings {
+  display: grid;
+  gap: 20px;
+}
+.saved-booking-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.saved-booking-heading h2 {
+  margin: 0;
+}
+.saved-details {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 16px;
+  margin: 26px 0;
+}
+.saved-details dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.saved-details dd {
+  font-size: 14px;
+  margin: 6px 0 0;
+  font-weight: 600;
+}
+.saved-booking-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  font-size: 13px;
+}
+.saved-booking-bottom small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+@media (max-width: 650px) {
+  .account-main {
+    padding-top: 26px;
+  }
+  .account-card {
+    padding: 23px 20px;
+  }
+  .account-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .saved-booking-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .saved-details {
+    grid-template-columns: 1fr 1fr;
+  }
+  .saved-booking-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .saved-booking-bottom .button {
+    width: 100%;
+  }
+  .list-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .account-main h1 {
+    font-size: 32px;
+  }
+  .empty-card {
+    padding: 35px 20px;
+  }
+}
+
+.account-tabs {
+  flex-wrap: wrap;
+  column-gap: 26px;
+  row-gap: 0;
+}
+
+.role-picker {
+  border: 0;
+  padding: 0;
+  margin: 0 0 16px;
+  display: grid;
+  gap: 12px;
+}
+.role-picker legend {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.account-card .role-choice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  margin: 0;
+}
+.account-card .role-choice input {
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+}
+.role-choice:has(input:checked) {
+  background: var(--soft);
+  border-color: var(--primary);
+}
+.role-choice small {
+  display: block;
+  margin-top: 6px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.demo-role-panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 24px;
+  margin: 24px 0;
+}
+.role-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.role-actions .button {
+  white-space: normal;
+  text-align: center;
+}
+.demo-role-panel h2 {
+  margin-bottom: 12px;
+}
+@media (max-width: 550px) {
+  .role-actions {
+    flex-direction: column;
+  }
+  .role-actions .button {
+    width: 100%;
+  }
+  .demo-role-panel {
+    padding: 20px;
+  }
+}

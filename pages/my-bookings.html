@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My bookings — SeatSync</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/account.css" />
+    <script src="../js/venues.js" defer></script>
+    <script src="../js/account.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="SeatSync home">
+          <span class="brand-symbol" aria-hidden="true"></span>
+          <span class="brand-word">
+            Seat
+            <span>Sync</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a class="header-link desktop-link" href="../index.html#discover">
+            Restaurants
+          </a>
+          <a class="header-link" href="booking.html">Book a table</a>
+          <a
+            class="header-link account-link"
+            data-account-link
+            href="account.html"
+          >
+            Sign in
+          </a>
+        </nav>
+      </div>
+    </header>
+    <main class="account-main">
+      <noscript>
+        <p class="notice">
+          Enable JavaScript to use the demo profile and saved bookings.
+        </p>
+      </noscript>
+      <div class="account-heading">
+        <div>
+          <span class="eyebrow">Make time for each other</span>
+          <h1>My bookings</h1>
+          <p class="muted">Your tables, your plans, all together.</p>
+        </div>
+        <a class="button" href="booking.html">Book a table +</a>
+      </div>
+      <nav class="account-tabs" aria-label="Account">
+        <a href="account.html">Profile</a>
+        <a href="my-bookings.html" aria-current="page">My bookings</a>
+      </nav>
+      <section id="bookings-signed-out" class="account-card empty-card">
+        <h2>Your plans belong here.</h2>
+        <p class="muted">
+          Open a demo profile to see the bookings saved for your email in this
+          browser.
+        </p>
+        <a class="button" href="account.html">Sign in to demo profile →</a>
+      </section>
+      <section id="bookings-signed-in" hidden>
+        <div class="list-heading">
+          <strong id="bookings-count"></strong>
+          <span class="demo-badge">Demo · No payments made</span>
+        </div>
+        <div id="booking-list" class="saved-bookings"></div>
+        <div id="bookings-empty" class="account-card empty-card">
+          <h2>A good moment is waiting.</h2>
+          <p class="muted">
+            You haven’t saved any bookings yet. Choose a place and a table to
+            get started.
+          </p>
+          <a class="button" href="../index.html#discover">Explore places →</a>
+        </div>
+        <p class="privacy-note">
+          Saved only in this browser. These demo bookings are not sent to a
+          venue.
+        </p>
+      </section>
+      <template id="booking-template">
+        <article class="account-card saved-booking">
+          <div class="saved-booking-heading">
+            <h2 data-venue></h2>
+            <span class="demo-badge" data-status></span>
+          </div>
+          <dl class="saved-details">
+            <div>
+              <dt>Date</dt>
+              <dd data-date></dd>
+            </div>
+            <div>
+              <dt>Time</dt>
+              <dd data-time></dd>
+            </div>
+            <div>
+              <dt>Guests</dt>
+              <dd data-guests></dd>
+            </div>
+            <div>
+              <dt>Table</dt>
+              <dd data-table></dd>
+            </div>
+          </dl>
+          <div class="saved-booking-bottom">
+            <span>
+              Service fee
+              <strong>100 ₸</strong>
+              <small>Demo only · Not charged</small>
+            </span>
+            <a class="button button-secondary" data-edit href="booking.html">
+              Edit booking
+            </a>
+          </div>
+        </article>
+      </template>
+    </main>
+    <footer class="site-footer">
+      <span>SeatSync · Good food. Better moments.</span>
+      <span>Demo profile · Stored in this browser only</span>
+    </footer>
+  </body>
+</html>
