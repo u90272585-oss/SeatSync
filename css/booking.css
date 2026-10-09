@@ -40,3 +40,7 @@
   background: #f4c9d0; border-color: #d78f9b; color: #8d4e5a;
 }
 .booking-experience [aria-invalid="true"] { outline: 2px solid #a13240; }
+
+.booking-experience .booking-reference { font-size: 11px; color: var(--muted); margin-top: 18px; overflow-wrap: anywhere; }
+.booking-experience .confirmation-actions { flex-wrap: wrap; }
+.booking-experience #receipt-status { margin: 18px 0; }
