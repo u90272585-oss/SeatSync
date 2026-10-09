@@ -18,7 +18,7 @@
     return Array.isArray(value) ? value.filter(b => b && typeof b.id === 'string' && typeof b.email === 'string'
       && /^\d{4}-\d{2}-\d{2}$/.test(b.date) && /^\d{2}:\d{2}$/.test(b.time)
       && /^[1-6]$/.test(String(b.table)) && /^[1-6]$/.test(String(b.guests))
-      && ['cafe','restaurant','bistro'].includes(b.venue)) : [];
+      && Object.hasOwn(window.SEATSYNC_VENUES || {}, b.venue)) : [];
   };
   const notify = (element, text) => { element.textContent = text; element.hidden = false; };
   function renderHeader() {

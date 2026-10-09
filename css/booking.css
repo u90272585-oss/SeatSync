@@ -23,3 +23,10 @@
   .booking-experience .booking-details div { font-size: 13px; }
   .booking-experience .button { font-size: 14px; min-height: 48px; }
 }
+
+/* Keep the venue selector readable in the existing reservation card. */
+.booking-experience .venue-field { grid-column: 1 / -1; }
+.booking-experience #draft-status { color: var(--green); }
+@media(max-width:650px) {
+  .booking-experience .field:has(#date) { grid-column: 1 / -1; }
+}

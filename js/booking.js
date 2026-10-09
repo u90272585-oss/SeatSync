@@ -12,6 +12,12 @@ const form = document.querySelector('#booking-form');
 const dateInput = form.elements.date;
 const timeInput = form.elements.time;
 const guestsInput = form.elements.guests;
+const venueInput = form.elements.venue;
+const draftStatus = document.querySelector('#draft-status');
+const draftKey = 'seatsync.booking.draft.v1';
+for (const [id, venue] of Object.entries(window.SEATSYNC_VENUES)) {
+  venueInput.add(new Option(venue.name, id));
+}
 const error = document.querySelector('#form-error');
 const localDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 const timeLabel = (time) => new Date(`2000-01-01T${time}`).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -28,17 +34,40 @@ document.querySelector('#tables').innerHTML = tables.map(table => `
 
 // Query parameters keep the flow functional even when browser storage is disabled.
 const params = new URLSearchParams(location.search);
-const venueId = Object.hasOwn(window.SEATSYNC_VENUES, params.get('venue') || '') ? params.get('venue') : 'cafe';
-document.querySelector('#venue-name').textContent = window.SEATSYNC_VENUES[venueId].name;
-if (params.has('date')) {
-  dateInput.value = params.get('date');
-  timeInput.value = params.get('time') || '';
-  if (/^[1-6]$/.test(params.get('guests'))) guestsInput.value = params.get('guests');
-  const restored = [...form.elements.table].find(input => input.value === params.get('table'));
-  if (restored) restored.checked = true;
+// Explicit links (including Edit Booking) take priority over a browser draft.
+let initial = params;
+if (!location.search) {
+  try {
+    const draft = JSON.parse(localStorage.getItem(draftKey));
+    if (draft && typeof draft === 'object' && !Array.isArray(draft)) {
+      initial = new URLSearchParams(draft);
+      draftStatus.textContent = 'Your unfinished booking was restored. Review the details.';
+    }
+  } catch {
+    draftStatus.textContent = 'Draft storage is unavailable. You can still book in this tab.';
+  }
+}
+venueInput.value = Object.hasOwn(window.SEATSYNC_VENUES, initial.get('venue') || '') ? initial.get('venue') : 'skyberry';
+dateInput.value = initial.get('date') || '';
+timeInput.value = initial.get('time') || '';
+if (/^[1-6]$/.test(initial.get('guests'))) guestsInput.value = initial.get('guests');
+const restored = [...form.elements.table].find(input => input.value === initial.get('table'));
+if (restored) restored.checked = true;
+
+function saveDraft() {
+  try {
+    localStorage.setItem(draftKey, JSON.stringify({
+      venue: venueInput.value, date: dateInput.value, time: timeInput.value,
+      guests: guestsInput.value, table: form.elements.table.value, id: initial.get('id') || ''
+    }));
+    draftStatus.textContent = 'Draft saved in this browser.';
+  } catch {
+    draftStatus.textContent = 'Draft could not be saved. You can still continue to confirmation.';
+  }
 }
 
 function update() {
+  document.querySelector('#venue-name').textContent = window.SEATSYNC_VENUES[venueInput.value].name;
   const now = new Date();
   dateInput.min = localDate(now);
   for (const option of timeInput.options) {
@@ -55,7 +84,14 @@ function update() {
   document.querySelector('#summary-guests').textContent = `${guestsInput.value} ${guestsInput.value === '1' ? 'guest' : 'guests'}`;
   document.querySelector('#summary-table').textContent = selected ? `Table ${selected.id} · ${selected.name}` : 'Choose a table';
 }
-form.addEventListener('change', () => { error.hidden = true; update(); });
+form.addEventListener('change', event => {
+  error.hidden = true;
+  if (event.target === venueInput) {
+    for (const input of form.elements.table) input.checked = false;
+  }
+  update();
+  saveDraft();
+});
 form.addEventListener('submit', event => {
   event.preventDefault();
   update();
@@ -66,8 +102,8 @@ form.addEventListener('submit', event => {
     dateInput.focus();
     return;
   }
-  const booking = new URLSearchParams({ venue: venueId, date: dateInput.value, time: timeInput.value, guests: guestsInput.value, table: form.elements.table.value });
-  const existingId = params.get('id');
+  const booking = new URLSearchParams({ venue: venueInput.value, date: dateInput.value, time: timeInput.value, guests: guestsInput.value, table: form.elements.table.value });
+  const existingId = initial.get('id');
   booking.set('id', /^[a-zA-Z0-9-]{10,80}$/.test(existingId || '') ? existingId : crypto.randomUUID());
   location.href = `confirmation.html?${booking.toString()}`;
 });
