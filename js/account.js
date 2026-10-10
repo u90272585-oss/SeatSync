@@ -24,7 +24,7 @@
   function renderHeader() {
     const user = profile();
     document.querySelectorAll('[data-account-link]').forEach(link => {
-      link.textContent = user ? `◉ ${user.name.split(/\s+/)[0]}` : 'Sign in';
+      link.textContent = user ? `◉ ${user.name.split(/\s+/)[0]}` : 'Sign in / Register';
       link.href = `${prefix}account.html`;
       link.setAttribute('aria-label', user ? 'Open your profile' : 'Sign in to demo profile');
     });
@@ -54,6 +54,8 @@
     document.querySelector('#signin-section').hidden = Boolean(user);
     profileSection.hidden = !user;
     if (user) {
+      const roleLabel = document.querySelector('#current-role');
+      if (roleLabel) roleLabel.textContent = user.role === 'admin' ? 'Administrator' : 'Guest';
       document.querySelector('#profile-name').value = user.name;
       document.querySelector('#profile-email').value = user.email;
       document.querySelector('#welcome-name').textContent = user.name;
@@ -62,7 +64,7 @@
   }
   function nextPage() {
     const next = new URLSearchParams(location.search).get('next');
-    if (!next) return 'my-bookings.html';
+    if (!next) return 'booking.html';
     try {
       const target = new URL(next, location.href);
       const allowedPath = new URL('confirmation.html', location.href).pathname;
@@ -71,6 +73,18 @@
   }
   if (loginForm) {
     renderAccount();
+    loginForm.addEventListener('change', () => {
+      loginForm.querySelector('button[type=submit]').textContent = loginForm.elements.role.value === 'admin' ? 'Continue as administrator →' : 'Continue as guest →';
+    });
+    document.querySelectorAll('[data-demo-role]').forEach(button => button.addEventListener('click', () => {
+      const user = profile();
+      if (!user) return;
+      const role = button.dataset.demoRole === 'admin' ? 'admin' : 'guest';
+      try {
+        localStorage.setItem(profileKey, JSON.stringify({ ...user, role }));
+        location.href = role === 'admin' ? '../admin.dashbroad.html' : nextPage();
+      } catch { notify(document.querySelector('#role-message'), 'Could not save your role. Please enable browser storage.'); }
+    }));
     if (new URLSearchParams(location.search).has('next')) {
       document.querySelector('#guest-continue').href = nextPage();
     }
@@ -81,8 +95,9 @@
       const message = document.querySelector('#signin-message');
       if (!name || !loginForm.reportValidity()) { notify(message, 'Please enter your name and a valid email.'); return; }
       try {
-        localStorage.setItem(profileKey, JSON.stringify({name, email}));
-        location.href = nextPage();
+        const role = loginForm.elements.role.value === 'admin' ? 'admin' : 'guest';
+        localStorage.setItem(profileKey, JSON.stringify({name, email, role}));
+        location.href = role === 'admin' ? '../admin.dashbroad.html' : nextPage();
       } catch { notify(message, 'Your browser could not save this demo profile. Allow local storage and try again.'); }
     });
     document.querySelector('#profile-form').addEventListener('submit', event => {

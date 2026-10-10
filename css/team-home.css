@@ -1,0 +1,21 @@
+/* Integration additions; Darina's hero, typography and sections stay in place. */
+:root { --primary: var(--purple); --surface: var(--white); --line: var(--border); --soft: var(--light); }
+.venue-discovery { padding-top: 64px; padding-bottom: 64px; scroll-margin-top: 100px; }
+.venue-discovery .section-title { display:flex; justify-content:space-between; align-items:center; gap:20px; }
+.venue-discovery .venue-grid { display:grid; }
+.venue-discovery .venue-type { color:var(--purple); font-weight:600; text-transform:uppercase; }
+.navbar { flex-wrap:wrap; gap:16px; }
+.navbar > .btn { padding:12px 18px; }
+@media(max-width:600px) {
+ .navbar { gap:10px; }
+ .navbar .logo { width:100%; text-align:center; }
+ .navbar > .btn { flex:1; font-size:12px; text-align:center; }
+}
+/* Keep the decorative background glows outside the layout viewport. */
+body { overflow-x: clip; }
+.background-shape { position: fixed; }
+.preview-glow { max-width: 100%; }
+.hero-content > * { min-width: 0; }
+.table-layout { max-width: 100%; }
+.footer-links { flex-wrap: wrap; justify-content: center; }
+@media(max-width:360px) { .hero h1 { font-size: 36px; } .table-card { padding:20px; } }

@@ -1,2 +1,211 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Your profile — SeatSync</title><link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/account.css"><script src="../js/venues.js" defer></script><script src="../js/account.js" defer></script></head><body><header class="site-header"><div class="header-inner"><a class="brand" href="../index.html" aria-label="SeatSync home"><span class="brand-symbol" aria-hidden="true"></span><span class="brand-word">Seat<span>Sync</span></span></a><nav class="site-nav" aria-label="Main navigation"><a class="header-link desktop-link" href="../index.html#venues">Restaurants</a><a class="header-link" href="booking.html">Book a table</a><a class="header-link account-link" data-account-link href="account.html">Sign in</a></nav></div></header><main class="account-main"><noscript><p class="notice">Enable JavaScript to use the demo profile and saved bookings.</p></noscript><section id="signin-section" class="account-card signin-card"><span class="eyebrow">Your plans, in one place</span><h1>Welcome to SeatSync.</h1><p class="muted">Keep your favorite moments a little closer. Open a demo profile to save your bookings.</p><div class="notice"><strong>Demo sign-in</strong><p>No password, verification code, or real account is created. Use sample details; this browser stores your profile and bookings locally.</p></div><form id="demo-signin"><label for="signin-name">Your name</label><input id="signin-name" name="name" maxlength="60" autocomplete="name" placeholder="Alex" required><label for="signin-email">Email</label><input id="signin-email" name="email" type="email" maxlength="254" autocomplete="email" placeholder="alex@example.com" required><p id="signin-message" class="form-message" role="alert" hidden></p><button class="button" type="submit">Continue to demo profile →</button></form><p class="privacy-note">No email is sent. This is not secure authentication: anyone using this browser can open a demo profile with the same email. Do not enter sensitive information.</p><a id="guest-continue" class="text-link" href="booking.html">Continue booking as a guest</a></section>
-<section id="profile-section" hidden><div class="account-heading"><div><span class="eyebrow">Your SeatSync space</span><h1>Hello, <span id="welcome-name"></span>.</h1><p class="muted">Your details and your next good moment.</p></div><a class="button" href="my-bookings.html">My bookings →</a></div><nav class="account-tabs" aria-label="Account"><a href="account.html" aria-current="page">Profile</a><a href="my-bookings.html">My bookings</a></nav><div class="profile-grid"><section class="account-card"><h2>Personal details</h2><form id="profile-form"><label for="profile-name">Name</label><input id="profile-name" maxlength="60" autocomplete="name" required><label for="profile-email">Email</label><input id="profile-email" type="email" readonly aria-describedby="email-note"><p id="email-note" class="privacy-note">This email identifies your demo bookings. To use a different email, sign out first.</p><button class="button" type="submit">Save changes</button><p id="profile-message" class="form-message" role="status" hidden></p></form></section><aside class="account-card"><span class="eyebrow">Something to look forward to</span><h2><span id="profile-count">0</span> saved bookings</h2><p class="muted">Find every demo reservation in My bookings.</p><a class="text-link" href="my-bookings.html">View my bookings →</a><div class="notice"><strong>Only in this browser</strong><p>These details are not synced to another device. Signing out keeps saved bookings here; use the same email to see them again. Clearing browser storage removes them.</p></div><button id="signout" class="button button-secondary" type="button">Sign out</button></aside></div></section></main><footer class="site-footer"><span>SeatSync · Good food. Better moments.</span><span>Demo profile · Stored in this browser only</span></footer></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your profile — SeatSync</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/account.css?v=roles1" />
+    <script src="../js/venues.js?v=team3" defer></script>
+    <script src="../js/account.js?v=team3" defer></script>
+  <link rel="stylesheet" href="../css/account-roles.css"></head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="SeatSync home">
+          <span class="brand-symbol" aria-hidden="true"></span>
+          <span class="brand-word">
+            Seat
+            <span>Sync</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a class="header-link desktop-link" href="../index.html#venues">
+            Restaurants
+          </a>
+          <a class="header-link" href="booking.html">Book a table</a>
+          <a
+            class="header-link account-link"
+            data-account-link
+            href="account.html"
+          >
+            Sign in
+          </a>
+        </nav>
+      </div>
+    </header>
+    <main class="account-main">
+      <noscript>
+        <p class="notice">
+          Enable JavaScript to use the demo profile and saved bookings.
+        </p>
+      </noscript>
+      <section id="signin-section" class="account-card signin-card">
+        <span class="eyebrow">Your plans, in one place</span>
+        <h1>Welcome to SeatSync.</h1>
+        <p class="muted">
+          Choose your demo role, then enter your name and email to continue.
+        </p>
+        <div class="notice">
+          <strong>Demo sign-in</strong>
+          <p>
+            No password, verification code, or real account is created. Use
+            sample details; this browser stores your profile and bookings
+            locally.
+          </p>
+        </div>
+        <form id="demo-signin">
+          <fieldset class="role-picker">
+            <legend>How would you like to use SeatSync?</legend>
+            <label class="role-choice">
+              <input type="radio" name="role" value="guest" checked />
+              <span>
+                <strong>Guest</strong>
+                <small>Find a table and save your bookings.</small>
+              </span>
+            </label>
+            <label class="role-choice">
+              <input type="radio" name="role" value="admin" />
+              <span>
+                <strong>Administrator</strong>
+                <small>Open the demo dashboard and view bookings.</small>
+              </span>
+            </label>
+          </fieldset>
+          <label for="signin-name">Your name</label>
+          <input
+            id="signin-name"
+            name="name"
+            maxlength="60"
+            autocomplete="name"
+            placeholder="Alex"
+            required
+          />
+          <label for="signin-email">Email</label>
+          <input
+            id="signin-email"
+            name="email"
+            type="email"
+            maxlength="254"
+            autocomplete="email"
+            placeholder="alex@example.com"
+            required
+          />
+          <p id="signin-message" class="form-message" role="alert" hidden></p>
+          <button class="button" type="submit">Continue as guest →</button>
+        </form>
+        <p class="privacy-note">
+          No email is sent. This is not secure authentication: anyone using this
+          browser can open a demo profile with the same email. Do not enter
+          sensitive information.
+        </p>
+        <a id="guest-continue" class="text-link" href="booking.html">
+          Continue booking as a guest
+        </a>
+      </section>
+      <section id="profile-section" hidden>
+        <div class="account-heading">
+          <div>
+            <span class="eyebrow">Your SeatSync space</span>
+            <h1>
+              Hello,
+              <span id="welcome-name"></span>
+              .
+            </h1>
+            <p class="muted">Your details and your next good moment.</p>
+          </div>
+          <a class="button" href="my-bookings.html">My bookings →</a>
+        </div>
+        <section class="demo-role-panel" aria-label="Choose demo role">
+          <h2>Choose your SeatSync space</h2>
+          <p class="muted">
+            Current demo role:
+            <strong id="current-role">Guest</strong>
+            . Both spaces are available to try.
+          </p>
+          <div class="role-actions">
+            <button type="button" class="button" data-demo-role="guest">
+              Guest — book a table →
+            </button>
+            <button
+              type="button"
+              class="button button-secondary"
+              data-demo-role="admin"
+            >
+              Administrator — dashboard →
+            </button>
+          </div>
+          <p class="privacy-note">
+            Demo access only. Choosing a role does not grant real administrator
+            permissions.
+          </p>
+          <p id="role-message" class="form-message" role="alert" hidden></p>
+        </section>
+        <nav class="account-tabs" aria-label="Account">
+          <a href="account.html" aria-current="page">Profile</a>
+          <a href="my-bookings.html">My bookings</a>
+          <a href="../admin.dashbroad.html">Admin dashboard · Demo ↗</a>
+        </nav>
+        <div class="profile-grid">
+          <section class="account-card">
+            <h2>Personal details</h2>
+            <form id="profile-form">
+              <label for="profile-name">Name</label>
+              <input
+                id="profile-name"
+                maxlength="60"
+                autocomplete="name"
+                required
+              />
+              <label for="profile-email">Email</label>
+              <input
+                id="profile-email"
+                type="email"
+                readonly
+                aria-describedby="email-note"
+              />
+              <p id="email-note" class="privacy-note">
+                This email identifies your demo bookings. To use a different
+                email, sign out first.
+              </p>
+              <button class="button" type="submit">Save changes</button>
+              <p
+                id="profile-message"
+                class="form-message"
+                role="status"
+                hidden
+              ></p>
+            </form>
+          </section>
+          <aside class="account-card">
+            <span class="eyebrow">Something to look forward to</span>
+            <h2>
+              <span id="profile-count">0</span>
+              saved bookings
+            </h2>
+            <p class="muted">Find every demo reservation in My bookings.</p>
+            <a class="text-link" href="my-bookings.html">View my bookings →</a>
+            <div class="notice">
+              <strong>Only in this browser</strong>
+              <p>
+                These details are not synced to another device. Signing out
+                keeps saved bookings here; use the same email to see them again.
+                Clearing browser storage removes them.
+              </p>
+            </div>
+            <button id="signout" class="button button-secondary" type="button">
+              Sign out
+            </button>
+            <p class="privacy-note">
+              <a href="../admin.dashbroad.html">Owner dashboard · Demo</a>
+            </p>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span>SeatSync · Good food. Better moments.</span>
+      <span>Demo profile · Stored in this browser only</span>
+    </footer>
+  </body>
+</html>

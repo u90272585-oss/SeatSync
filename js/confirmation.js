@@ -129,5 +129,6 @@ if (problem) {
   if (cancelled) showCancelled(storage.isCancelled(details.id));
   window.addEventListener('storage', syncCancellation);
   window.addEventListener('pageshow', syncCancellation);
+  document.querySelector('#empty-state').hidden = true;
   document.querySelector('#confirmation').hidden = false;
 }

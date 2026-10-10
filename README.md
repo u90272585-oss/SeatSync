@@ -102,8 +102,8 @@ Reference mapping (supplied October 10, 2026):
 ## Combined team demonstration — October 10, 2026
 
 Start `python3 -m http.server 8000` from the repository root.
-- [Current customer homepage](index.html)
-- [Team presentation entry point](team-demo.html)
+- [Unified homepage — Darina’s design](index.html)
+- [Optional team reference page](team-demo.html)
 - [Darina’s original homepage](darina-home.html)
 - [Uldana’s booking flow](pages/booking.html)
 - [Malika’s original admin prototype](admin.dashbroad.html)
@@ -132,3 +132,14 @@ sample dashboard (expand it to show the unchanged example cards and floor plan).
 
 Validation: `node --test tests/*.test.cjs`. Browser checks cover the homepage links,
 creation, cross-tab admin display, edits, old URLs, cancellation and mobile layout.
+
+### Unified site entry
+
+Open `/index.html` (or `/`). Darina’s original hero and sections are the homepage,
+with the Almaty venue cards added below. The previous booking-oriented homepage
+is preserved as `booking-home.html`. Account offers guest and administrator demo
+roles, with switching for existing profiles. Administrator opens
+`admin.dashbroad.html`; guest opens Uldana’s booking flow. All Back to Home links
+return to Darina’s homepage. Demo roles are navigation, not secure authentication.
+Dependent scripts use a coordinated version query to prevent mixed cached APIs.
+Confirmation has a visible recovery state if scripts cannot load.
