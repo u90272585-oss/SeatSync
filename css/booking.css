@@ -44,3 +44,6 @@
 .booking-experience .booking-reference { font-size: 11px; color: var(--muted); margin-top: 18px; overflow-wrap: anywhere; }
 .booking-experience .confirmation-actions { flex-wrap: wrap; }
 .booking-experience #receipt-status { margin: 18px 0; }
+
+/* Venue-specific cover above the unchanged brandbook fallback. */
+.booking-experience #venue-cover { display: block; width: 100%; height: 100%; object-fit: cover; }

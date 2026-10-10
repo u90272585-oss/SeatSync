@@ -7,6 +7,13 @@ const dateInput = form.elements.date;
 const timeInput = form.elements.time;
 const guestsInput = form.elements.guests;
 const venueInput = form.elements.venue;
+const venueCover = document.querySelector('#venue-cover');
+const venueCoverNote = document.querySelector('#venue-cover-note');
+// The brandbook background remains visible if a venue has no image or loading fails.
+venueCover.addEventListener('error', () => {
+  venueCover.hidden = true;
+  venueCoverNote.hidden = true;
+});
 const draftStatus = document.querySelector('#draft-status');
 const draftKey = 'seatsync.booking.draft.v1';
 for (const [id, venue] of Object.entries(window.SEATSYNC_VENUES)) {
@@ -57,7 +64,15 @@ function saveDraft() {
 }
 
 function update() {
-  document.querySelector('#venue-name').textContent = window.SEATSYNC_VENUES[venueInput.value].name;
+  const venue = window.SEATSYNC_VENUES[venueInput.value];
+  document.querySelector('#venue-name').textContent = venue.name;
+  if (venueCover.dataset.venue !== venueInput.value) {
+    venueCover.dataset.venue = venueInput.value;
+    venueCover.hidden = !venue.image;
+    venueCoverNote.hidden = !venue.image;
+    if (venue.image) venueCover.src = `../${venue.image}`;
+    else venueCover.removeAttribute('src');
+  }
   const now = new Date();
   dateInput.min = rules.nowInAlmaty(now).date;
   for (const option of timeInput.options) {
