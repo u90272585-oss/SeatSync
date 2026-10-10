@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SeatSync - Del Papa Dashboard</title>
+    <title>SeatSync — Reservation dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
@@ -91,7 +91,12 @@
             main > header { flex-wrap: wrap; height: auto; gap: 1rem; padding: 1rem; }
         }
     </style>
-</head>
+<style>
+        button:disabled { opacity: .45; cursor: not-allowed; }
+        .table-node:focus-visible { outline:3px solid #635bff; outline-offset:3px; }
+        #bookingRows tr.is-selected { background: #f0edff; }
+        @media (max-width: 420px) { main > .p-6 { padding:12px; } }
+    </style></head>
 <body class="min-h-screen flex flex-col antialiased">
 
     <div class="flex flex-1 w-full overflow-hidden">
@@ -114,9 +119,9 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-1">
-                            <h4 class="font-bold text-sm text-slate-900 tracking-wide uppercase truncate">DEL PAPA</h4>
+                            <h4 class="font-bold text-sm text-slate-900 tracking-wide uppercase truncate" id="admin-venue-name">SeatSync</h4>
                         </div>
-                        <p class="text-[11px] text-slate-500 font-medium">switch restaurant</p>
+                        <p class="text-[11px] text-slate-500 font-medium">Selected venue</p>
                     </div>
                     <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
                 </div>
@@ -187,7 +192,7 @@
                 <!-- Search Bar -->
                 <div class="relative w-80">
                     <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" onkeyup="filterBookings()" placeholder="Search booking, customer..." class="w-full pl-10 pr-4 py-2 bg-slate-100/80 border-0 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none transition-all placeholder:text-slate-400">
+                    <input type="text" id="searchInput"  placeholder="Search booking, customer..." class="w-full pl-10 pr-4 py-2 bg-slate-100/80 border-0 rounded-xl text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:bg-white outline-none transition-all placeholder:text-slate-400">
                 </div>
 
                 <!-- Right Header Tools -->
@@ -212,7 +217,7 @@
                     <!-- Date Selector -->
                     <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-200/70 transition-all">
                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
-                        <span>Mon, 7 Sep 2026</span>
+                        <span><span id="admin-date-label"></span></span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
                     </div>
                 </div>
@@ -224,31 +229,19 @@
                 <!-- Welcome Greeting -->
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Good evening, Malika!</h1>
-                    <p class="text-xs font-medium text-brand-600/80 mt-0.5">Manage SeatSync bookings and explore the original dashboard below. <a href="index.html" class="underline">Home</a> · <a href="pages/account.html" class="underline">Profile / switch role</a></p>
+                    <p class="text-xs font-medium text-brand-600/80 mt-0.5">Manage reservations, tables and guests in one place. <a href="index.html" class="underline">Home</a> · <a href="pages/account.html" class="underline">Profile / switch role</a></p>
                 </div>
 
-                <section id="shared-bookings" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm" aria-labelledby="shared-title">
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div><h2 id="shared-title" class="text-lg font-extrabold text-slate-900">SeatSync bookings</h2>
-                        <p class="text-xs text-slate-500 mt-1">Customer bookings in this browser · demo, no payment or restaurant connection</p></div>
-                        <a href="pages/booking.html?new=1" class="px-4 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold">New booking</a>
-                    </div>
-                    <div class="flex flex-wrap gap-3 my-4 text-xs">
-                        <label>Venue <select id="shared-venue" class="border rounded-lg p-2"><option value="">All venues</option></select></label>
-                        <label>Date <input id="shared-date" type="date" class="border rounded-lg p-2"></label>
+                <section class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <div class="flex flex-wrap gap-3 text-xs items-center">
+                        <label>Venue <select id="shared-venue" class="border rounded-lg p-2"></select></label>
+                        <label>Date <input id="shared-date" type="date" required class="border rounded-lg p-2"></label>
+                        <label>Floor plan at <input id="shared-time" type="time" required value="12:00" class="border rounded-lg p-2"></label>
                         <label>Status <select id="shared-status" class="border rounded-lg p-2"><option value="">All statuses</option><option value="confirmed">Confirmed</option><option value="cancelled">Cancelled</option></select></label>
-                        <button id="shared-reset" class="text-brand-600 font-semibold">Clear filters</button>
                     </div>
-                    <p id="shared-summary" class="text-sm font-bold text-brand-600 mb-3" aria-live="polite"></p>
+                    <p id="shared-summary" class="text-xs text-slate-500 mt-3" aria-live="polite"></p>
                     <p id="shared-message" class="text-sm text-rose-700" role="alert"></p>
-                    <div class="overflow-x-auto"><table class="w-full text-xs text-left" style="min-width:650px">
-                        <thead class="text-slate-500"><tr><th class="py-3">Date / time</th><th>Venue</th><th>Reference</th><th>Guests</th><th>Table</th><th>Status</th><th>Actions</th></tr></thead>
-                        <tbody id="shared-rows" class="divide-y divide-slate-100"></tbody>
-                    </table></div>
-                    <p id="shared-empty" class="py-6 text-sm text-slate-500">No bookings yet. Create a booking from the customer page.</p>
                 </section>
-                <details class="space-y-6">
-                    <summary class="cursor-pointer text-sm font-bold text-brand-600">Malika’s original dashboard · sample data and floor plan</summary>
                 <!-- 4 SUMMARY METRIC CARDS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Total Booking -->
@@ -257,11 +250,11 @@
                             <i data-lucide="calendar" class="w-5 h-5"></i>
                         </div>
                         <div class="space-y-1">
-                            <div class="text-2xl font-black text-slate-900 leading-none">24</div>
+                            <div class="text-2xl font-black text-slate-900 leading-none" id="metric-0">0</div>
                             <div class="text-xs font-semibold text-slate-500">Total booking</div>
                             <div class="flex items-center gap-1 text-[11px] font-medium text-emerald-600 pt-0.5">
                                 <i data-lucide="trending-up" class="w-3 h-3"></i>
-                                <span>+20% from yesterday</span>
+                                <span>Selected venue and date</span>
                             </div>
                         </div>
                     </div>
@@ -272,11 +265,11 @@
                             <i data-lucide="users" class="w-5 h-5"></i>
                         </div>
                         <div class="space-y-1">
-                            <div class="text-2xl font-black text-slate-900 leading-none">56</div>
+                            <div class="text-2xl font-black text-slate-900 leading-none" id="metric-1">0</div>
                             <div class="text-xs font-semibold text-slate-500">Total guests</div>
                             <div class="flex items-center gap-1 text-[11px] font-medium text-emerald-600 pt-0.5">
                                 <i data-lucide="trending-up" class="w-3 h-3"></i>
-                                <span>+12% from yesterday</span>
+                                <span>Confirmed bookings</span>
                             </div>
                         </div>
                     </div>
@@ -287,9 +280,9 @@
                             <i data-lucide="armchair" class="w-5 h-5"></i>
                         </div>
                         <div class="space-y-1">
-                            <div class="text-2xl font-black text-slate-900 leading-none">18</div>
-                            <div class="text-xs font-semibold text-slate-500">Table occupied</div>
-                            <div class="text-[11px] font-medium text-slate-400 pt-0.5">of 28</div>
+                            <div class="text-2xl font-black text-slate-900 leading-none" id="metric-2">0</div>
+                            <div class="text-xs font-semibold text-slate-500">Tables reserved</div>
+                            <div class="text-[11px] font-medium text-slate-400 pt-0.5">of 8 · selected time</div>
                         </div>
                     </div>
 
@@ -299,9 +292,9 @@
                             <i data-lucide="armchair" class="w-5 h-5"></i>
                         </div>
                         <div class="space-y-1">
-                            <div class="text-2xl font-black text-slate-900 leading-none">10</div>
+                            <div class="text-2xl font-black text-slate-900 leading-none" id="metric-3">0</div>
                             <div class="text-xs font-semibold text-slate-500">Tables available</div>
-                            <div class="text-[11px] font-medium text-slate-400 pt-0.5">of 28</div>
+                            <div class="text-[11px] font-medium text-slate-400 pt-0.5">of 8 · selected time</div>
                         </div>
                     </div>
                 </div>
@@ -314,10 +307,10 @@
                         <div>
                             <!-- Header -->
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-base font-bold text-slate-900">Today's booking</h3>
+                                <h3 class="text-base font-bold text-slate-900">Bookings for selected date</h3>
                                 <div class="flex items-center gap-3">
                                     <button class="text-xs font-semibold text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-0.5">
-                                        View all <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                        <span id="view-all-bookings">View all</span> <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                                     </button>
                                     <button onclick="openModal()" class="px-3 py-1.5 bg-brand-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-sm transition-all flex items-center gap-1">
                                         <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Booking
@@ -338,80 +331,7 @@
                                             <th class="pb-2 font-medium text-right">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 font-medium text-slate-700" id="bookingRows">
-                                        <!-- Row 1 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">18:00</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Aigerim S.</td>
-                                            <td class="py-2.5 text-center">2</td>
-                                            <td class="py-2.5 text-center">1</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">Confirmed</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 2 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">18:30</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Daniyal K.</td>
-                                            <td class="py-2.5 text-center">4</td>
-                                            <td class="py-2.5 text-center">3</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-700">Arriving</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 3 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">19:00</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Sara M.</td>
-                                            <td class="py-2.5 text-center">2</td>
-                                            <td class="py-2.5 text-center">5</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">Pending</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 4 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">19:30</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Arman T.</td>
-                                            <td class="py-2.5 text-center">3</td>
-                                            <td class="py-2.5 text-center">6</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">Confirmed</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 5 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">20:00</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Alina B.</td>
-                                            <td class="py-2.5 text-center">2</td>
-                                            <td class="py-2.5 text-center">8</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-100 text-rose-700">Cancelled</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 6 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">20:30</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Timur R.</td>
-                                            <td class="py-2.5 text-center">4</td>
-                                            <td class="py-2.5 text-center">2</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">Confirmed</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 7 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">21:00</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Madina K.</td>
-                                            <td class="py-2.5 text-center">2</td>
-                                            <td class="py-2.5 text-center">7</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">Pending</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                        <!-- Row 8 -->
-                                        <tr class="hover:bg-slate-50/80 transition-colors">
-                                            <td class="py-2.5">21:30</td>
-                                            <td class="py-2.5 font-bold text-slate-800">Bekzhan A.</td>
-                                            <td class="py-2.5 text-center">5</td>
-                                            <td class="py-2.5 text-center">4</td>
-                                            <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">Confirmed</span></td>
-                                            <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-                                        </tr>
-                                    </tbody>
+                                    <tbody class="divide-y divide-slate-50 font-medium text-slate-700" id="bookingRows"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -425,8 +345,8 @@
 
                             <!-- Switcher Pills -->
                             <div class="bg-slate-100 p-1 rounded-xl flex items-center text-xs font-semibold">
-                                <button class="px-3 py-1 bg-brand-900 text-white rounded-lg shadow-sm">Floor plan</button>
-                                <button class="px-3 py-1 text-slate-600 hover:text-slate-900">List view</button>
+                                <button class="px-3 py-1 bg-brand-900 text-white rounded-lg shadow-sm" id="floor-view">Floor plan</button>
+                                <button class="px-3 py-1 text-slate-600 hover:text-slate-900" id="list-view">List view</button>
                             </div>
 
                             <!-- Legend -->
@@ -439,7 +359,7 @@
                         </div>
 
                         <!-- Floor Map Canvas Container -->
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+                        <div id="floor-map" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
                             <!-- Visual Room Floor Plan -->
                             <div class="md:col-span-8 bg-amber-50/40 border-2 border-slate-200/90 rounded-2xl p-4 relative min-h-[300px] flex flex-col justify-between select-none overflow-hidden">
                                 
@@ -583,8 +503,8 @@
 
                                 <!-- Reservation Action Buttons -->
                                 <div class="space-y-2 pt-3">
-                                    <button class="w-full py-2 bg-brand-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold shadow-sm transition-all">Edit Reservation</button>
-                                    <button class="w-full py-2 border border-rose-300 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition-all">Cancel Reservation</button>
+                                    <button class="w-full py-2 bg-brand-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold shadow-sm transition-all" id="edit-reservation">Edit Reservation</button>
+                                    <button class="w-full py-2 border border-rose-300 text-rose-600 hover:bg-rose-50 rounded-xl text-xs font-semibold transition-all" id="cancel-reservation">Cancel Reservation</button>
                                 </div>
                             </div>
                         </div>
@@ -596,74 +516,13 @@
 
                     <!-- Resent activity (4 Cols) -->
                     <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm space-y-3">
-                        <h4 class="font-bold text-sm text-slate-900">Resent activity</h4>
-                        <div class="space-y-2.5 text-xs">
-                            <div class="flex items-start justify-between gap-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600"><i data-lucide="notebook-pen" class="w-3.5 h-3.5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-slate-800">New booking — Table 3</div>
-                                        <div class="text-[10px] text-slate-400">Daniyal K. • 4 guests • 18:30</div>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] text-slate-400 font-medium">5 min ago</span>
-                            </div>
-
-                            <div class="flex items-start justify-between gap-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="p-1.5 rounded-lg bg-rose-50 text-rose-600"><i data-lucide="user-x" class="w-3.5 h-3.5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-slate-800">Booking cancelled — Table 8</div>
-                                        <div class="text-[10px] text-slate-400">Alina B. • 2 guests • 20:00</div>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] text-slate-400 font-medium">12 min ago</span>
-                            </div>
-
-                            <div class="flex items-start justify-between gap-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600"><i data-lucide="bell" class="w-3.5 h-3.5"></i></div>
-                                    <div>
-                                        <div class="font-bold text-slate-800">Booking updated — Table 6</div>
-                                        <div class="text-[10px] text-slate-400">Arman T. • 3 guests • 19:30</div>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] text-slate-400 font-medium">20 min ago</span>
-                            </div>
-                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Booking activity</h4>
+                        <div id="booking-activity" class="space-y-2.5 text-xs"></div>
                     </div>
 
-                    <!-- Upcoming (next 3) (4 Cols) -->
                     <div class="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm space-y-3">
-                        <h4 class="font-bold text-sm text-slate-900">Upcoming (next 3)</h4>
-                        <div class="space-y-2 text-xs font-medium">
-                            <div class="flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-50">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-slate-700">19:00.</span>
-                                    <span class="font-semibold text-slate-900">Sara M.</span>
-                                    <span class="text-slate-400 text-[11px]">2 guests. Table 5.</span>
-                                </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-100 text-blue-700">Arriving</span>
-                            </div>
-
-                            <div class="flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-50">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-slate-700">19:30.</span>
-                                    <span class="font-semibold text-slate-900">Arman T.</span>
-                                    <span class="text-slate-400 text-[11px]">3 guests. Table 6</span>
-                                </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-700">Confirmed</span>
-                            </div>
-
-                            <div class="flex items-center justify-between p-1.5 rounded-xl hover:bg-slate-50">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-slate-700">20:00.</span>
-                                    <span class="font-semibold text-slate-900">Alina B.</span>
-                                    <span class="text-slate-400 text-[11px]">2 guests. Table 8</span>
-                                </div>
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-700">Cancelled</span>
-                            </div>
-                        </div>
+                        <h4 class="font-bold text-sm text-slate-900">Upcoming · next 3</h4>
+                        <div id="upcoming-bookings" class="space-y-2.5 text-xs"></div>
                     </div>
 
                     <!-- Quick action + Handwritten note (4 Cols) -->
@@ -700,7 +559,6 @@
 
                 </div>
 
-                </details>
             </div>
         </main>
     </div>
@@ -712,40 +570,29 @@
                 <h3 class="font-extrabold text-base text-slate-900">Add New Reservation</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <form id="addBookingForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
+            <p id="admin-form-error" class="text-xs text-rose-700" role="alert"></p><form id="addBookingForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Customer Name</label>
-                    <input type="text" id="custName" required placeholder="e.g. Aigerim S." class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                    <input type="text" id="custName" maxlength="60" required placeholder="e.g. Aigerim S." class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Time</label>
-                        <input type="time" id="custTime" required value="19:00" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                        <input type="time" id="custTime" required value="12:00" step="1800" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Guests</label>
-                        <input type="number" id="custGuests" min="1" max="10" required value="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                        <input type="number" id="custGuests" min="1" max="6" required value="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Table Number</label>
-                        <select id="custTable" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="1">Table 1</option>
-                            <option value="2">Table 2</option>
-                            <option value="3">Table 3</option>
-                            <option value="5">Table 5</option>
-                            <option value="6">Table 6</option>
-                            <option value="7">Table 7</option>
-                        </select>
+                        <select id="custTable" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"></select>
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status</label>
-                        <select id="custStatus" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Arriving">Arriving</option>
-                            <option value="Pending">Pending</option>
-                        </select>
+                        <select id="custStatus" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500"><option value="confirmed">Confirmed</option></select>
                     </div>
                 </div>
                 <div class="pt-3 flex items-center justify-end gap-2">
@@ -756,95 +603,9 @@
         </div>
     </div>
 
-    <script>
-        // Initialize Lucide Icons
-        lucide.createIcons();
-
-        // Sample Table Data for Interactive Map
-        const tablesData = {
-            1: { name: "Table 1", status: "Available", statusColor: "bg-emerald-100 text-emerald-700", type: "Indoor", capacity: "2-4 seats", feature: "Near Entrance", guest: "None", count: "0 guests", time: "Available all day", pill: "Available", pillColor: "bg-emerald-100 text-emerald-700" },
-            2: { name: "Table 2", status: "Occupied", statusColor: "bg-rose-100 text-rose-700", type: "Indoor", capacity: "2-4 seats", feature: "Window View", guest: "Timur R.", count: "4 guests", time: "18:00 - 20:00", pill: "Seated", pillColor: "bg-rose-100 text-rose-700" },
-            3: { name: "Table 3", status: "Reserved", statusColor: "bg-indigo-100 text-indigo-700", type: "Indoor", capacity: "2-4 seats", feature: "Window View", guest: "Daniyal K.", count: "4 guests", time: "18:30 - 20:30", pill: "Arriving", pillColor: "bg-blue-100 text-blue-700" },
-            4: { name: "Table 4", status: "Unavailable", statusColor: "bg-slate-200 text-slate-700", type: "Indoor", capacity: "2 seats", feature: "Quiet Zone", guest: "Bekzhan A.", count: "5 guests", time: "21:30 - 23:00", pill: "Maintenance", pillColor: "bg-slate-200 text-slate-700" },
-            5: { name: "Table 5", status: "Reserved", statusColor: "bg-indigo-100 text-indigo-700", type: "Indoor", capacity: "2-4 seats", feature: "Great view", guest: "Uldana T.", count: "2 guests", time: "19:00 - 21:00", pill: "Arriving", pillColor: "bg-blue-100 text-blue-700" },
-            6: { name: "Table 6", status: "Available", statusColor: "bg-emerald-100 text-emerald-700", type: "Indoor", capacity: "2 seats", feature: "Main Hall", guest: "Arman T.", count: "3 guests", time: "19:30 - 21:30", pill: "Confirmed", pillColor: "bg-emerald-100 text-emerald-700" },
-            7: { name: "Table 7", status: "Available", statusColor: "bg-emerald-100 text-emerald-700", type: "Indoor", capacity: "6-8 seats", feature: "Large Group", guest: "Madina K.", count: "2 guests", time: "21:00 - 22:30", pill: "Pending", pillColor: "bg-amber-100 text-amber-700" },
-            8: { name: "Table 8", status: "Unavailable", statusColor: "bg-slate-200 text-slate-700", type: "Indoor", capacity: "2 seats", feature: "Restroom Corner", guest: "Alina B.", count: "2 guests", time: "Cancelled", pill: "Cancelled", pillColor: "bg-rose-100 text-rose-700" },
-        };
-
-        // Select Table Handler
-        function selectTable(id) {
-            document.querySelectorAll('.table-node').forEach(node => node.classList.remove('active'));
-            const clickedNode = document.getElementById(`table-node-${id}`);
-            if (clickedNode) clickedNode.classList.add('active');
-
-            const info = tablesData[id];
-            if (info) {
-                document.getElementById('selectedTableName').innerText = info.name;
-                document.getElementById('selectedTableStatus').innerText = info.status;
-                document.getElementById('selectedTableStatus').className = `px-2 py-0.5 rounded-full text-[10px] font-bold ${info.statusColor}`;
-                document.getElementById('selectedTableType').innerText = info.type;
-                document.getElementById('selectedTableCapacity').innerText = info.capacity;
-                document.getElementById('selectedTableFeature').innerText = info.feature;
-                document.getElementById('selectedGuestName').innerText = info.guest;
-                document.getElementById('selectedGuestCount').innerText = info.count;
-                document.getElementById('selectedTimeSlot').innerText = info.time;
-                document.getElementById('selectedBookingPill').innerText = info.pill;
-                document.getElementById('selectedBookingPill').className = `px-2 py-0.5 rounded-full text-[10px] font-semibold ${info.pillColor}`;
-            }
-        }
-
-        // Live Filter Bookings
-        function filterBookings() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#bookingRows tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        }
-
-        // Modal Functions
-        function openModal() {
-            document.getElementById('bookingModal').classList.remove('hidden');
-        }
-        function closeModal() {
-            document.getElementById('bookingModal').classList.add('hidden');
-        }
-
-        // Add Booking Handler
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            const name = document.getElementById('custName').value;
-            const time = document.getElementById('custTime').value;
-            const guests = document.getElementById('custGuests').value;
-            const table = document.getElementById('custTable').value;
-            const status = document.getElementById('custStatus').value;
-
-            let pillClass = "bg-emerald-100 text-emerald-700";
-            if (status === "Arriving") pillClass = "bg-blue-100 text-blue-700";
-            if (status === "Pending") pillClass = "bg-amber-100 text-amber-700";
-
-            const newRow = document.createElement('tr');
-            newRow.className = "hover:bg-slate-50/80 transition-colors";
-            newRow.innerHTML = `
-                <td class="py-2.5">${time}</td>
-                <td class="py-2.5 font-bold text-slate-800">${name}</td>
-                <td class="py-2.5 text-center">${guests}</td>
-                <td class="py-2.5 text-center">${table}</td>
-                <td class="py-2.5 text-center"><span class="px-2.5 py-1 rounded-full text-[11px] font-semibold ${pillClass}">${status}</span></td>
-                <td class="py-2.5 text-right"><button class="text-slate-400 hover:text-slate-600"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button></td>
-            `;
-
-            document.getElementById('bookingRows').prepend(newRow);
-            lucide.createIcons();
-            closeModal();
-            document.getElementById('addBookingForm').reset();
-        }
-    </script>
     <script src="js/venues.js?v=team3"></script>
     <script src="js/booking-rules.js?v=team3"></script>
     <script src="js/booking-storage.js?v=team3"></script>
-    <script src="js/admin-bookings.js?v=team3"></script>
+    <script src="js/admin-bookings.js?v=admin4"></script>
 </body>
 </html>

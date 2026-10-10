@@ -115,9 +115,10 @@ open the customer flow; her duplicate script load and empty-anchor error are fix
 
 ### Shared booking administration
 
-`admin.dashbroad.html` displays a SeatSync booking journal above Malika’s original
-sample dashboard (expand it to show the unchanged example cards and floor plan).
-`js/admin-bookings.js` uses the existing purple design and shared storage API.
+`admin.dashbroad.html` uses Malika’s original table, floor plan, detail panel and
+metric cards for shared customer bookings. The duplicate journal and static sample
+rows have been replaced with live browser data; her layout and styles are retained.
+`js/admin-bookings.js` connects those components to the shared storage API.
 
 - Guest and profile bookings are stored by ID in `seatsync.bookings.shared.v1`.
 - Existing profile records and the last guest receipt are migrated when saved.
@@ -125,7 +126,14 @@ sample dashboard (expand it to show the unchanged example cards and floor plan).
 - Venue, date and status filters are available. Admin Edit opens the customer form;
   Cancel asks for confirmation and persists cancellation in both views.
 - Old confirmation URLs use the newest saved version, avoiding accidental rollback.
-- The original sample floor plan and statistics remain demonstration data.
+- Select a venue, date and time to inspect the floor plan. Confirmed visits reserve
+  a table for 90 minutes, with an exclusive end time. Cancelled visits free the table.
+  Tables 7–8 remain unavailable as in the customer booking rules.
+- Selecting a row shows its details and time on the map. The original Edit and
+  Cancel Reservation buttons operate on that ID. Add Booking saves through the
+  same validation and storage, including the entered customer name.
+- Metrics count the selected venue/date; table availability uses the selected time.
+  Search and status filters affect the list, not the floor plan or metrics.
 - This is a frontend demo: shared data exists only for the same browser and origin.
   It has no real restaurant connection, administrator authentication or payments.
 - The original admin fonts, Tailwind and icons require internet access.
