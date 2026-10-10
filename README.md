@@ -76,13 +76,17 @@ Qarlygash Cafe, Gülfairus and Procoffee. The matching search options and card l
 open the existing booking form; no new venue detail pages were added. Vanilla and
 legacy sample IDs remain available in the booking catalogue for compatibility.
 
-`css/venues.css` scopes the collection layout: two columns above 700px and one below,
-using the existing SeatSync colors, typography and buttons. The covers are designed
-brand panels, not photographs of the venues. Their circular logos are displayed
-from the eight user-supplied screenshots with CSS clipping; the screenshots are
-stored unchanged in `assets/images/venues/`. Instagram links use the account handles
-visible in those references. No hours, ratings, addresses or partnership badges
-have been invented.
+`css/venues.css` scopes the compact collection: three columns above 1000px, two
+columns on tablets, and one below 541px. Cards keep SeatSync typography and purple
+accents, show each venue name once and open the existing booking form.
+
+The eight `*-mood.jpg` covers are fictional atmosphere illustrations generated with
+the built-in image_gen tool, not actual photographs of the named venues. They share
+warm editorial lighting and subtle lilac/plum accents. Full prompts are recorded in
+`assets/images/venues/generation-prompts.json`. JPEG encoding reduces transfer size;
+images are lazy-loaded with explicit dimensions. The originals of the earlier user
+reference screenshots remain available but are not loaded by these cards. Instagram
+links still use the account handles visible in those references.
 
 Reference mapping (supplied October 10, 2026):
 - skyberry-reference.jpeg — skyberry.almaty
