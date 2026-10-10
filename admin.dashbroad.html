@@ -83,6 +83,14 @@
             position: absolute;
         }
     </style>
+<style>
+        @media (max-width: 767px) {
+            body > .flex { flex-direction: column; }
+            aside.w-64 { width: 100%; min-height: auto; }
+            aside nav, aside > div:last-child { display: none; }
+            main > header { flex-wrap: wrap; height: auto; gap: 1rem; padding: 1rem; }
+        }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
@@ -216,9 +224,31 @@
                 <!-- Welcome Greeting -->
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Good evening, Malika!</h1>
-                    <p class="text-xs font-medium text-brand-600/80 mt-0.5">Here's what's happening at Lively today.</p>
+                    <p class="text-xs font-medium text-brand-600/80 mt-0.5">Manage SeatSync bookings and explore the original dashboard below.</p>
                 </div>
 
+                <section id="shared-bookings" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm" aria-labelledby="shared-title">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div><h2 id="shared-title" class="text-lg font-extrabold text-slate-900">SeatSync bookings</h2>
+                        <p class="text-xs text-slate-500 mt-1">Customer bookings in this browser · demo, no payment or restaurant connection</p></div>
+                        <a href="pages/booking.html?new=1" class="px-4 py-2 rounded-xl bg-brand-900 text-white text-xs font-bold">New booking</a>
+                    </div>
+                    <div class="flex flex-wrap gap-3 my-4 text-xs">
+                        <label>Venue <select id="shared-venue" class="border rounded-lg p-2"><option value="">All venues</option></select></label>
+                        <label>Date <input id="shared-date" type="date" class="border rounded-lg p-2"></label>
+                        <label>Status <select id="shared-status" class="border rounded-lg p-2"><option value="">All statuses</option><option value="confirmed">Confirmed</option><option value="cancelled">Cancelled</option></select></label>
+                        <button id="shared-reset" class="text-brand-600 font-semibold">Clear filters</button>
+                    </div>
+                    <p id="shared-summary" class="text-sm font-bold text-brand-600 mb-3" aria-live="polite"></p>
+                    <p id="shared-message" class="text-sm text-rose-700" role="alert"></p>
+                    <div class="overflow-x-auto"><table class="w-full text-xs text-left" style="min-width:650px">
+                        <thead class="text-slate-500"><tr><th class="py-3">Date / time</th><th>Venue</th><th>Reference</th><th>Guests</th><th>Table</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="shared-rows" class="divide-y divide-slate-100"></tbody>
+                    </table></div>
+                    <p id="shared-empty" class="py-6 text-sm text-slate-500">No bookings yet. Create a booking from the customer page.</p>
+                </section>
+                <details class="space-y-6">
+                    <summary class="cursor-pointer text-sm font-bold text-brand-600">Malika’s original dashboard · sample data and floor plan</summary>
                 <!-- 4 SUMMARY METRIC CARDS -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Total Booking -->
@@ -670,6 +700,7 @@
 
                 </div>
 
+                </details>
             </div>
         </main>
     </div>
@@ -811,5 +842,9 @@
             document.getElementById('addBookingForm').reset();
         }
     </script>
+    <script src="js/venues.js"></script>
+    <script src="js/booking-rules.js"></script>
+    <script src="js/booking-storage.js"></script>
+    <script src="js/admin-bookings.js"></script>
 </body>
 </html>

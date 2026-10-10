@@ -53,3 +53,25 @@ test('blocked cancellation reports failure instead of claiming persistence', () 
   assert.equal(storage.cancel(receipt), false);
   assert.equal(storage.isCancelled(receipt.id), false);
 });
+
+test('shared ledger retains multiple guests and edits by stable ID', () => {
+  const { storage } = setup();
+  storage.saveReceipt(receipt);
+  storage.saveReceipt({ ...receipt, id: 'second-booking-123' });
+  storage.saveShared({ ...receipt, time: '14:00' });
+  assert.equal(storage.list().length, 2);
+  assert.equal(storage.find(receipt.id).time, '14:00');
+  storage.cancel(storage.find(receipt.id));
+  storage.saveShared({ ...receipt, status: 'confirmed' });
+  assert.equal(storage.find(receipt.id).status, 'cancelled');
+  assert.equal(storage.find('second-booking-123').status, 'confirmed');
+});
+test('migrates legacy records, ignores malformed entries and keeps newer shared fields', () => {
+  const { storage, values } = setup();
+  values.set('seatsync.demo.bookings.v1', JSON.stringify([null, {}, { ...receipt, email: 'demo@example.com' }]));
+  assert.equal(storage.list().length, 1);
+  storage.saveShared({ ...receipt, table: '3' });
+  values.set('seatsync.booking.confirmed.v1', JSON.stringify(receipt));
+  assert.equal(storage.find(receipt.id).table, '3');
+  assert.equal(storage.find(receipt.id).email, 'demo@example.com');
+});

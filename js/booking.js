@@ -147,6 +147,8 @@ form.addEventListener('submit', event => {
   const booking = new URLSearchParams(bookingDetails());
   const existingId = initial.get('id');
   booking.set('id', /^[a-zA-Z0-9-]{10,80}$/.test(existingId || '') ? existingId : crypto.randomUUID());
+  // An explicit form submission updates the shared record, keeping the same ID on edit.
+  window.SeatSyncBookingStorage.saveShared({ ...Object.fromEntries(booking), status: 'confirmed' });
   location.href = `confirmation.html?${booking.toString()}`;
 });
 update();

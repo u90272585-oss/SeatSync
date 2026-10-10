@@ -110,18 +110,25 @@ Start `python3 -m http.server 8000` from the repository root.
 
 The integration preserves commit ancestry from `main` / `darina-homepage`
 (`d3429e5`), `uldana-booking` (`b82658b`) and `Malika-Admin` (`a3d4ccc`).
-All original application files from these three branches are retained byte-for-byte.
-Only this README is combined, and `team-demo.html` is new. Experimental branches
-`codex/team-integration` and `team-integration-work` remain separate.
+The source branches and commit history are preserved. Darina’s booking links now
+open the customer flow; her duplicate script load and empty-anchor error are fixed.
 
-Existing prototype limitations were preserved as requested:
-- Darina’s page includes its script twice, causing a duplicate `copyright`
-  declaration error; its Book a table links are placeholders. Use the current
-  customer homepage or team presentation page to enter the working booking flow.
-- Malika’s dashboard has its own fixed sample data. New rows are kept only in the
-  current page, without persistent storage or synchronization with customer bookings.
-  Some dashboard buttons are visual placeholders. Tailwind, Lucide and fonts load
-  from external services, so the original dashboard needs internet access.
+### Shared booking administration
 
-The homepage at the repository root is the existing `index.html` from Uldana’s
-branch. Team pages have not been restyled or rewritten during this integration.
+`admin.dashbroad.html` displays a SeatSync booking journal above Malika’s original
+sample dashboard (expand it to show the unchanged example cards and floor plan).
+`js/admin-bookings.js` uses the existing purple design and shared storage API.
+
+- Guest and profile bookings are stored by ID in `seatsync.bookings.shared.v1`.
+- Existing profile records and the last guest receipt are migrated when saved.
+- Creation, editing, cancellation, reload and other tabs use the same records.
+- Venue, date and status filters are available. Admin Edit opens the customer form;
+  Cancel asks for confirmation and persists cancellation in both views.
+- Old confirmation URLs use the newest saved version, avoiding accidental rollback.
+- The original sample floor plan and statistics remain demonstration data.
+- This is a frontend demo: shared data exists only for the same browser and origin.
+  It has no real restaurant connection, administrator authentication or payments.
+- The original admin fonts, Tailwind and icons require internet access.
+
+Validation: `node --test tests/*.test.cjs`. Browser checks cover the homepage links,
+creation, cross-tab admin display, edits, old URLs, cancellation and mobile layout.

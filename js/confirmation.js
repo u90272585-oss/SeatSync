@@ -4,7 +4,11 @@ const rules = window.SeatSyncBooking;
 const storage = window.SeatSyncBookingStorage;
 const params = new URLSearchParams(location.search);
 // A supplied URL must pass validation itself; never hide bad URL data with an old receipt.
-const booking = location.search ? Object.fromEntries(params) : storage.readReceipt();
+let booking = location.search ? Object.fromEntries(params) : storage.readReceipt();
+// Validate supplied fields first, then prefer the newest saved version of this ID.
+if (booking && !rules.validate(booking, new Date(), true)) {
+  booking = storage.find(booking.id) || booking;
+}
 const cancelled = booking && (booking.status === 'cancelled' || storage.isCancelled(booking.id));
 const problem = rules.validate(booking, new Date(), cancelled);
 

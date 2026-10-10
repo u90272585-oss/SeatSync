@@ -31,7 +31,8 @@
   }
   window.SeatSyncAccount = {
     profile,
-    bookings: () => records().filter(b => b.email === profile()?.email),
+    bookings: () => records().filter(b => b.email === profile()?.email)
+      .map(b => ({ ...b, ...(window.SeatSyncBookingStorage?.find(b.id) || {}), email: b.email })),
     saveBooking(booking) {
       const user = profile();
       if (!user) return false;
