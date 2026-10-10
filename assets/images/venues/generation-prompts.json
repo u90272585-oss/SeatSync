@@ -1,0 +1,15 @@
+{
+  "mode": "Built-in image_gen",
+  "prefix": "Use case: photorealistic-natural. Asset type: landscape cafe discovery card, 3:2 composition.",
+  "scenes": {
+    "skyberry": "A flaky almond croissant and cappuccino on a dark walnut cafe table, warm window light, a subtle mauve velvet seat behind.",
+    "aqqu": "A beautiful contemporary cafe corner with cream boucle chairs, rounded oak bistro table, small flowers, tall window and one muted lavender cushion.",
+    "renee": "Elegant French-style breakfast: a porcelain cup, raspberry pastry and small flowers on a warm ivory table, dusty lilac linen.",
+    "benedict": "Eggs benedict on sourdough with golden hollandaise and fresh herbs, ceramic plate, pale purple linen, morning sunshine.",
+    "six": "Two glasses of red wine and a small cheese board on a cafe table at blue hour, soft plum velvet booth, candlelight.",
+    "qarlygash": "Sunlit city cafe table with fresh salad, warm bread and lemonade, oak chairs, a hint of lavender flowers.",
+    "gulfairus": "Refined restaurant table setting with an elegant plated dish, linen napkin, slender candle, deep aubergine upholstery in soft evening light.",
+    "procoffee": "Close-up specialty coffee in a handmade lilac ceramic cup on a pale stone counter, espresso machine softly out of focus, warm sunlight."
+  },
+  "suffix": "Editorial hospitality photography, natural realistic textures, sophisticated restrained SeatSync purple accents, warm inviting light, tasteful composition readable at thumbnail size, subject centered for a wide crop. Fictional atmospheric illustration, not a representation of any real venue. No people, no text, no logos, no collage, no borders, no watermark."
+}

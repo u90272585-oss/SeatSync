@@ -1,0 +1,24 @@
+.booking-policy { margin: 22px 0; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--soft); font-size: 12px; }
+.booking-policy h3 { margin: 0 0 12px; }
+.booking-policy p { margin-bottom: 12px; }
+.policy-consent { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; cursor: pointer; }
+.policy-consent input { width: 20px; height: 20px; flex-shrink: 0; margin: 2px 0 0; accent-color: var(--primary); }
+.help-launcher { position: fixed; right: 20px; bottom: 20px; z-index: 10; border: 0; border-radius: 24px; padding: 12px 20px; min-height: 48px; background: var(--primary); color: white; font-weight: 600; cursor: pointer; box-shadow: 0 4px 18px #241b4533; }
+.booking-dialog { width: min(540px, calc(100% - 32px)); max-height: calc(100dvh - 40px); overflow: auto; box-sizing: border-box; border: 1px solid var(--line); border-radius: 20px; padding: 26px; color: var(--ink); background: var(--surface); }
+.booking-dialog::backdrop { background: #241b4580; }
+.dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dialog-heading h2 { margin: 0; font-size: 24px; }
+.help-close { min-width: 44px; min-height: 44px; border: 0; background: var(--soft); border-radius: 50%; color: var(--ink); cursor: pointer; }
+.help-intro { color: var(--muted); margin: 14px 0; }
+.help-dialog details { border-top: 1px solid var(--line); padding: 12px 0; }
+.help-dialog summary { cursor: pointer; font-weight: 600; padding: 4px 0; }
+.help-dialog details p { margin: 10px 0 0; font-size: 14px; }
+.dialog-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.button.button-danger { background: #a13240; color: white; border-color: #a13240; }
+.cancelled-badge { color: #a13240; background: #fff0ef; }
+.cancel-notice { padding: 14px; border-radius: 10px; background: #fff0ef; color: #862532; }
+body:has(.help-launcher) .site-footer { padding-bottom: 90px; }
+@media(max-width:650px) { .booking-dialog { padding: 20px; } .dialog-actions > * { width: 100%; } .help-launcher { right: 14px; bottom: 14px; } }
+
+.booking-experience .button:disabled { opacity: .55; cursor: not-allowed; }
+.saved-booking-bottom { flex-wrap: wrap; }
