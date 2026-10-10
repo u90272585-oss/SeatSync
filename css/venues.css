@@ -1,0 +1,47 @@
+/* The homepage collection uses SeatSync's existing typography and purple accents.
+   Logo windows display the supplied reference screenshots without altering logos. */
+.venue-discovery .section-title { align-items: center; margin-bottom: 14px; }
+.venue-discovery h2 { font-size: clamp(27px,3.2vw,39px); }
+.city-label { display: inline-flex; align-items: center; gap: 20px; padding: 9px 16px; border-radius: 24px; border: 1px solid #d9d0ee; color: var(--primary); font-size: 13px; white-space: nowrap; }
+.discovery-intro { color: var(--muted); margin-bottom: 28px; max-width: 640px; }
+.almaty-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 26px; }
+.almaty-card { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 4px 22px #39235f05; }
+.venue-cover { --cover-bg:#37271e; --cover-ink:#fff1d4; --logo-top:-133.1%; display: block; position: relative; overflow: hidden; aspect-ratio: 1.85; color: var(--cover-ink); background: radial-gradient(ellipse at 75% 35%,#ffffff17,transparent 57%),var(--cover-bg); text-decoration: none; isolation: isolate; }
+.venue-cover::before { content:''; position: absolute; width: 55%; aspect-ratio: 1; border: 1px solid currentColor; opacity: .13; border-radius: 50%; right: -12%; top: -28%; }
+.venue-cover::after { content:''; position: absolute; width: 58%; aspect-ratio: 1; border: 1px solid currentColor; opacity: .12; border-radius: 50%; left: -22%; bottom: -85%; }
+.cover-kicker { position: absolute; top: 22px; left: 24px; font-size: 10px; letter-spacing: 2px; font-weight: 600; max-width: calc(100% - 48px); }
+.venue-emblem { position: absolute; width: 25%; aspect-ratio: 1; left: 50%; top: 45%; transform: translate(-50%,-50%); border-radius: 50%; overflow: hidden; box-shadow: 0 8px 28px #00000016; }
+.venue-emblem img { position: absolute; max-width: none; width: 529.412%; height: auto; left: -30.882%; top: var(--logo-top); }
+.cover-name { position: absolute; bottom: 22px; left: 24px; right: 65px; font-size: clamp(23px,2.7vw,34px); letter-spacing: -.8px; line-height: 1.1; font-family: Poppins,Arial,sans-serif; font-weight: 600; }
+.cover-arrow { position: absolute; right: 22px; bottom: 20px; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #ffffff45; border-radius: 50%; font-size: 20px; }
+.venue-cover:hover .cover-arrow { background: #ffffff1f; }
+.venue-cover:focus-visible { outline-offset: -5px; }
+.skyberry-card .venue-cover { --logo-top:-140.4%; }
+.aqqu-card .venue-cover { --cover-bg:#e9e2d5; --cover-ink:#51412c; }
+.renee-card .venue-cover { --cover-bg:#fae9d6; --cover-ink:#423930; }
+.benedict-card .venue-cover { --cover-bg:#007f97; --cover-ink:#fff4db; }
+.six-card .venue-cover { --cover-bg:#eeedf3; --cover-ink:#312849; }
+.qarlygash-card .venue-cover { --cover-bg:#49413a; --cover-ink:#fff6e9; }
+.gulfairus-card .venue-cover { --cover-bg:#261661; --cover-ink:#f0e9ff; }
+.procoffee-card .venue-cover { --cover-bg:#008931; --cover-ink:#ecffe9; }
+.almaty-card-body { padding: 23px 24px 20px; }
+.almaty-card-body h3 { margin: 8px 0; font-size: 22px; }
+.almaty-card-body > p { font-size: 13px; color: var(--muted); margin: 0 0 20px; }
+.venue-card-actions { display: flex; gap: 14px; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding-top: 10px; flex-wrap: wrap; }
+.venue-book-link { display: inline-flex; align-items: center; gap: 20px; min-height: 44px; text-decoration: none; font-weight: 600; color: var(--primary); font-size: 13px; }
+.venue-social-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 11px; color: var(--muted); text-decoration: none; }
+.venue-card-actions a:hover { text-decoration: underline; }
+.venue-demo-note { color: var(--muted); font-size: 11px; line-height: 1.7; margin-top: 22px; max-width: 720px; }
+@media(max-width:700px) {
+  .almaty-grid { grid-template-columns: 1fr; gap: 20px; }
+  .venue-discovery .section-title { display: flex; align-items: flex-start; gap: 12px; }
+  .venue-discovery .eyebrow { font-size: 9px; letter-spacing: 1.4px; }
+  .city-label { padding: 6px 10px; gap: 8px; font-size: 11px; margin-top: 5px; }
+  .discovery-intro { font-size: 13px; margin-bottom: 22px; }
+  .cover-name { font-size: clamp(24px,6vw,34px); left: 20px; bottom: 18px; }
+  .cover-kicker { top: 18px; left: 20px; font-size: 9px; letter-spacing: 1.4px; }
+  .cover-arrow { right: 18px; bottom: 16px; }
+  .almaty-card-body { padding: 20px; }
+  .almaty-card-body h3 { font-size: 21px; }
+}
+@media(prefers-reduced-motion:no-preference) { .cover-arrow { transition: background .15s; } }

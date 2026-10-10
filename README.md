@@ -12,7 +12,7 @@ Run locally from the repository root with `python3 -m http.server 8000`, then op
 The booking form accepts a venue, date, half-hour time slot, 1–6 guests and one table.
 The venue list includes the nine Almaty names supplied by the team; categories, opening
 hours, images, table layout and availability are illustrative, not verified venue data.
-Existing homepage venue IDs remain supported. The homepage is unchanged.
+Legacy venue IDs remain supported for older links and saved bookings. The homepage now shows the eight venues from the supplied Instagram references.
 Teammates can link cards to `pages/booking.html?venue=skyberry` (from the root page).
 Other new IDs: `vanilla`, `aqqu`, `renee`, `benedict`, `six`, `qarlygash`, `gulfairus`, `procoffee`.
 
@@ -68,3 +68,28 @@ Manual checks: try submitting without consent; cancel and choose Keep booking;
 confirm cancellation; reload both the updated and original URLs; create a second
 booking and revisit the first; check Cancelled in My bookings; try an old edit link;
 open Help, expand a question and close with Escape. Repeat with storage blocked.
+
+### Almaty venue cards
+
+The homepage collection contains Skyberry, AQQU, RENÉE, Benedict, SIX Coffee + Wine,
+Qarlygash Cafe, Gülfairus and Procoffee. The matching search options and card links
+open the existing booking form; no new venue detail pages were added. Vanilla and
+legacy sample IDs remain available in the booking catalogue for compatibility.
+
+`css/venues.css` scopes the collection layout: two columns above 700px and one below,
+using the existing SeatSync colors, typography and buttons. The covers are designed
+brand panels, not photographs of the venues. Their circular logos are displayed
+from the eight user-supplied screenshots with CSS clipping; the screenshots are
+stored unchanged in `assets/images/venues/`. Instagram links use the account handles
+visible in those references. No hours, ratings, addresses or partnership badges
+have been invented.
+
+Reference mapping (supplied October 10, 2026):
+- skyberry-reference.jpeg — skyberry.almaty
+- aqqu-reference.jpeg — aqqu.cafe
+- renee-reference.jpeg — renee_almaty
+- benedict-reference.jpeg — benedict_almaty
+- six-reference.jpeg — sixcoffeewine
+- qarlygash-reference.jpeg — qarlygash_cafe
+- gulfairus-reference.jpeg — gulfairus_restaurant
+- procoffee-reference.jpeg — procoffee.almaty
