@@ -1,4 +1,5 @@
 # SeatSync
+Table reservation system for small cafes
 Table reservation platform for cafés and restaurants
 
 
@@ -97,3 +98,30 @@ Reference mapping (supplied October 10, 2026):
 - qarlygash-reference.jpeg — qarlygash_cafe
 - gulfairus-reference.jpeg — gulfairus_restaurant
 - procoffee-reference.jpeg — procoffee.almaty
+
+## Combined team demonstration — October 10, 2026
+
+Start `python3 -m http.server 8000` from the repository root.
+- [Current customer homepage](index.html)
+- [Team presentation entry point](team-demo.html)
+- [Darina’s original homepage](darina-home.html)
+- [Uldana’s booking flow](pages/booking.html)
+- [Malika’s original admin prototype](admin.dashbroad.html)
+
+The integration preserves commit ancestry from `main` / `darina-homepage`
+(`d3429e5`), `uldana-booking` (`b82658b`) and `Malika-Admin` (`a3d4ccc`).
+All original application files from these three branches are retained byte-for-byte.
+Only this README is combined, and `team-demo.html` is new. Experimental branches
+`codex/team-integration` and `team-integration-work` remain separate.
+
+Existing prototype limitations were preserved as requested:
+- Darina’s page includes its script twice, causing a duplicate `copyright`
+  declaration error; its Book a table links are placeholders. Use the current
+  customer homepage or team presentation page to enter the working booking flow.
+- Malika’s dashboard has its own fixed sample data. New rows are kept only in the
+  current page, without persistent storage or synchronization with customer bookings.
+  Some dashboard buttons are visual placeholders. Tailwind, Lucide and fonts load
+  from external services, so the original dashboard needs internet access.
+
+The homepage at the repository root is the existing `index.html` from Uldana’s
+branch. Team pages have not been restyled or rewritten during this integration.

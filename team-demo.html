@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SeatSync — Team demonstration</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .demo-main { max-width: 1120px; }
+    .demo-main h1 { font-size: clamp(32px,5vw,52px); margin: 16px 0; }
+    .demo-intro { max-width: 650px; color: var(--muted); }
+    .contributions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; margin-top: 36px; }
+    .contribution { display: flex; flex-direction: column; gap: 16px; padding: 26px; background: white; border: 1px solid var(--line); border-radius: 20px; }
+    .contribution h2 { font-size: 23px; margin: 0; }
+    .contribution p { color: var(--muted); font-size: 14px; }
+    .contribution .button { margin-top: auto; }
+    .demo-note { font-size: 13px; color: var(--muted); margin-top: 30px; }
+    @media(max-width:800px) { .contributions { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-symbol" aria-hidden="true"></span><span class="brand-word">Seat<span>Sync</span></span></a><a class="header-link" href="index.html">Open SeatSync →</a></div></header>
+  <main class="demo-main">
+    <span class="eyebrow">Product development · Stage 2</span>
+    <h1>One project.<br>Three contributions.</h1>
+    <p class="demo-intro">Explore the current customer experience and each team member’s work. The original homepage and admin prototype are preserved alongside the booking flow.</p>
+    <a class="button" href="index.html">Explore cafés &amp; book a table →</a>
+    <section class="contributions" aria-label="Team contributions">
+      <article class="contribution"><span class="eyebrow">Darina · Homepage</span><h2>Discover SeatSync</h2><p>The original landing page, with categories, a table preview, How it works and About SeatSync.</p><a class="button button-secondary" href="darina-home.html">View original homepage</a></article>
+      <article class="contribution"><span class="eyebrow">Uldana · Booking</span><h2>Choose your table</h2><p>Select a venue, date, time and table. Confirm, edit or cancel your demo booking, with saved details and clear terms.</p><a class="button" href="pages/booking.html?new=1">Try booking</a></article>
+      <article class="contribution"><span class="eyebrow">Malika · Administration</span><h2>Manage the dining room</h2><p>The original dashboard prototype, with a floor plan, booking search and an Add Booking form using its own sample data.</p><a class="button button-secondary" href="admin.dashbroad.html">View admin prototype</a></article>
+    </section>
+    <p class="demo-note">Student frontend demo. The admin prototype and customer bookings use separate data. No real reservations or payments are made.</p>
+  </main>
+</body>
+</html>
