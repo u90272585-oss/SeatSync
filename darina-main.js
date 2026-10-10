@@ -10,8 +10,8 @@ document
         link.addEventListener("click", function(event) {
 
             const target =
-                document.querySelector(
-                    this.getAttribute("href")
+                document.getElementById(
+                    this.getAttribute("href").slice(1)
                 );
 
             if (target) {
