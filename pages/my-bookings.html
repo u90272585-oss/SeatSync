@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/account.css" />
     <script src="../js/venues.js" defer></script>
-    <script src="../js/account.js" defer></script>
+    <script src="../js/account-live.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -37,14 +37,14 @@
     <main class="account-main">
       <noscript>
         <p class="notice">
-          Enable JavaScript to use the demo profile and saved bookings.
+          Enable JavaScript to load your account bookings.
         </p>
       </noscript>
       <div class="account-heading">
         <div>
           <span class="eyebrow">Make time for each other</span>
           <h1>My bookings</h1>
-          <p class="muted">Your tables, your plans, all together.</p>
+          <p class="muted">Your upcoming and past reservations, together.</p>
         </div>
         <a class="button" href="booking.html">Book a table +</a>
       </div>
@@ -55,28 +55,27 @@
       <section id="bookings-signed-out" class="account-card empty-card">
         <h2>Your plans belong here.</h2>
         <p class="muted">
-          Open a demo profile to see the bookings saved for your email in this
-          browser.
+          Sign in to see the bookings saved to your account.
         </p>
-        <a class="button" href="account.html">Sign in to demo profile →</a>
+        <a class="button" href="account.html">Sign in →</a>
       </section>
       <section id="bookings-signed-in" hidden>
         <div class="list-heading">
           <strong id="bookings-count"></strong>
-          <span class="demo-badge">Demo · No payments made</span>
+          <span class="demo-badge">Reservations · No payments made</span>
         </div>
+        <p id="bookings-message" class="form-message" role="status" aria-live="polite"></p>
         <div id="booking-list" class="saved-bookings"></div>
         <div id="bookings-empty" class="account-card empty-card">
           <h2>A good moment is waiting.</h2>
           <p class="muted">
-            You haven’t saved any bookings yet. Choose a place and a table to
+            You don’t have any bookings yet. Choose a place and a table to
             get started.
           </p>
           <a class="button" href="../index.html#discover">Explore places →</a>
         </div>
         <p class="privacy-note">
-          Saved only in this browser. These demo bookings are not sent to a
-          venue.
+          Booking details are loaded from SeatSync.
         </p>
       </section>
       <template id="booking-template">
@@ -105,20 +104,21 @@
           </dl>
           <div class="saved-booking-bottom">
             <span>
-              Service fee
-              <strong>100 ₸</strong>
-              <small>Demo only · Not charged</small>
+              Booking fee
+              <strong>None</strong>
+              <small>No payment collected</small>
             </span>
             <a class="button button-secondary" data-edit href="booking.html">
               Edit booking
             </a>
+            <button class="button button-secondary" data-cancel type="button">Cancel booking</button>
           </div>
         </article>
       </template>
     </main>
     <footer class="site-footer">
       <span>SeatSync · Good food. Better moments.</span>
-      <span>Demo profile · Stored in this browser only</span>
+      <span>SeatSync · Reservations stored on the server</span>
     </footer>
   </body>
 </html>

@@ -27,6 +27,13 @@ const dateLabel = (date) =>
     day: "numeric",
     year: "numeric",
   });
+const endTimeFromStart = (timeValue, minutes = 90) => {
+  const [hours, mins] = timeValue.split(":").map(Number);
+  const total = hours * 60 + mins + minutes;
+  const targetHours = Math.floor(total / 60) % 24;
+  const targetMinutes = total % 60;
+  return `${String(targetHours).padStart(2, "0")}:${String(targetMinutes).padStart(2, "0")}`;
+};
 
 for (let minutes = 540; minutes <= 1110; minutes += 30) {
   const value = `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
@@ -114,12 +121,30 @@ form.addEventListener("submit", (event) => {
     table: form.elements.table.value,
   });
   const existingId = params.get("id");
-  booking.set(
-    "id",
-    /^[a-zA-Z0-9-]{10,80}$/.test(existingId || "")
-      ? existingId
-      : crypto.randomUUID(),
-  );
+  const bookingId = /^[a-zA-Z0-9-]{10,80}$/.test(existingId || "")
+    ? existingId
+    : crypto.randomUUID();
+  booking.set("id", bookingId);
+
+  const token = localStorage.getItem("seatsync.token");
+  if (token) {
+    window.SEATSYNC_API.createBooking({
+      venue_id: venueId,
+      table_id: Number(form.elements.table.value),
+      reservation_date: dateInput.value,
+      start_time: timeInput.value,
+      end_time: endTimeFromStart(timeInput.value, 90),
+      guest_count: Number(guestsInput.value),
+      notes: "Booked from SeatSync frontend",
+    }).then((savedBooking) => {
+      booking.set("id", savedBooking.id || bookingId);
+      location.href = `confirmation.html?${booking.toString()}`;
+    }).catch(() => {
+      location.href = `confirmation.html?${booking.toString()}`;
+    });
+    return;
+  }
+
   location.href = `confirmation.html?${booking.toString()}`;
 });
 update();

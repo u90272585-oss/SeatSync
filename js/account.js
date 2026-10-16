@@ -129,24 +129,33 @@
     if (new URLSearchParams(location.search).has("next")) {
       document.querySelector("#guest-continue").href = nextPage();
     }
-    loginForm.addEventListener("submit", (event) => {
+    loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = loginForm.elements.name.value.trim();
       const email = loginForm.elements.email.value.trim().toLowerCase();
+      const password = loginForm.elements.password?.value.trim() || "";
       const message = document.querySelector("#signin-message");
-      if (!name || !loginForm.reportValidity()) {
-        notify(message, "Please enter your name and a valid email.");
+      if (!name || !email || !password || !loginForm.reportValidity()) {
+        notify(message, "Please enter your name, email, and password.");
         return;
       }
+      const role =
+        loginForm.elements.role.value === "admin" ? "admin" : "guest";
       try {
-        const role =
-          loginForm.elements.role.value === "admin" ? "admin" : "guest";
+        const result = await window.SEATSYNC_API.login({ email, password });
         localStorage.setItem(profileKey, JSON.stringify({ name, email, role }));
+        if (result && result.user) {
+          localStorage.setItem(
+            "seatsync.profile",
+            JSON.stringify({ ...result.user, role }),
+          );
+        }
         location.href = role === "admin" ? "admin.html" : nextPage();
-      } catch {
+      } catch (error) {
         notify(
           message,
-          "Your browser could not save this demo profile. Allow local storage and try again.",
+          error.message ||
+            "The sign-in request failed. Check the API connection and try again.",
         );
       }
     });

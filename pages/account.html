@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/account.css?v=roles1" />
     <script src="../js/venues.js" defer></script>
-    <script src="../js/account.js?v=roles1" defer></script>
+    <script src="../js/account-live.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -44,42 +44,20 @@
         <span class="eyebrow">Your plans, in one place</span>
         <h1>Welcome to SeatSync.</h1>
         <p class="muted">
-          Choose your demo role, then enter your name and email to continue.
+          Sign in or create an account. Access to administration is assigned by the server.
         </p>
         <div class="notice">
-          <strong>Demo sign-in</strong>
-          <p>
-            No password, verification code, or real account is created. Use
-            sample details; this browser stores your profile and bookings
-            locally.
-          </p>
+          <strong>SeatSync sign-in</strong>
+          <p>This form authenticates against the SeatSync backend. Your profile and bookings are stored on the server.</p>
         </div>
         <form id="demo-signin">
-          <fieldset class="role-picker">
-            <legend>How would you like to use SeatSync?</legend>
-            <label class="role-choice">
-              <input type="radio" name="role" value="guest" checked />
-              <span>
-                <strong>Guest</strong>
-                <small>Find a table and save your bookings.</small>
-              </span>
-            </label>
-            <label class="role-choice">
-              <input type="radio" name="role" value="admin" />
-              <span>
-                <strong>Administrator</strong>
-                <small>Open the demo dashboard and view bookings.</small>
-              </span>
-            </label>
-          </fieldset>
-          <label for="signin-name">Your name</label>
-          <input
-            id="signin-name"
+        <label for="signin-name">Your name</label>
+        <input
+          id="signin-name"
             name="name"
             maxlength="60"
             autocomplete="name"
             placeholder="Alex"
-            required
           />
           <label for="signin-email">Email</label>
           <input
@@ -91,17 +69,24 @@
             placeholder="alex@example.com"
             required
           />
+          <label for="signin-password">Password</label>
+          <input
+            id="signin-password"
+            name="password"
+            type="password"
+            maxlength="128"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            required
+          />
           <p id="signin-message" class="form-message" role="alert" hidden></p>
-          <button class="button" type="submit">Continue as guest →</button>
+          <button class="button" type="submit">Sign in</button>
+          <button id="toggle-auth-mode" class="button button-secondary" type="button">Create an account</button>
         </form>
         <p class="privacy-note">
-          No email is sent. This is not secure authentication: anyone using this
-          browser can open a demo profile with the same email. Do not enter
-          sensitive information.
+          Passwords are verified by the SeatSync backend. Do not reuse a password from another service.
         </p>
-        <a id="guest-continue" class="text-link" href="booking.html">
-          Continue booking as a guest
-        </a>
+        <a id="guest-continue" class="text-link" href="../index.html#venues">Explore restaurants</a>
       </section>
       <section id="profile-section" hidden>
         <div class="account-heading">
@@ -116,35 +101,19 @@
           </div>
           <a class="button" href="my-bookings.html">My bookings →</a>
         </div>
-        <section class="demo-role-panel" aria-label="Choose demo role">
-          <h2>Choose your SeatSync space</h2>
+        <section class="demo-role-panel" aria-label="Account permissions">
+          <h2>Your SeatSync access</h2>
           <p class="muted">
-            Current demo role:
+            Account role:
             <strong id="current-role">Guest</strong>
-            . Both spaces are available to try.
+            . Roles are assigned by SeatSync administrators.
           </p>
-          <div class="role-actions">
-            <button type="button" class="button" data-demo-role="guest">
-              Guest — book a table →
-            </button>
-            <button
-              type="button"
-              class="button button-secondary"
-              data-demo-role="admin"
-            >
-              Administrator — dashboard →
-            </button>
-          </div>
-          <p class="privacy-note">
-            Demo access only. Choosing a role does not grant real administrator
-            permissions.
-          </p>
-          <p id="role-message" class="form-message" role="alert" hidden></p>
+          <a class="button button-secondary" data-admin-only href="admin.html" hidden>Open admin dashboard</a>
         </section>
         <nav class="account-tabs" aria-label="Account">
           <a href="account.html" aria-current="page">Profile</a>
           <a href="my-bookings.html">My bookings</a>
-          <a href="admin.html">Admin dashboard · Demo ↗</a>
+          <a data-admin-only href="admin.html" hidden>Admin dashboard ↗</a>
         </nav>
         <div class="profile-grid">
           <section class="account-card">
@@ -165,8 +134,7 @@
                 aria-describedby="email-note"
               />
               <p id="email-note" class="privacy-note">
-                This email identifies your demo bookings. To use a different
-                email, sign out first.
+                This email identifies your account and bookings.
               </p>
               <button class="button" type="submit">Save changes</button>
               <p
@@ -188,16 +156,14 @@
             <div class="notice">
               <strong>Only in this browser</strong>
               <p>
-                These details are not synced to another device. Signing out
-                keeps saved bookings here; use the same email to see them again.
-                Clearing browser storage removes them.
+                Your profile is stored by SeatSync. Signing out clears this browser's session token.
               </p>
             </div>
             <button id="signout" class="button button-secondary" type="button">
               Sign out
             </button>
             <p class="privacy-note">
-              <a href="admin.html">Owner dashboard · Demo</a>
+              <a data-admin-only href="admin.html" hidden>Owner dashboard</a>
             </p>
           </aside>
         </div>
@@ -205,7 +171,7 @@
     </main>
     <footer class="site-footer">
       <span>SeatSync · Good food. Better moments.</span>
-      <span>Demo profile · Stored in this browser only</span>
+      <span>Secure account · Bookings stored on SeatSync</span>
     </footer>
   </body>
 </html>

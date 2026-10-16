@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+backend/test_seatsync.db
+backend/seat_sync.db
+
+# Node / frontend
+node_modules/
+
+# OS/editor
+.DS_Store
+.vscode/
+*.swp

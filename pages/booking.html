@@ -6,9 +6,9 @@
     <title>Choose your table — SeatSync</title>
     <link rel="stylesheet" href="../css/style.css" />
     <link rel="stylesheet" href="../css/booking.css" />
-    <script src="../js/account.js" defer></script>
     <script src="../js/venues.js" defer></script>
-    <script src="../js/booking.js" defer></script>
+    <script src="../js/account-live.js" defer></script>
+    <script src="../js/booking-live.js" defer></script>
     <link rel="stylesheet" href="../css/brand-elements.css" />
   </head>
   <body class="booking-experience">
@@ -32,7 +32,7 @@
             Sign in
           </a>
         </nav>
-        <span class="demo-badge">Homework demo</span>
+        <span class="demo-badge">Live reservations</span>
       </div>
     </header>
     <main>
@@ -76,7 +76,7 @@
             <span class="art-label">GOOD FOOD, BETTER MOMENTS</span>
           </div>
           <div class="panel-content">
-            <span class="eyebrow">Demo venue</span>
+            <span class="eyebrow">SeatSync venue</span>
             <div class="venue-name-row">
               <img
                 class="brand-icon"
@@ -213,8 +213,7 @@
             </span>
           </div>
           <p class="field-note">
-            Illustrative availability for this demo. Choose a table with enough
-            seats for your group.
+            Availability is checked against active reservations on the server.
           </p>
         </section>
         <aside class="panel summary" aria-labelledby="summary-heading">
@@ -270,19 +269,20 @@
             </div>
           </dl>
           <div class="fee-row">
-            <span>SeatSync service fee</span>
-            <strong>100 ₸</strong>
+            <span>Booking fee</span>
+            <strong>None</strong>
           </div>
           <p class="field-note">
             Booking service only. Food and drinks are paid for at the venue.
           </p>
           <div class="demo-payment">
-            <strong>Demo payment</strong>
+            <strong>No payment required</strong>
             <span>
-              The 100 ₸ fee is shown for demonstration. You will not be charged.
+              Reservations are saved without collecting payment.
             </span>
           </div>
           <p id="form-error" class="error" role="alert" hidden></p>
+          <a id="signin-to-booking" class="text-link" href="account.html" hidden>Sign in to confirm your reservation</a>
           <button class="button confirm-button" type="submit">
             Confirm Booking
             <span aria-hidden="true">→</span>
@@ -290,7 +290,7 @@
           <p class="demo-note">
             No card details needed.
             <br />
-            No real payment or reservation is made.
+            No payment is taken. Confirmed reservations are saved to SeatSync.
           </p>
         </aside>
       </form>
@@ -298,7 +298,7 @@
     <footer class="site-footer">
       <a class="brand" href="../index.html">SeatSync</a>
       <span>Good food. Better moments.</span>
-      <span>Demo experience · No real reservation</span>
+      <span>SeatSync · No payment required</span>
     </footer>
   </body>
 </html>

@@ -211,7 +211,7 @@
             <!-- MAIN BODY -->
             <div class="p-6 space-y-6 flex-1">
 
-                <section id="live-bookings" class="live-panel"><div class="live-heading"><div><h2>Bookings from the website</h2><p>Demo owner view · All sample venues · This browser only · No real authentication</p></div><button id="refresh-live" type="button">Refresh</button></div><p id="live-message" role="status"></p><div class="live-scroll"><table><thead><tr><th>Venue</th><th>Date</th><th>Time</th><th>Guest</th><th>Guests</th><th>Table</th><th>Status</th></tr></thead><tbody id="live-booking-rows"></tbody></table></div></section><!-- Welcome Greeting -->
+                <section id="live-bookings" class="live-panel"><div class="live-heading"><div><h2>Bookings from the website</h2><p>Administrator view · Live SeatSync data</p></div><button id="refresh-live" type="button">Refresh</button></div><p id="live-message" role="status"></p><div class="live-scroll"><table><thead><tr><th>Venue</th><th>Date</th><th>Time</th><th>Guest</th><th>Guests</th><th>Table</th><th>Status</th></tr></thead><tbody id="live-booking-rows"></tbody></table></div></section><!-- Welcome Greeting -->
                 <div id="dashboardSection">
                     <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Good evening, Malika!</h1>
                     <p class="text-xs font-medium text-brand-600/80 mt-0.5">Malika’s sample dashboard. Example metrics and floor plan are illustrative.</p>
@@ -227,10 +227,9 @@
                             <i data-lucide="filter" class="w-3.5 h-3.5 text-slate-500"></i>
                             <select id="adminStatusFilter" aria-label="Filter by status">
                                 <option value="all">All statuses</option>
-                                <option value="Confirmed">Confirmed</option>
-                                <option value="Arriving">Arriving</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="pending">Pending</option>
+                                <option value="cancelled">Cancelled</option>
                             </select>
                         </label>
                     </div>
@@ -707,7 +706,11 @@
             <form id="addBookingForm" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-semibold text-slate-700 mb-1">Customer Name</label>
-                    <input type="text" id="custName" required placeholder="e.g. Aigerim S." class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                    <input type="text" id="custName" placeholder="Customer name is managed by the account" readonly class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1" for="custEmail">Customer email</label>
+                    <input type="email" id="custEmail" required placeholder="registered-customer@example.com" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -722,7 +725,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Guests</label>
-                        <input type="number" id="custGuests" min="1" max="6" required value="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                        <input type="number" id="custGuests" min="1" max="24" required value="2" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Venue</label>
@@ -736,7 +739,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Table Number</label>
-                        <select id="custTable" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                        <select id="custTable" required class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="1">Table 1</option>
                             <option value="2">Table 2</option>
                             <option value="3">Table 3</option>
@@ -748,10 +751,9 @@
                     <div>
                         <label class="block font-semibold text-slate-700 mb-1">Status</label>
                         <select id="custStatus" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="Confirmed">Confirmed</option>
-                            <option value="Arriving">Arriving</option>
-                            <option value="Pending">Pending</option>
-                            <option value="Cancelled">Cancelled</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="pending">Pending</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
                 </div>
