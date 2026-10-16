@@ -35,3 +35,18 @@
  .venue-book-panel { position:static; }
  .menu-feature .button { width:100%; }
 }
+
+/* Local PDF page previews and original Instagram menu screenshots. */
+.menu-select-label { display:block; margin:20px 0 8px; font-size:13px; font-weight:600; }
+.menu-select { width:100%; min-width:0; padding:12px; border:1px solid var(--line); border-radius:12px; background:white; color:var(--ink); font:inherit; font-size:14px; }
+.menu-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:14px 0; font-size:12px; color:var(--muted); }
+.menu-nav { width:44px; height:44px; border:1px solid var(--line); border-radius:50%; background:white; color:var(--primary); cursor:pointer; font-size:20px; }
+.menu-nav:disabled { opacity:.35; cursor:default; }
+.menu-nav:focus-visible, .menu-select:focus-visible, .menu-image-link:focus-visible { outline:3px solid var(--primary); outline-offset:3px; }
+.menu-image-link { display:block; border-radius:12px; overflow:hidden; }
+.menu-image-frame { background:#f8f7f1; }
+.menu-image-frame img { display:block; width:100%; height:auto; }
+/* Keep the source intact; frame only the central menu, excluding browser chrome. */
+.menu-image-frame.menu-screenshot { position:relative; aspect-ratio:593 / 850; overflow:hidden; }
+.menu-screenshot img { position:absolute; width:329.2%; max-width:none; left:-114.5%; top:-35.3%; }
+@media(max-width:400px) { .menu-feature { padding:16px; } }

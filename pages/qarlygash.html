@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Qarlygash Cafe · Menu & location — SeatSync</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/venue-details.css">
+  <script src="../js/api.js?v=backend1" defer></script>
+  <script src="../js/venues.js?v=backend1" defer></script>
+  <script src="../js/booking-rules.js?v=backend1" defer></script>
+  <script src="../js/booking-storage.js?v=backend1" defer></script>
+  <script src="../js/account.js?v=backend1" defer></script>
+  <script src="../js/menu-data.js" defer></script>
+  <script src="../js/menu-viewer.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner">
+    <a class="brand" href="../index.html" aria-label="SeatSync home"><span class="brand-symbol" aria-hidden="true"></span><span class="brand-word">Seat<span>Sync</span></span></a>
+    <nav class="site-nav" aria-label="Main navigation"><a class="header-link desktop-link" href="../index.html#venues">Restaurants</a><a class="header-link account-link" data-account-link href="account.html">Sign in / Register</a></nav>
+  </div></header>
+  <main class="venue-detail">
+    <a class="venue-back" href="../index.html#venues">← Back to restaurants</a>
+    <section class="venue-intro" aria-labelledby="venue-title">
+      <div><span class="eyebrow">Almaty · City Café</span><h1 id="venue-title">Qarlygash Cafe<span>.</span></h1><p class="muted">A little time for coffee.<br>A table for your next good moment.</p></div>
+      <figure class="venue-detail-cover"><img src="../assets/images/venues/qarlygash-mood.jpg" alt="Atmosphere illustration in SeatSync’s purple palette" width="1536" height="1024"><figcaption>SeatSync atmosphere illustration · Not a photo of the venue</figcaption></figure>
+    </section>
+    <div class="venue-detail-grid">
+      <div class="venue-information">
+        <section class="venue-info-card menu-feature" aria-labelledby="menu-title" data-menu-venue="qarlygash"><span class="eyebrow">Take a look before you book</span><h2 id="menu-title">Explore the menu.</h2><p class="muted">Browse the menu documents right here in SeatSync.</p><label class="menu-select-label" for="menu-section">Choose a menu section</label><select id="menu-section" class="menu-select"><option value="0">Main menu · RU</option><option value="1">Breakfast · RU / KZ</option><option value="2">Pizza · RU</option><option value="3">Wine list</option></select><div class="menu-toolbar"><button type="button" class="menu-nav" id="menu-prev" aria-label="Previous menu page">←</button><span id="menu-position" role="status" aria-live="polite"></span><button type="button" class="menu-nav" id="menu-next" aria-label="Next menu page">→</button></div><a id="menu-image-link" class="menu-image-link" href="../assets/menus/qarlygash/main-1.jpg" target="_blank" rel="noopener noreferrer" aria-label="Open menu image at full size in a new tab"><div class="menu-image-frame"><img id="menu-image" src="../assets/menus/qarlygash/main-1.jpg" alt="Qarlygash Cafe menu"></div></a><p id="menu-error" class="venue-small-note" hidden>Preview unavailable. Open the original menu below.</p><div class="venue-detail-links"><a class="button" href="https://drive.google.com/drive/folders/1we5hPViw_xW1Ldyv0Nh4FfX8U6vVo7jk" target="_blank" rel="noopener noreferrer">Open menu in Google Drive ↗<span class="visually-hidden"> (opens in a new tab)</span></a></div><p class="venue-small-note">Tap the menu to enlarge. Menus supplied on 16 October 2026; dishes, prices and offers may have changed. Confirm details with the venue.</p><noscript><p>Enable JavaScript to switch sections, or open the original menu above.</p></noscript></section>
+        <section class="venue-info-card" aria-labelledby="location-title">
+          <span class="eyebrow">Plan your visit</span><h2 id="location-title">Find your Qarlygash Cafe.</h2>
+          <p class="muted">Find a branch in Almaty and check its address and opening hours in 2GIS.</p>
+          <div class="venue-detail-links"><a href="https://2gis.kz/almaty/search/Qarlygash%20Cafe" target="_blank" rel="noopener noreferrer">Find branches in 2GIS ↗<span class="visually-hidden"> (opens in a new tab)</span></a><a href="https://www.instagram.com/qarlygash_cafe/" target="_blank" rel="noopener noreferrer">Qarlygash Cafe on Instagram ↗<span class="visually-hidden"> (opens in a new tab)</span></a></div>
+        </section>
+      </div>
+      <aside class="venue-info-card venue-book-panel" aria-labelledby="book-title">
+        <span class="eyebrow">Make it a plan</span><h2 id="book-title">Your next table.</h2><p class="muted">Choose your date, bring your people, and pick a seat.</p>
+        <ol class="venue-book-steps"><li><span>01</span> Choose date &amp; time</li><li><span>02</span> Select guests &amp; table</li><li><span>03</span> Confirm your booking</li></ol>
+        <a class="button" href="booking.html?venue=qarlygash">Book a table <span aria-hidden="true">→</span></a>
+        <p class="venue-small-note">SeatSync demo booking. Branch selection is not available yet. No reservation is sent to Qarlygash Cafe and no payment is taken.</p>
+      </aside>
+    </div>
+  </main>
+  <footer class="site-footer"><span>SeatSync · Good food. Better moments.</span><a href="../index.html#venues">Explore more places →</a></footer>
+</body>
+</html>
