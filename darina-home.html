@@ -31,6 +31,7 @@
 
 <body>
 
+<<<<<<< Updated upstream
     <!-- Decorative background -->
 
     <div class="background-shape shape-one"></div>
@@ -38,6 +39,8 @@
     <div class="background-shape shape-two"></div>
 
 
+=======
+>>>>>>> Stashed changes
     <!-- HEADER -->
 
     <header class="header">
@@ -80,9 +83,13 @@
 
 
 
+<<<<<<< Updated upstream
     <!-- HERO -->
 
     <main>
+=======
+        <!--HERO -->
+>>>>>>> Stashed changes
 
         <section class="hero" id="home">
 
@@ -255,14 +262,651 @@
         </section>
 
 
+<<<<<<< Updated upstream
+=======
+        <!--BENEFITS -->
+>>>>>>> Stashed changes
 
         <!-- DISCOVER -->
 
+<<<<<<< Updated upstream
         <section class="section discover"
                  id="discover">
 
             <div class="container">
 
+=======
+            <div class="container benefits-grid">
+
+                <article class="benefit-item">
+                    <div class="benefit-icon">⌕</div>
+                    <div>
+                        <h3>Discover</h3>
+                        <p>Explore places around your city.</p>
+                    </div>
+                </article>
+
+                <article class="benefit-item">
+                    <div class="benefit-icon">♡</div>
+                    <div>
+                        <h3>Save Favorites</h3>
+                        <p>Keep your favorite places together.</p>
+                    </div>
+                </article>
+
+                <article class="benefit-item">
+                    <div class="benefit-icon">↗</div>
+                    <div>
+                        <h3>Plan Your Visit</h3>
+                        <p>Move from discovery to booking.</p>
+                    </div>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!--DISCOVER ALMATY -->
+
+        <section class="discover-section" id="discover">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="section-label">
+                        YOUR NEXT FAVORITE PLACE
+                    </span>
+
+                    <h2>Discover Almaty</h2>
+
+                    <p>
+                        From your morning coffee to a cozy dinner,
+                        find a place that matches your mood.
+                    </p>
+
+                </div>
+
+
+                <!-- Search -->
+
+                <div class="restaurant-search">
+
+                    <span class="search-icon" aria-hidden="true">⌕</span>
+
+                    <input
+                        type="search"
+                        id="restaurant-search"
+                        placeholder="Search cafés and restaurants..."
+                        aria-label="Search cafés and restaurants"
+                    >
+
+                    <button id="clear-search" type="button">
+                        Clear
+                    </button>
+
+                </div>
+
+
+                <!-- Category filters -->
+
+                <div class="category-filters"
+                     aria-label="Filter restaurants">
+
+                    <button
+                        class="filter-btn active"
+                        data-category="all"
+                        aria-pressed="true">
+                        All Places
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-category="cafe"
+                        aria-pressed="false">
+                        Cafés
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-category="coffee"
+                        aria-pressed="false">
+                        Coffee Shops
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-category="breakfast"
+                        aria-pressed="false">
+                        Breakfast & Brunch
+                    </button>
+
+                    <button
+                        class="filter-btn"
+                        data-category="restaurant"
+                        aria-pressed="false">
+                        Restaurants
+                    </button>
+
+                </div>
+
+
+                <!-- Restaurant results -->
+
+                <div class="results-header">
+
+                    <div>
+                        <h3>Places to explore</h3>
+                        <p class="results-subtitle">
+                            Find your next favorite spot.
+                        </p>
+                    </div>
+
+                    <span id="results-count">9 places</span>
+
+                </div>
+
+
+                <!-- Restaurant cards -->
+
+                <div class="restaurant-grid" id="restaurant-grid">
+
+
+                    <!-- SKYBERRY -->
+
+                    <article class="restaurant-card"
+                             data-category="cafe coffee">
+
+                        <div class="restaurant-card-top skyberry-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">☕</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add Skyberry to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Coffee & Bakery
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>Skyberry</h3>
+
+                            <p>
+                                Add this spot to your list for your
+                                next coffee break.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Skyberry+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="Skyberry">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- VANILLA COFFEE SHOP -->
+
+                    <article class="restaurant-card"
+                             data-category="coffee cafe">
+
+                        <div class="restaurant-card-top vanilla-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">☕</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add Vanilla Coffee Shop to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Coffee Shop
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>Vanilla Coffee Shop</h3>
+
+                            <p>
+                                A coffee stop for your morning routine
+                                or a study break.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Vanilla+Coffee+Shop+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="Vanilla Coffee Shop">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- AQQU -->
+
+                    <article class="restaurant-card"
+                             data-category="cafe">
+
+                        <div class="restaurant-card-top aqqu-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">✦</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add AQQU to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Café
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>AQQU</h3>
+
+                            <p>
+                                Discover another local place for
+                                your next outing.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=AQQU+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="AQQU">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- RENEE -->
+
+                    <article class="restaurant-card"
+                             data-category="cafe">
+
+                        <div class="restaurant-card-top renee-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">♡</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add RENÉE to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Café
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>RENÉE</h3>
+
+                            <p>
+                                Save this place for a relaxed coffee
+                                date or a meet-up.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Renee+Cafe+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="RENÉE">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- BENEDICT -->
+
+                    <article class="restaurant-card"
+                             data-category="cafe breakfast">
+
+                        <div class="restaurant-card-top benedict-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">✦</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add Benedict to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Breakfast & Brunch
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>Benedict</h3>
+
+                            <p>
+                                A brunch-inspired choice for a slow
+                                morning in the city.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Benedict+Cafe+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="Benedict">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- SIX COFFEE + WINE -->
+
+                    <article class="restaurant-card"
+                             data-category="coffee cafe">
+
+                        <div class="restaurant-card-top six-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">☕</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add SIX Coffee+Wine to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Coffee & Wine
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>SIX Coffee+Wine</h3>
+
+                            <p>
+                                Add this spot to your list for
+                                coffee breaks and meet-ups.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=SIX+Coffee+Wine+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="SIX Coffee+Wine">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- QARLYGASH CAFE -->
+
+                    <article class="restaurant-card"
+                             data-category="cafe restaurant">
+
+                        <div class="restaurant-card-top qarlygash-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">✦</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add Qarlygash Cafe to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Café & Restaurant
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>Qarlygash Cafe</h3>
+
+                            <p>
+                                Keep this local place on your
+                                Almaty discovery list.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Qarlygash+Cafe+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="Qarlygash Cafe">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- GULFAIRUS -->
+
+                    <article class="restaurant-card"
+                             data-category="restaurant">
+
+                        <div class="restaurant-card-top gulfairus-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">✦</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add Gulfairus to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Restaurant
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>Gulfairus</h3>
+
+                            <p>
+                                Add this restaurant to your list
+                                of places to explore.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Gulfairus+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="Gulfairus">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- PROCOFFEE -->
+
+                    <article class="restaurant-card"
+                             data-category="coffee cafe">
+
+                        <div class="restaurant-card-top procoffee-bg">
+
+                            <span class="restaurant-emoji"
+                                  aria-hidden="true">☕</span>
+
+                            <button class="favorite-btn"
+                                    type="button"
+                                    aria-label="Add Procoffee to favorites"
+                                    aria-pressed="false">♡</button>
+
+                            <span class="place-tag">
+                                Coffee Shop
+                            </span>
+
+                        </div>
+
+                        <div class="restaurant-info">
+
+                            <h3>Procoffee</h3>
+
+                            <p>
+                                Find a coffee spot for your everyday
+                                routine or next meet-up.
+                            </p>
+
+                            <div class="card-actions">
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query=Procoffee+Almaty"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="details-btn">
+                                    Find Location ↗
+                                </a>
+
+                                <button class="book-btn"
+                                        type="button"
+                                        data-restaurant="Procoffee">
+                                    Book a Table
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <p id="no-results" hidden>
+                    No places found. Try another search or category.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- HOW IT WORKS -->
+
+        <section class="how-it-works" id="how-it-works">
+
+            <div class="container">
+>>>>>>> Stashed changes
 
                 <div class="section-heading">
 
@@ -270,6 +914,130 @@
                         DISCOVER
                     </p>
 
+<<<<<<< Updated upstream
+=======
+                </div>
+
+
+                <div class="steps-grid">
+
+                    <article class="step-card">
+
+                        <div class="step-number">01</div>
+
+                        <div class="step-icon">⌕</div>
+
+                        <h3>Discover Places</h3>
+
+                        <p>
+                            Explore cafés and restaurants in Almaty
+                            and search for places that match your plans.
+                        </p>
+
+                    </article>
+
+
+                    <article class="step-card">
+
+                        <div class="step-number">02</div>
+
+                        <div class="step-icon">♡</div>
+
+                        <h3>Choose Your Favorite</h3>
+
+                        <p>
+                            Save the places you like and keep your
+                            personal shortlist in one place.
+                        </p>
+
+                    </article>
+
+
+                    <article class="step-card">
+
+                        <div class="step-number">03</div>
+
+                        <div class="step-icon">↗</div>
+
+                        <h3>Plan Your Visit</h3>
+
+                        <p>
+                            Continue to the booking page to choose
+                            your preferred visit details.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section class="favorites-section" id="favorites">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="section-label">
+                        SAVED JUST FOR YOU
+                    </span>
+
+                    <h2>Your Favorite Places</h2>
+
+                    <p>
+                        Keep the places you love together.
+                        Your saved favorites will appear here.
+                    </p>
+
+                </div>
+
+                <div id="favorites-list" class="favorites-list">
+
+                    <p class="empty-favorites">
+                        You haven't saved any places yet.
+                        Tap the heart on a card to add one.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT -->
+
+        <section class="about-section" id="about">
+
+            <div class="container about-content">
+
+                <div class="about-decoration">
+
+                    <div class="about-circle about-circle-one"></div>
+                    <div class="about-circle about-circle-two"></div>
+
+                    <div class="about-logo">
+                        Seat<span>Sync</span>
+                    </div>
+
+                    <p class="about-decoration-text">
+                        Your city is full of possibilities.
+                    </p>
+
+                </div>
+
+
+                <div class="about-text">
+
+                    <span class="section-label">
+                        ABOUT SEATSYNC
+                    </span>
+
+>>>>>>> Stashed changes
                     <h2>
                         Find your perfect place
                     </h2>
@@ -348,6 +1116,10 @@
         </section>
 
 
+<<<<<<< Updated upstream
+=======
+        <!--  CALL TO ACTION -->
+>>>>>>> Stashed changes
 
         <!-- HOW IT WORKS -->
 
@@ -481,6 +1253,10 @@
     </main>
 
 
+<<<<<<< Updated upstream
+=======
+FOOTER
+>>>>>>> Stashed changes
 
     <!-- FOOTER -->
 
