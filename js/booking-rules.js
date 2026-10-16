@@ -1,7 +1,9 @@
+(function () {
 'use strict';
 
 // One source for demo tables, time slots and validation on both booking pages.
-window.SeatSyncBooking = (() => {
+const bookingRules = (() => {
+  const venues = typeof module !== 'undefined' && module.exports ? require('./venues.js') : window.SEATSYNC_VENUES;
   const tables = [
     { id: '1', name: 'Window nook', seats: 2, shape: 'round' },
     { id: '2', name: 'Coffee corner', seats: 2, shape: 'round' },
@@ -35,7 +37,7 @@ window.SeatSyncBooking = (() => {
     return `${date}T${time}` > `${current.date}T${current.time}`;
   }
   function validate(booking, now = new Date(), allowPast = false) {
-    if (!booking || !Object.hasOwn(window.SEATSYNC_VENUES, booking.venue || '')) {
+    if (!booking || !Object.hasOwn(venues, booking.venue || '')) {
       return { field: 'venue', message: 'Please choose a café or restaurant.' };
     }
     if (!isDate(booking.date) || (!allowPast && booking.date < nowInAlmaty(now).date)) {
@@ -54,4 +56,8 @@ window.SeatSyncBooking = (() => {
     return null;
   }
   return { tables, times, nowInAlmaty, isDate, isFuture, validate };
+})();
+
+if (typeof module !== 'undefined' && module.exports) module.exports = bookingRules;
+else window.SeatSyncBooking = bookingRules;
 })();

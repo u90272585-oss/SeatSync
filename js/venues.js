@@ -1,7 +1,8 @@
+(function () {
 "use strict";
 // Names supplied by the team. Categories, hours and floor plans are demo data.
 // These entries do not imply a partnership or live booking availability.
-window.SEATSYNC_VENUES = Object.freeze({
+const venues = Object.freeze({
   skyberry: {name: 'Skyberry', type: 'Café & Bakery', image: 'assets/images/venues/skyberry-mood.jpg'},
   vanilla: {name: 'Vanilla Coffee Shop', type: 'Coffee Shop'},
   aqqu: {name: 'AQQU', type: 'Café', image: 'assets/images/venues/aqqu-mood.jpg'},
@@ -16,3 +17,7 @@ window.SEATSYNC_VENUES = Object.freeze({
   restaurant: {name: 'The Violet Room', type: 'Restaurant'},
   bistro: {name: 'Garden Bistro', type: 'Bistro'}
 });
+
+if (typeof module !== 'undefined' && module.exports) module.exports = venues;
+else window.SEATSYNC_VENUES = venues;
+})();
