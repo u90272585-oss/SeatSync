@@ -1,0 +1,37 @@
+/* Venue information uses the existing SeatSync palette and typography. */
+.venue-detail { max-width: 1120px; }
+.venue-back { display:inline-flex; align-items:center; min-height:44px; color:var(--muted); font-size:13px; text-decoration:none; }
+.venue-back:hover { color:var(--primary); text-decoration:underline; }
+.venue-intro { display:grid; grid-template-columns: .85fr 1.15fr; gap:40px; align-items:center; margin:20px 0 30px; }
+.venue-intro h1 { margin:12px 0 20px; font-size:clamp(42px,6vw,68px); }
+.venue-intro h1 span { color:var(--primary); }
+.venue-intro p { font-size:17px; }
+.venue-detail-cover { margin:0; min-width:0; }
+.venue-detail-cover img { display:block; width:100%; height:245px; object-fit:cover; border-radius:60px 20px 20px 20px; }
+.venue-detail-cover figcaption { color:var(--muted); font-size:10px; margin-top:8px; }
+.venue-detail-grid { display:grid; grid-template-columns:minmax(0,1.45fr) minmax(0,1fr); gap:24px; align-items:start; }
+.venue-information { display:grid; gap:20px; }
+.venue-info-card { padding:28px; border:1px solid var(--line); border-radius:22px; background:var(--surface); }
+.venue-info-card h2 { font-size:26px; margin:12px 0; }
+.venue-info-card p { font-size:14px; }
+.menu-feature { background:linear-gradient(130deg,#fff 30%,#f0eafb); }
+.menu-categories { list-style:none; display:flex; flex-wrap:wrap; gap:8px; margin:20px 0 24px; padding:0; }
+.menu-categories li { padding:6px 12px; border-radius:20px; color:var(--primary); background:#ffffffc9; border:1px solid var(--line); font-size:12px; }
+.venue-info-card .venue-small-note { font-size:11px; line-height:1.7; color:var(--muted); margin:14px 0 0; }
+.venue-detail-links { display:flex; flex-wrap:wrap; gap:8px 24px; }
+.venue-detail-links a { display:inline-flex; align-items:center; min-height:44px; color:var(--primary); font-size:13px; font-weight:600; text-underline-offset:4px; }
+.venue-book-panel { position:sticky; top:24px; }
+.venue-book-panel .button { width:100%; }
+.venue-book-steps { padding:0; margin:24px 0; list-style:none; display:grid; gap:15px; font-size:13px; }
+.venue-book-steps span { display:inline-grid; place-items:center; width:30px; height:30px; margin-right:8px; border-radius:50%; color:var(--primary); background:var(--soft); font-size:11px; }
+.visually-hidden { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0; }
+@media(max-width:700px) {
+ .venue-intro { grid-template-columns:1fr; gap:10px; margin-top:15px; }
+ .venue-intro h1 { margin:8px 0 12px; }
+ .venue-intro p { font-size:15px; }
+ .venue-detail-cover img { height:205px; border-top-left-radius:40px; }
+ .venue-detail-grid { grid-template-columns:1fr; gap:20px; }
+ .venue-info-card { padding:22px; }
+ .venue-book-panel { position:static; }
+ .menu-feature .button { width:100%; }
+}

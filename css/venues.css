@@ -34,3 +34,6 @@
  .almaty-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px #39235f12; }
  .venue-cover:hover .venue-photo { transform: scale(1.035); }
 }
+
+.venue-detail-link { text-decoration:none; }
+.venue-detail-link:hover { color:var(--primary); text-decoration:underline; text-underline-offset:4px; }
