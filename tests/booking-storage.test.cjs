@@ -1,77 +1,29 @@
-const { test } = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const vm = require('node:vm');
-const path = require('node:path');
-const source = fs.readFileSync(path.join(__dirname, '../js/booking-storage.js'), 'utf8');
-function setup(blocked = false) {
-  const values = new Map();
-  const context = vm.createContext({ window: {}, localStorage: {
-    getItem(key) { if (blocked) throw Error('blocked'); return values.get(key) || null; },
-    setItem(key, value) { if (blocked) throw Error('blocked'); values.set(key, value); },
-    removeItem(key) { values.delete(key); }
-  }});
-  vm.runInContext(source, context);
-  return { storage: context.window.SeatSyncBookingStorage, values };
+'use strict';
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const {readFileSync}=require('node:fs');
+const vm=require('node:vm');
+const source=readFileSync(require('node:path').join(__dirname,'../js/booking-storage.js'),'utf8');
+function setup(){
+ const calls=[],record={id:'server-id',version:1,status:'confirmed'},state={fail:false};
+ const context=vm.createContext({window:{dispatchEvent(){},SeatSyncAPI:{ready:Promise.resolve(),async request(path,method='GET',body){
+  calls.push({path,method,body});if(state.fail)throw Error('Server unavailable');
+  if(path==='/bookings'&&method==='GET')return [];
+  return {...record,...body,status:path.endsWith('/cancel')?'cancelled':'confirmed',version:2};
+ }}},Event:class{},sessionStorage:{setItem(){throw Error('storage disabled');}},encodeURIComponent});
+ vm.runInContext(source,context);return {storage:context.window.SeatSyncBookingStorage,calls,state};
 }
-const receipt = { venue: 'aqqu', date: '2027-01-01', time: '12:00', guests: '2', table: '1', id: 'booking-test-123' };
-test('round-trips a receipt and clears only a matching draft', () => {
-  const { storage, values } = setup();
-  values.set('seatsync.booking.draft.v1', JSON.stringify(receipt));
-  assert.equal(storage.saveReceipt(receipt), true);
-  assert.equal(storage.readReceipt().id, receipt.id);
-  assert.equal(values.has('seatsync.booking.draft.v1'), false);
-  const anotherDraft = JSON.stringify({ ...receipt, venue: 'skyberry' });
-  values.set('seatsync.booking.draft.v1', anotherDraft);
-  storage.saveReceipt(receipt);
-  assert.equal(values.get('seatsync.booking.draft.v1'), anotherDraft);
+test('API creates records, edits with version and supports blocked browser storage',async()=>{
+ const {storage,calls}=setup();await storage.ready;
+ const saved=await storage.saveShared({venue:'skyberry'});assert.equal(saved.id,'server-id');
+ await storage.saveShared({...saved,table:'3'});
+ assert.equal(calls.at(-1).method,'PUT');assert.equal(calls.at(-1).body.version,2);
+ assert.equal(storage.list().length,1);assert.equal(storage.find(saved.id).table,'3');
+ await assert.rejects(storage.saveShared({id:'unloaded-id'}),/Load the booking/);
 });
-test('handles missing, malformed and blocked storage', () => {
-  const { storage, values } = setup();
-  assert.equal(storage.readReceipt(), null);
-  for (const invalid of ['{bad json', '[]', 'false', '"text"']) {
-    values.set('seatsync.booking.confirmed.v1', invalid);
-    assert.equal(storage.readReceipt(), null);
-  }
-  const blocked = setup(true).storage;
-  assert.equal(blocked.readReceipt(), null);
-  assert.equal(blocked.saveReceipt(receipt), false);
-});
-
-test('cancellation survives a new receipt and cannot be overwritten by an active save', () => {
-  const { storage } = setup();
-  assert.equal(storage.cancel(receipt), true);
-  assert.equal(storage.isCancelled(receipt.id), true);
-  assert.equal(storage.readReceipt().status, 'cancelled');
-  storage.saveReceipt({ ...receipt, id: 'another-booking' });
-  assert.equal(storage.isCancelled(receipt.id), true);
-  storage.saveReceipt({ ...receipt, status: 'confirmed' });
-  assert.equal(storage.readReceipt().status, 'cancelled');
-});
-test('blocked cancellation reports failure instead of claiming persistence', () => {
-  const { storage } = setup(true);
-  assert.equal(storage.cancel(receipt), false);
-  assert.equal(storage.isCancelled(receipt.id), false);
-});
-
-test('shared ledger retains multiple guests and edits by stable ID', () => {
-  const { storage } = setup();
-  storage.saveReceipt(receipt);
-  storage.saveReceipt({ ...receipt, id: 'second-booking-123' });
-  storage.saveShared({ ...receipt, time: '14:00' });
-  assert.equal(storage.list().length, 2);
-  assert.equal(storage.find(receipt.id).time, '14:00');
-  storage.cancel(storage.find(receipt.id));
-  storage.saveShared({ ...receipt, status: 'confirmed' });
-  assert.equal(storage.find(receipt.id).status, 'cancelled');
-  assert.equal(storage.find('second-booking-123').status, 'confirmed');
-});
-test('migrates legacy records, ignores malformed entries and keeps newer shared fields', () => {
-  const { storage, values } = setup();
-  values.set('seatsync.demo.bookings.v1', JSON.stringify([null, {}, { ...receipt, email: 'demo@example.com' }]));
-  assert.equal(storage.list().length, 1);
-  storage.saveShared({ ...receipt, table: '3' });
-  values.set('seatsync.booking.confirmed.v1', JSON.stringify(receipt));
-  assert.equal(storage.find(receipt.id).table, '3');
-  assert.equal(storage.find(receipt.id).email, 'demo@example.com');
+test('failed cancellation cannot change cached status or report success',async()=>{
+ const {storage,state}=setup();await storage.ready;const record=await storage.saveShared({});
+ state.fail=true;await assert.rejects(storage.cancel(record),/Server unavailable/);
+ assert.equal(storage.isCancelled(record.id),false);
+ state.fail=false;await storage.cancel(record);assert.equal(storage.isCancelled(record.id),true);
 });

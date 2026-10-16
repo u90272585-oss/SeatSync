@@ -1,9 +1,11 @@
 'use strict';
 
 // Malika's original components now share the customer booking records.
-(() => {
+(async () => {
   const storage = window.SeatSyncBookingStorage;
   const rules = window.SeatSyncBooking;
+  try { await storage.ready; } catch { return; }
+  if (window.SeatSyncAPI.user?.role !== 'admin') { location.replace('pages/account.html'); return; }
   const $ = id => document.getElementById(id);
   const venue = $('shared-venue'), date = $('shared-date'), time = $('shared-time');
   const status = $('shared-status'), search = $('searchInput');
@@ -42,7 +44,7 @@
     setText('metric-2', reserved.size); setText('metric-3', rules.tables.length - blocked - reserved.size);
     setText('admin-venue-name', window.SEATSYNC_VENUES[venue.value].name);
     setText('admin-date-label', date.value);
-    setText('shared-summary', `${window.SEATSYNC_VENUES[venue.value].name} · ${date.value} · Floor plan at ${time.value} (Almaty). Visits last 90 minutes. Tables 7–8 are unavailable in this demo. Browser-only data; no real reservation.`);
+    setText('shared-summary', `${window.SEATSYNC_VENUES[venue.value].name} · ${date.value} · Floor plan at ${time.value} (Almaty). Visits last 90 minutes. Tables 7–8 are unavailable in this demo. Server data; no real reservation.`);
     const visible = bookings.filter(b => (!status.value || b.status === status.value)
       && `${customer(b)} ${b.id} ${b.time} table ${b.table}`.toLowerCase().includes(search.value.toLowerCase()));
     const rows = $('bookingRows'); rows.replaceChildren();
@@ -106,24 +108,29 @@
     const booking = storage.find(selectedId); if (!canChange(booking)) return render();
     location.href = `pages/booking.html?${new URLSearchParams({id:booking.id,venue:booking.venue,date:booking.date,time:booking.time,guests:booking.guests,table:booking.table})}`;
   });
-  $('cancel-reservation').addEventListener('click', () => {
+  $('cancel-reservation').addEventListener('click', async () => {
     const booking = storage.find(selectedId); if (!canChange(booking)) return render();
     if (!confirm(`Cancel ${customer(booking)}, ${booking.date} at ${booking.time}, Table ${booking.table}? No real payment is charged.`)) return;
-    setText('shared-message', storage.cancel(booking) ? '' : 'Cancellation could not be saved. Enable browser storage and try again.'); render();
+    $('cancel-reservation').disabled = true;
+    try { await storage.cancel(booking); setText('shared-message', 'Booking cancelled.'); }
+    catch (error) { setText('shared-message', error.message); }
+    render();
   });
   window.openModal = () => {
     $('addBookingForm').reset(); $('custTime').value = time.value; setText('admin-form-error','');
     $('bookingModal').classList.remove('hidden'); $('custName').focus();
   };
   window.closeModal = () => $('bookingModal').classList.add('hidden');
-  window.handleFormSubmit = event => {
+  window.handleFormSubmit = async event => {
     event.preventDefault();
-    const booking = {id:crypto.randomUUID(),venue:venue.value,date:date.value,time:$('custTime').value,
+    const booking = {venue:venue.value,date:date.value,time:$('custTime').value,
       guests:$('custGuests').value,table:$('custTable').value,name:$('custName').value.trim(),status:'confirmed'};
     const problem = rules.validate(booking);
     if (!booking.name || problem) { setText('admin-form-error', problem?.message || 'Enter a customer name.'); return; }
-    if (!storage.saveShared(booking)) { setText('admin-form-error','Could not save booking. Enable browser storage.'); return; }
-    window.closeModal(); selectBooking(booking);
+    const button = $('addBookingForm').querySelector('button[type=submit]'); button.disabled = true;
+    try { const saved = await storage.saveShared(booking); window.closeModal(); selectBooking(saved); }
+    catch (error) { setText('admin-form-error', error.message); }
+    finally { button.disabled = false; }
   };
   for (const node of document.querySelectorAll('.table-node')) {
     node.setAttribute('role','button'); node.tabIndex = 0;
@@ -141,4 +148,15 @@
   window.addEventListener('storage',render); window.addEventListener('pageshow',render);
   document.addEventListener('keydown',event => {if(event.key === 'Escape') window.closeModal();});
   window.lucide?.createIcons(); render();
+  let refreshing = false;
+  async function refresh() {
+    if (refreshing || document.hidden) return;
+    refreshing = true;
+    try { await storage.refresh(); render(); }
+    catch (error) { setText('shared-message', error.message); }
+    finally { refreshing = false; }
+  }
+  const timer = setInterval(refresh, 5000);
+  window.addEventListener('focus', refresh);
+  window.addEventListener('pagehide', () => clearInterval(timer));
 })();

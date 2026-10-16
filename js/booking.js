@@ -1,4 +1,10 @@
 'use strict';
+(async () => {
+const submit = document.querySelector('#booking-form [type=submit]');
+submit.disabled = true;
+try { await window.SeatSyncBookingStorage.ready; } catch (error) {
+  const message = document.querySelector('#form-error'); message.textContent = error.message; message.hidden = false; return;
+}
 
 const rules = window.SeatSyncBooking;
 const tables = rules.tables;
@@ -29,7 +35,7 @@ document.querySelector('#tables').innerHTML = tables.map(table => `
   <span class="table-card"><span class="table-icon ${table.shape}" aria-hidden="true">${table.id}</span><strong>${table.name}</strong><small>Table ${table.id} · ${table.seats} seats</small><small id="table-state-${table.id}" class="table-state"></small></span></label>
 `).join('');
 
-// Query parameters keep the flow functional even when browser storage is disabled.
+// IDs identify saved server bookings. Query fields alone cannot create a confirmation.
 const params = new URLSearchParams(location.search);
 // Explicit links (including Edit Booking) take priority over a browser draft.
 let initial = params;
@@ -44,6 +50,16 @@ if (!location.search) {
     draftStatus.textContent = 'Draft storage is unavailable. You can still book in this tab.';
   }
 }
+let editingVersion;
+if (initial.get('id')) {
+  try {
+    const record = await window.SeatSyncBookingStorage.load(initial.get('id'));
+    editingVersion = record.version;
+    initial = new URLSearchParams(record);
+  } catch (problem) { error.textContent = problem.message; error.hidden = false; return; }
+}
+let requestSequence = 0;
+let availabilityPending = false;
 venueInput.value = Object.hasOwn(window.SEATSYNC_VENUES, initial.get('venue') || '') ? initial.get('venue') : 'skyberry';
 dateInput.value = initial.get('date') || '';
 timeInput.value = initial.get('time') || '';
@@ -63,7 +79,24 @@ function saveDraft() {
   }
 }
 
-function update() {
+async function update() {
+  const sequence = ++requestSequence;
+  let availability = null;
+  availabilityPending = true; submit.disabled = true;
+  if (dateInput.value && timeInput.value) {
+    try {
+      const query = new URLSearchParams({venue:venueInput.value,date:dateInput.value,time:timeInput.value});
+      if (initial.get('id')) query.set('exclude',initial.get('id'));
+      availability = await window.SeatSyncAPI.request(`/availability?${query}`);
+    } catch (problem) {
+      if (sequence !== requestSequence) return;
+      error.textContent = problem.message; error.hidden = false;
+      for (const input of form.elements.table) input.disabled = true;
+      availabilityPending = false; return;
+    }
+  }
+  if (sequence !== requestSequence) return;
+  availabilityPending = false;
   const venue = window.SEATSYNC_VENUES[venueInput.value];
   document.querySelector('#venue-name').textContent = venue.name;
   if (venueCover.dataset.venue !== venueInput.value) {
@@ -82,26 +115,28 @@ function update() {
   let selectionRemoved = false;
   for (const input of form.elements.table) {
     const table = tables.find(table => table.id === input.value);
-    input.disabled = Boolean(table.occupied) || table.seats < Number(guestsInput.value);
+    const reserved = availability && !availability.find(item => item.id === table.id)?.available;
+    input.disabled = !availability || Boolean(table.occupied) || reserved || table.seats < Number(guestsInput.value);
     if (input.disabled && input.checked) { input.checked = false; selectionRemoved = true; }
-    input.closest('.table-option').classList.toggle('is-occupied', Boolean(table.occupied));
-    document.querySelector(`#table-state-${table.id}`).textContent = table.occupied ? 'Occupied (demo)' : input.disabled ? 'Too small' : input.checked ? 'Selected' : 'Available';
+    input.closest('.table-option').classList.toggle('is-occupied', Boolean(table.occupied || reserved));
+    document.querySelector(`#table-state-${table.id}`).textContent = table.occupied ? 'Unavailable (demo)' : !availability ? 'Choose date and time' : reserved ? 'Reserved' : input.disabled ? 'Too small' : input.checked ? 'Selected' : 'Available';
   }
   const availableCount = [...form.elements.table].filter(input => !input.disabled).length;
-  document.querySelector('#table-status').textContent = `${selectionRemoved ? 'Your previous table is too small. Please choose again. ' : ''}${availableCount} tables fit your group. Availability is illustrative.`;
+  document.querySelector('#table-status').textContent = `${selectionRemoved ? 'Your previous table is unavailable for this selection. Please choose again. ' : ''}${availableCount} tables available for this selection. Checked with the server.`;
   const selected = tables.find(table => table.id === form.elements.table.value);
   document.querySelector('#summary-date').textContent = dateInput.value ? dateLabel(dateInput.value) : 'Choose a date';
   document.querySelector('#summary-time').textContent = timeInput.value ? timeLabel(timeInput.value) : 'Choose a time';
   document.querySelector('#summary-guests').textContent = `${guestsInput.value} ${guestsInput.value === '1' ? 'guest' : 'guests'}`;
   document.querySelector('#summary-table').textContent = selected ? `Table ${selected.id} · ${selected.name}` : 'Choose a table';
+  submit.disabled = blockCancelledEdit();
 }
-form.addEventListener('change', event => {
+form.addEventListener('change', async event => {
   error.hidden = true;
   if (blockCancelledEdit()) return;
   if (event.target === venueInput) {
     for (const input of form.elements.table) input.checked = false;
   }
-  update();
+  await update();
   saveDraft();
 });
 function blockCancelledEdit() {
@@ -123,9 +158,9 @@ function bookingDetails() {
     guests: guestsInput.value, table: form.elements.table.value };
 }
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
-  if (blockCancelledEdit()) return;
+  if (availabilityPending || submit.disabled || blockCancelledEdit()) return;
   const problem = rules.validate(bookingDetails());
   for (const input of [venueInput, dateInput, timeInput, guestsInput, ...form.elements.table]) {
     input.removeAttribute('aria-invalid');
@@ -144,12 +179,18 @@ form.addEventListener('submit', event => {
     consent.focus();
     return;
   }
-  const booking = new URLSearchParams(bookingDetails());
-  const existingId = initial.get('id');
-  booking.set('id', /^[a-zA-Z0-9-]{10,80}$/.test(existingId || '') ? existingId : crypto.randomUUID());
-  // An explicit form submission updates the shared record, keeping the same ID on edit.
-  window.SeatSyncBookingStorage.saveShared({ ...Object.fromEntries(booking), status: 'confirmed', name: window.SeatSyncBookingStorage.find(booking.get('id'))?.name || window.SeatSyncAccount?.profile()?.name || 'Guest' });
-  location.href = `confirmation.html?${booking.toString()}`;
+  submit.disabled = true;
+  try {
+    const data = bookingDetails();
+    if (initial.get('id')) { data.id = initial.get('id'); data.version = editingVersion; }
+    const saved = await window.SeatSyncBookingStorage.saveShared(data);
+    try { localStorage.removeItem(draftKey); } catch {}
+    location.href = `confirmation.html?${new URLSearchParams({id:saved.id})}`;
+  } catch (problem) {
+    await update(); error.textContent = problem.message; error.hidden = false;
+  }
+
 });
-update();
+await update();
 blockCancelledEdit();
+})();
