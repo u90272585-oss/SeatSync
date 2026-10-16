@@ -1,5 +1,23 @@
 'use strict';
 (async () => {
+  const passwordInput = document.querySelector('#signin-password');
+  const passwordToggle = document.querySelector('#password-toggle');
+  if (passwordInput && passwordToggle) {
+    const setPasswordVisible = visible => {
+      passwordInput.type = visible ? 'text' : 'password';
+      const label = visible ? 'Hide password' : 'Show password';
+      passwordToggle.setAttribute('aria-label', label);
+      passwordToggle.title = label;
+      passwordToggle.classList.toggle('is-visible', visible);
+    };
+    passwordToggle.hidden = false;
+    passwordToggle.addEventListener('click', () => setPasswordVisible(passwordInput.type === 'password'));
+    document.querySelectorAll('input[name="mode"]').forEach(input => {
+      input.addEventListener('change', () => setPasswordVisible(false));
+    });
+    passwordInput.form.addEventListener('submit', () => setPasswordVisible(false));
+    window.addEventListener('pagehide', () => setPasswordVisible(false));
+  }
   const api = window.SeatSyncAPI;
   const storage = window.SeatSyncBookingStorage;
   const prefix = location.pathname.includes('/pages/') ? '' : 'pages/';
