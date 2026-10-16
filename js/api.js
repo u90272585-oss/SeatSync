@@ -9,7 +9,7 @@ window.SeatSyncAPI = (() => {
       const response = await fetch(`/api${path}`, { method, credentials:'same-origin', signal:controller.signal,
         headers: { 'Content-Type':'application/json', 'X-SeatSync-Request':'1' },
         body: body === undefined ? undefined : JSON.stringify(body) });
-      const data = await response.json().catch(() => { throw new Error('The API is unavailable. Start SeatSync with npm start, not the Python server.'); });
+      const data = await response.json().catch(() => { throw new Error('The API is unavailable. Start SeatSync with python app.py, not a static file server.'); });
       if (!response.ok) throw Object.assign(new Error(data.error || 'Request failed.'), {status:response.status});
       return data;
     } catch (error) {

@@ -2,19 +2,10 @@
   "name": "seatsync",
   "version": "0.3.0",
   "private": true,
-  "description": "SeatSync booking backend and frontend",
-  "engines": {
-    "node": ">=24.14.0 <25"
-  },
+  "description": "Optional frontend and browser tests for the Python SeatSync backend",
   "scripts": {
-    "start": "node server/index.cjs",
-    "dev": "node --watch server/index.cjs",
     "test": "node --test tests/*.test.cjs",
-    "admin:create": "node server/create-admin.cjs",
     "test:browser": "node tests/browser.cjs"
-  },
-  "dependencies": {
-    "express": "^5.1.0"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

@@ -1,15 +1,23 @@
 const {chromium}=require('playwright');
 const root=require('node:path').resolve(__dirname,'..');
 const date=new Date(Date.now()+7*86400000).toISOString().slice(0,10);
-const {openDatabase}=require(root+'/server/database.cjs');
-const {createApp}=require(root+'/server/app.cjs');
-const {hashPassword}=require(root+'/server/auth.cjs');
+const {spawn}=require('node:child_process');
+const {mkdtempSync,rmSync}=require('node:fs');
+const {join}=require('node:path');
+const {tmpdir}=require('node:os');
+const {once}=require('node:events');
 const assert=require('node:assert/strict');
 (async()=>{
- const db=openDatabase(':memory:');
- db.prepare('INSERT INTO users VALUES (?,?,?,?,?)').run('test-admin','Administrator','admin@example.test',await hashPassword('test-password-123'),'admin');
- const server=createApp(db).listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));
- const base=`http://127.0.0.1:${server.address().port}`;
+ const temp=mkdtempSync(join(tmpdir(),'seatsync-browser-'));
+ const server=spawn(process.env.PYTHON || join(root,'.venv/bin/python'),[join(root,'tests/browser_server.py')],{
+   env:{...process.env,SEATSYNC_TEST_DATABASE:join(temp,'db.sqlite')},stdio:['ignore','pipe','pipe']
+ });
+ const base=await new Promise((resolve,reject)=>{
+   let output='',errors='';
+   server.stdout.on('data',chunk=>{output+=chunk;if(output.includes('\n'))resolve(output.trim().split('\n')[0]);});
+   server.stderr.on('data',chunk=>{errors+=chunk;});
+   server.on('error',reject);server.on('exit',()=>reject(Error(errors || 'Python test server stopped')));
+ });
  const browser=await chromium.launch({executablePath:process.env.PLAYWRIGHT_EXECUTABLE_PATH || undefined,headless:true});
  const errors=[];
  try {
@@ -17,6 +25,7 @@ const assert=require('node:assert/strict');
   const page=await guest.newPage(),dashboard=await admin.newPage(),second=await other.newPage();
   for(const p of [page,dashboard,second])p.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/pages/booking.html');
+  await page.waitForFunction(()=>document.querySelector('#booking-form')?.getAttribute('aria-busy') === null);
   await page.locator('#venue').selectOption('skyberry');await page.locator('#date').fill(date);await page.locator('#time').selectOption('14:00');
   await page.waitForFunction(()=>!document.querySelector('input[name=table][value="1"]').disabled);
   await page.locator('input[name=table][value="1"]').check();await page.locator('#accept-terms').check();await page.locator('button[type=submit]').click();
@@ -27,7 +36,10 @@ const assert=require('node:assert/strict');
   await second.goto(base+`/pages/booking.html?venue=skyberry&date=${date}&time=14%3A00`);
   await second.waitForFunction(()=>document.querySelector('#table-state-1')?.textContent==='Reserved');
   assert(await second.locator('input[name=table][value="1"]').isDisabled());
-  await page.locator('#edit-booking').click();await page.locator('#time').selectOption('16:00');
+  await page.locator('#edit-booking').click();
+  await page.waitForFunction(()=>document.querySelector('#booking-form')?.getAttribute('aria-busy') === null);
+  assert.equal(await page.locator('#time').inputValue(),'14:00');
+  await page.locator('#time').selectOption('16:00');
   await page.waitForFunction(()=>!document.querySelector('button[type=submit]').disabled);
   await page.locator('#accept-terms').check();await page.locator('button[type=submit]').click();await page.waitForURL('**/confirmation.html?id=*');
   await page.waitForFunction(()=>document.querySelector('#confirmed-time').textContent.includes('16:00'));
@@ -46,5 +58,5 @@ const assert=require('node:assert/strict');
    const size=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,width:innerWidth}));assert(size.scroll<=size.width+1,JSON.stringify({path,...size}));
   }
   assert.deepEqual(errors,[]);console.log('PASS: guest booking, conflict, edit, admin updates, cancellation, registration, cross-browser login, authorization and mobile widths; no JS errors.');
- }finally {await browser.close();await new Promise(r=>server.close(r));db.close();}
+ }finally {await browser.close();server.kill();await once(server,'exit');rmSync(temp,{recursive:true,force:true});}
 })().catch(e=>{console.error(e);process.exit(1)});

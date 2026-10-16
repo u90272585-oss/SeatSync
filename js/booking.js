@@ -1,5 +1,8 @@
 'use strict';
 (async () => {
+const bookingForm = document.querySelector('#booking-form');
+bookingForm.inert = true;
+bookingForm.setAttribute('aria-busy', 'true');
 const submit = document.querySelector('#booking-form [type=submit]');
 submit.disabled = true;
 try { await window.SeatSyncBookingStorage.ready; } catch (error) {
@@ -192,5 +195,7 @@ form.addEventListener('submit', async event => {
 
 });
 await update();
+bookingForm.inert = false;
+bookingForm.removeAttribute('aria-busy');
 blockCancelledEdit();
 })();

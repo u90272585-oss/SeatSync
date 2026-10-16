@@ -6,17 +6,18 @@
 
 ```sh
 cd /Users/uldanatolegenkyzy/Documents/ChatGPT/startup2
-npm ci
-npm start
+source .venv/bin/activate
+python app.py
 ```
 
 Открой http://127.0.0.1:3000/. Терминал должен оставаться открытым.
-`npm ci` нужен при первом запуске или после изменения зависимостей; для обычного
-повторного запуска достаточно `npm start`. Python-сервер больше не подходит для API.
+При первом запуске на другом компьютере сначала создай окружение и установи зависимости:
+`python3 -m venv .venv`, затем `source .venv/bin/activate` и
+`python -m pip install -r requirements.txt`.
 
-Чтобы создать администратора, открой второй терминал в той же папке и выполни
-`npm run admin:create`. Придумай email, имя и пароль от 10 символов. Пароль виден при
-вводе в терминале — сделай это до демонстрации. Затем войди через Sign in на сайте.
+Чтобы создать администратора, открой второй терминал в той же папке, активируй
+окружение и выполни `python -m server.create_admin`. Введи email, имя и пароль от
+10 символов. Пароль при вводе скрыт. Затем войди через Sign in на сайте.
 Самостоятельно выбрать права администратора при регистрации нельзя.
 
 ## Что изменилось
@@ -31,12 +32,12 @@ npm start
 
 ## Где что искать
 
-- `server/index.cjs`: начало работы — открыть базу, запустить сервер на порту 3000.
-- `server/database.cjs`: CREATE TABLE создаёт таблицы users, sessions, venues, tables,
+- `app.py`: начало работы — открыть базу, запустить сервер на порту 3000.
+- `server/schema.sql` и `server/database.py`: CREATE TABLE создаёт таблицы users, sessions, venues, tables,
   bookings. IF NOT EXISTS сохраняет существующие данные при повторном запуске.
-- `server/app.cjs`: POST /api/bookings создаёт бронь, PUT изменяет её, маршрут
-  /cancel отменяет. GET отдаёт данные. Функция owns проверяет владельца или админа.
-- `server/auth.cjs`: пароль превращается в хеш с индивидуальной солью. При входе
+- `server/app.py`: POST /api/bookings создаёт бронь, PUT изменяет её, маршрут
+  /cancel отменяет. GET отдаёт данные. Функция get_booking проверяет владельца или админа.
+- `server/auth.py`: пароль превращается в хеш с индивидуальной солью. При входе
   сравниваются хеши. Открытый пароль не записывается в базу.
 - `js/api.js`: fetch отправляет запрос; await ждёт ответ. При ошибке показывается
   сообщение, а не ложное подтверждение.
@@ -49,6 +50,18 @@ npm start
   сервера. Каждые пять секунд повторяет запрос, пока вкладка видима.
 - `js/account.js`: вход, регистрация, профиль, список бронирований.
 
+## Как читать Python-код
+
+- `@app.post('/api/bookings')` связывает адрес запроса с функцией `create_booking`.
+- `g.body` — данные формы, которые пришли как JSON. `g` хранит данные текущего запроса.
+- `validate()` проверяет поля на сервере, даже если браузер уже их проверил.
+- `with transaction(db()):` объединяет проверку занятости и сохранение в одну операцию.
+- `db().execute(...)` выполняет SQL. Знаки `?` — места для безопасной подстановки значений.
+- `jsonify(...)` отправляет ответ интерфейсу в формате JSON.
+- `APIError(409, ...)` возвращает понятную ошибку, например если стол уже занят.
+- `sqlite3` — встроенный модуль Python для работы с базой. Flask принимает HTTP-запросы,
+  а Waitress обслуживает приложение. Оформление страниц по-прежнему HTML/CSS/JavaScript.
+
 ## Как доказать, что это backend
 
 1. Открой сайт в обычном браузере как клиент и в другом браузере как администратор.
@@ -57,7 +70,7 @@ npm start
 4. Измени бронь. ID остаётся прежним, админка получает изменения.
 5. Отмени бронь. Запись остаётся со статусом Cancelled, стол освобождается.
 6. Перезапусти сервер. Бронь всё ещё находится в базе.
-7. Покажи `npm test`: тесты используют отдельную временную базу.
+7. Покажи `python -m unittest discover -s tests -p 'test_*.py' -v`: тесты используют отдельную временную базу.
 
 ## Вопросы преподавателя
 
@@ -95,7 +108,7 @@ npm start
 ## Короткое выступление на английском
 
 My contribution connects the booking and confirmation flow to a real backend.
-I use Node.js and Express for the API, and SQLite to store accounts and bookings.
+I use Python and Flask for the API, and SQLite to store accounts and bookings.
 When a customer confirms a booking, the server validates the data, checks table
 availability and saves the reservation. The administrator can see the same booking
 from another browser. Customers can edit or cancel their reservations. Cancellation
