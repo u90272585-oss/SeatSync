@@ -22,11 +22,6 @@
       render();
     });
     card.append(button);
-    const map = document.createElement('a');
-    map.className = 'venue-map-link'; map.textContent = 'Find on Google Maps ↗';
-    map.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue.name + ' Almaty')}`;
-    map.target = '_blank'; map.rel = 'noopener noreferrer';
-    card.querySelector('.almaty-card-body').append(map);
   }
   function render() {
     let count = 0;

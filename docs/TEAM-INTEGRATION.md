@@ -1,13 +1,13 @@
 # Team integration — 17 October 2026
 
-Work branch: `codex/team-integration-auth`, based on main `50175e2`.
+Developed on `codex/team-integration-auth`, based on main `50175e2`; approved for main.
 
 ## Source work and decisions
 
 - Darina: `origin/darina-homepage` at `b0713dc`. Ported discovery search,
-  category filtering, favorites and Google Maps search links onto the existing
-  homepage, keeping the eight image/menu/detail cards and adding Vanilla from
-  the shared catalogue. Her branch contained unresolved conflict markers, so
+  category filtering and favorites onto the existing homepage, keeping the eight
+  image/menu/detail cards. Google Maps links and the Vanilla card were removed
+  after review, as requested. Her branch contained unresolved conflict markers, so
   its entire HTML was not copied over the working page. Search/favorites needed
   implementation, not just markup. Legacy homepage files lead to the single home.
 - Uldana: existing booking, edit/cancel, confirmation, venue/menu pages retained.
@@ -33,7 +33,7 @@ API (rather than copying only a SQLite file while WAL writes are active).
 
 The published server has not been updated by this integration. Preview uses a
 separate copy of the local database; preview activity does not modify the original
-`data/seatsync.sqlite`. Review before merging and updating PythonAnywhere.
+`data/seatsync.sqlite`. The main update is approved; PythonAnywhere requires a separate code update and Reload.
 
 ## Verification
 
@@ -53,7 +53,7 @@ Chrome emulation does not constitute testing on all physical devices.
 
 ## Demonstration
 
-1. Open the homepage signed out, search a venue, save a favorite, open its menu/map.
+1. Open the homepage signed out, search a venue, save a favorite, open its menu.
 2. Press Book a table. Register (or choose Sign in for an existing account).
 3. Select a future date, time, table and accept terms. Confirm the booking.
 4. In a second browser/profile sign in as admin. Find the same booking.
@@ -62,5 +62,7 @@ Chrome emulation does not constitute testing on all physical devices.
 7. Open SQLite tables users/venues/tables/bookings/venue_tables to explain storage.
 
 Demo venue layouts/capacities are illustrative; no real restaurant booking,
-payment, verification email or recovery email is sent. Maps open external Google
-Maps searches. Favorites are per device, not synchronized account data.
+payment, verification email or recovery email is sent. Favorites are per device, not synchronized account data.
+
+After review, the home and admin headers use the original SeatSync brandbook icon
+and matching two-color wordmark.

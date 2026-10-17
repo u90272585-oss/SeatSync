@@ -19,7 +19,7 @@ body { overflow-x: clip; }
 .table-layout { max-width: 100%; }
 .footer-links { flex-wrap: wrap; justify-content: center; }
 @media(max-width:360px) { .hero h1 { font-size: 36px; } .table-card { padding:20px; } }
-/* Search, categories, map links and device favorites from Darina's updated home. */
+/* Search, categories and device favorites from Darina's updated home. */
 .discovery-controls { margin:24px 0; }
 .discovery-controls label { display:block; font-weight:600; margin-bottom:10px; }
 .discovery-search { display:flex; gap:10px; max-width:650px; }
@@ -32,7 +32,4 @@ body { overflow-x: clip; }
 .almaty-card[hidden],#discovery-empty[hidden] { display:none!important; }
 .favorite-btn { position:absolute; top:12px; right:12px; width:44px; height:44px; border:1px solid var(--border); border-radius:50%; background:white; color:var(--purple); font-size:27px; cursor:pointer; box-shadow:0 3px 15px #20124418; }
 .favorite-btn[aria-pressed="true"] { background:var(--purple); color:white; }
-.venue-map-link { display:inline-block; color:var(--purple); font-size:13px; margin-top:16px; text-decoration:underline; text-underline-offset:3px; }
 .discovery-controls button:focus-visible,.favorite-btn:focus-visible { outline:3px solid #5575ff; outline-offset:3px; }
-
-.vanilla-cover { display:flex; align-items:center; justify-content:center; min-height:200px; aspect-ratio:3/2; background:linear-gradient(135deg,#f8efdd,#e9dff5); color:#58428f; font-size:32px; font-weight:700; text-align:center; }

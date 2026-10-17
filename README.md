@@ -48,7 +48,7 @@ Existing administrator accounts continue to work after the Python migration.
 
 ### Browsing and customer accounts
 
-Restaurants, menus, search, categories, device favorites and map links are public.
+Restaurants, menus, search, categories, device favorites are public.
 To book, a visitor registers or signs in first. The chosen venue/date/time is preserved
 through authentication. The API rejects anonymous creation, editing and cancellation.
 Existing guest bookings from earlier versions can still be attached to an account by
@@ -180,8 +180,8 @@ For backups, stop the app and copy the entire data directory, or use SQLite's ba
 
 Existing public site: https://uuulllluo324932ujdsnanc.pythonanywhere.com/
 
-This integration branch is a local preview until reviewed and merged. The public server
-continues using its previously deployed code. Local and hosted SQLite files are separate;
+The integrated version is in `main`. The public server continues using its previously
+deployed code until updated and reloaded. Local and hosted SQLite files are separate;
 Git transfers code, not account or booking data. See [integration notes](docs/TEAM-INTEGRATION.md)
 for the source branches, decisions and verification.
 
