@@ -35,8 +35,9 @@
   function nextPage() {
     const next = new URLSearchParams(location.search).get('next');
     if (next) {
-      const target = new URL(next, location.href);
-      if (target.origin === location.origin && target.pathname === new URL('confirmation.html', location.href).pathname) return target.href;
+      let target;
+      try { target = new URL(next, location.href); } catch { return 'my-bookings.html'; }
+      if (target.origin === location.origin && ['/pages/booking.html', '/pages/confirmation.html', '/pages/my-bookings.html'].includes(target.pathname)) return target.href;
     }
     return 'my-bookings.html';
   }
@@ -51,8 +52,9 @@
       login.elements.password.autocomplete = register ? 'new-password' : 'current-password';
       login.querySelector('button[type=submit]').textContent = register ? 'Create account →' : 'Sign in →';
     };
+    if (new URLSearchParams(location.search).get('mode') === 'register') login.elements.mode.value = 'register';
     login.addEventListener('change', updateMode); updateMode();
-    document.querySelector('#guest-continue').href = new URLSearchParams(location.search).has('next') ? nextPage() : 'booking.html';
+    if (user && new URLSearchParams(location.search).has('next')) { location.replace(nextPage()); return; }
     login.addEventListener('submit', async event => {
       event.preventDefault();
       const button = login.querySelector('button[type=submit]'); button.disabled = true;
@@ -60,7 +62,7 @@
         const result = await api.request(`/auth/${login.elements.mode.value}`, 'POST', {
           name: login.elements.name.value.trim(), email: login.elements.email.value.trim(), password: login.elements.password.value
         });
-        location.href = result.user.role === 'admin' ? '../admin.dashbroad.html' : nextPage();
+        location.href = new URLSearchParams(location.search).has('next') ? nextPage() : result.user.role === 'admin' ? '../admin.dashbroad.html' : nextPage();
       } catch (error) { notify(document.querySelector('#signin-message'), error.message); }
       finally { button.disabled = false; }
     });
@@ -86,6 +88,7 @@
   }
   const list = document.querySelector('#booking-list');
   if (!list) return;
+  if (!user) return;
   document.querySelector('#bookings-signed-out').hidden = true;
   document.querySelector('#bookings-signed-in').hidden = false;
   function render() {

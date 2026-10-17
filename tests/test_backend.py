@@ -32,19 +32,22 @@ class BackendTests(unittest.TestCase):
         return client.open(path, method=method, json=body or {}, headers=HEADERS)
 
     def create(self, client=None, **fields):
-        return self.send(client or self.a, '/api/bookings', {**BOOKING, **fields})
+        client = client or self.a
+        if not client.get('/api/session').json['user']:
+            self.register(client, f'{id(client)}@example.com')
+        return self.send(client, '/api/bookings', {**BOOKING, **fields})
 
     def register(self, client, email='test@example.com'):
         return self.send(client, '/api/auth/register', dict(name='Uldana', email=email,
                          password='test-password-123', role='admin'))
 
-    def test_guest_crud_ownership_and_persistence(self):
+    def test_customer_crud_ownership_and_persistence(self):
         result = self.create()
         self.assertEqual(result.status_code, 201)
         record = result.json
         url = '/api/bookings/' + record['id']
         self.assertEqual(self.b.get(url).status_code, 404)
-        self.assertEqual(self.send(self.b, url + '/cancel').status_code, 404)
+        self.assertEqual(self.send(self.b, url + '/cancel').status_code, 401)
         self.assertEqual(self.b.get('/api/bookings').json, [])
         self.assertEqual(self.send(self.a, url, {**BOOKING, 'time': '13:00', 'version': 1}, 'PUT').status_code, 200)
         self.assertEqual(self.send(self.a, url, {**BOOKING, 'version': 1}, 'PUT').status_code, 409)
@@ -81,7 +84,14 @@ class BackendTests(unittest.TestCase):
         self.assertEqual(self.b.get(query + '&exclude=' + result['id']).status_code, 404)
 
     def test_registration_claims_guest_cross_browser_login_and_logout(self):
-        record = self.create().json
+        # Existing pre-integration guest reservations remain claimable on registration.
+        db = connect(self.path)
+        token = self.a.get_cookie('seatsync_session').value
+        db.execute('''INSERT INTO bookings(id,venue,date,time,start_minute,end_minute,guests,table_id,name,status,guest_session,created_at,updated_at)
+                    VALUES ('legacy-booking','skyberry','2027-03-01','14:00',840,930,2,'1','Guest','confirmed',?,'old','old')''',
+                   (hashlib.sha256(token.encode()).hexdigest(),))
+        db.close()
+        record = {'id':'legacy-booking'}
         session = self.a.get_cookie('seatsync_session').value
         result = self.register(self.a)
         self.assertEqual(result.json['user']['role'], 'customer')
@@ -105,7 +115,41 @@ class BackendTests(unittest.TestCase):
         record = self.create().json
         self.assertEqual(self.b.get('/api/bookings').json[0]['id'], record['id'])
         self.assertEqual(self.send(self.b, '/api/bookings/' + record['id'] + '/cancel').status_code, 200)
-        self.assertEqual(self.create(self.b, name='Walk-in').json['name'], 'Walk-in')
+        self.assertEqual(self.create(self.b, customer_email=f'{id(self.a)}@example.com').json['name'], 'Uldana')
+        self.assertEqual(len(self.a.get('/api/bookings').json), 2)
+        self.assertEqual(self.create(self.b, customer_email='unknown@example.com').status_code, 400)
+
+    def test_guest_cannot_create_and_customer_cannot_manage_tables_or_export(self):
+        self.assertEqual(self.send(self.a, '/api/bookings', BOOKING).status_code, 401)
+        self.assertEqual(self.a.get('/api/admin/bookings/export').status_code, 401)
+        self.register(self.a)
+        self.assertEqual(self.a.get('/api/admin/bookings/export').status_code, 403)
+        self.assertEqual(self.send(self.a, '/api/admin/tables/skyberry/1', {'blocked':True}, 'PATCH').status_code, 403)
+        self.assertEqual(self.a.get('/api/admin/tables?venue=skyberry').status_code, 403)
+
+    def test_table_changes_are_per_venue_persistent_and_respect_bookings(self):
+        self.register(self.b, 'manager@example.com')
+        db = connect(self.path)
+        db.execute("UPDATE users SET role='admin' WHERE email='manager@example.com'")
+        db.close()
+        url = '/api/admin/tables/skyberry/1'
+        self.assertEqual(self.send(self.b,url,{'blocked':True},'PATCH').status_code,200)
+        self.assertEqual(self.create().status_code,400)
+        self.assertEqual(self.create(venue='aqqu').status_code,201)
+        self.assertEqual(self.send(self.b,url,{'blocked':False,'seats':4},'PATCH').status_code,200)
+        self.assertEqual(self.create(guests=4).status_code,201)
+        self.assertEqual(self.send(self.b,url,{'blocked':True},'PATCH').status_code,409)
+        self.assertEqual(self.send(self.b,url,{'seats':2},'PATCH').status_code,409)
+        self.assertEqual(self.send(self.b,url,{'seats':True},'PATCH').status_code,400)
+        restarted = create_app(self.path, clock=lambda: NOW).test_client()
+        table = restarted.get('/api/availability?venue=skyberry&date=2027-03-01&time=16:00').json[0]
+        self.assertEqual(table['seats'],4)
+        self.assertTrue(table['available'])
+        report = self.b.get('/api/admin/bookings/export')
+        self.assertEqual(report.status_code,200)
+        self.assertIn('attachment;',report.headers['Content-Disposition'])
+        self.assertIn('skyberry',report.text)
+        self.assertNotIn('password_hash',report.text)
 
     def test_node_password_and_cookie_compatibility(self):
         fixture = json.loads((Path(__file__).parent / 'node-auth-fixture.json').read_text())

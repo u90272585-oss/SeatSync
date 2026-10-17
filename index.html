@@ -6,7 +6,7 @@
 <script src="js/venues.js?v=backend1" defer></script>
 <script src="js/booking-rules.js?v=backend1" defer></script>
 <script src="js/booking-storage.js?v=backend1" defer></script>
-<script src="js/account.js?v=backend1" defer></script>
+<script src="js/account.js?v=integration1" defer></script>
 
     <meta charset="UTF-8">
 
@@ -58,7 +58,7 @@
                     Home
                 </a>
 
-                <a href="#discover">
+                <a href="#venues">
                     Discover
                 </a>
 
@@ -263,6 +263,18 @@
 <section class="container venue-discovery" id="venues" aria-labelledby="venues-title">
   <div class="section-title"><div><span class="eyebrow">Your city. Your next table.</span><h2 id="venues-title">Find your place in Almaty</h2></div><span class="city-label">Almaty <span aria-hidden="true">↗</span></span></div>
   <p class="discovery-intro">Coffee dates, slow breakfasts, evenings together. Find a table for your kind of day.</p>
+  <div class="discovery-controls">
+    <label for="restaurant-search">Find a restaurant or café</label>
+    <div class="discovery-search"><input id="restaurant-search" type="search" placeholder="Search by name or category" autocomplete="off"><button id="clear-search" type="button">Clear</button></div>
+    <div class="category-filters" role="group" aria-label="Filter venues">
+      <button type="button" data-category="all" aria-pressed="true">All places</button>
+      <button type="button" data-category="cafe" aria-pressed="false">Cafés &amp; coffee</button>
+      <button type="button" data-category="breakfast" aria-pressed="false">Breakfast</button>
+      <button type="button" data-category="restaurant" aria-pressed="false">Restaurants</button>
+      <button type="button" data-category="favorites" aria-pressed="false">♡ Favorites</button>
+    </div>
+    <p id="discovery-results" role="status" aria-live="polite"></p>
+  </div>
   <div class="venue-grid almaty-grid">
     <article class="almaty-card skyberry-card">
       <a class="venue-cover" href="pages/skyberry.html" aria-label="Explore Skyberry menu and location">
@@ -328,102 +340,17 @@
         <div class="venue-card-actions"><a class="venue-book-link" href="pages/booking.html?venue=procoffee">Book a table <span aria-hidden="true">→</span></a><a class="venue-social-link" href="https://www.instagram.com/procoffee.almaty/" target="_blank" rel="noopener noreferrer" aria-label="Procoffee on Instagram (opens in a new tab)">Instagram ↗</a></div>
       </div>
     </article>
+    <article class="almaty-card vanilla-card">
+      <div class="venue-cover vanilla-cover" aria-hidden="true"><span>Vanilla<br>Coffee Shop</span></div>
+      <div class="almaty-card-body"><span class="venue-type">Coffee Shop</span><h3>Vanilla Coffee Shop</h3>
+        <p class="venue-demo-note">Explore the location or choose a table in our demo.</p>
+        <div class="venue-card-actions"><a class="venue-book-link" href="pages/booking.html?venue=vanilla">Book a table <span aria-hidden="true">→</span></a></div>
+      </div>
+    </article>
   </div>
+  <p id="discovery-empty" hidden>No places match your selection. Try another name or choose All places.</p>
   <p class="venue-demo-note">Atmosphere images are AI-created illustrations, not photographs of the listed venues. SeatSync is a student demo; bookings are not sent to the venues.</p>
 </section>
-        <!-- DISCOVER -->
-
-        <section class="section discover"
-                 id="discover">
-
-            <div class="container">
-
-
-                <div class="section-heading">
-
-                    <p class="eyebrow">
-                        DISCOVER
-                    </p>
-
-                    <h2>
-                        Find your perfect place
-                    </h2>
-
-                    <p>
-                        Choose a place that matches
-                        your mood and occasion.
-                    </p>
-
-                </div>
-
-
-
-                <div class="category-grid">
-
-
-                    <div class="category-card">
-
-                        <div class="category-icon">
-                            ✦
-                        </div>
-
-                        <h3>
-                            Fine Dining
-                        </h3>
-
-                        <p>
-                            Elegant places for special evenings.
-                        </p>
-
-                    </div>
-
-
-
-                    <div class="category-card featured">
-
-                        <div class="category-icon">
-                            ◌
-                        </div>
-
-                        <h3>
-                            Cozy Cafés
-                        </h3>
-
-                        <p>
-                            Relaxed spaces for coffee
-                            and conversations.
-                        </p>
-
-                    </div>
-
-
-
-                    <div class="category-card">
-
-                        <div class="category-icon">
-                            ✧
-                        </div>
-
-                        <h3>
-                            Romantic
-                        </h3>
-
-                        <p>
-                            Beautiful tables for memorable
-                            moments.
-                        </p>
-
-                    </div>
-
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
         <!-- HOW IT WORKS -->
 
         <section class="section how"
@@ -475,7 +402,7 @@
                         </span>
 
                         <h3>
-                            Choose a table
+                            Sign in &amp; choose a table
                         </h3>
 
                         <p>
@@ -586,7 +513,7 @@
                     Home
                 </a>
 
-                <a href="#discover">
+                <a href="#venues">
                     Discover
                 </a>
 
@@ -614,6 +541,7 @@
 
     <script src="darina-main.js"></script>
 
+<script src="js/discovery.js?v=integration1" defer></script>
 </body>
 
 </html>

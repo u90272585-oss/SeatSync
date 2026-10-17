@@ -1,4 +1,6 @@
 """Flask routes: sessions, accounts and table reservations."""
+import csv
+import io
 import hashlib
 import os
 import re
@@ -10,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
-from flask import Flask, g, jsonify, request, send_from_directory
+from flask import Flask, Response, g, jsonify, request, send_from_directory
 from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 from . import rules
@@ -206,6 +208,24 @@ def create_app(database_path=None, *, production=None, clock=None):
     def admin():
         return g.user is not None and g.user['role'] == 'admin'
 
+    def require_account():
+        if not g.user:
+            raise APIError(401, 'Create an account or sign in to book a table.')
+
+    def require_admin():
+        require_account()
+        if not admin():
+            raise APIError(403, 'Administrator access is required.')
+
+    def venue_tables(venue):
+        if not isinstance(venue, str):
+            return rules.TABLES
+        overrides = {row['table_id']: row for row in db().execute(
+            'SELECT * FROM venue_tables WHERE venue=?', (venue,))}
+        return [{**table, **({'occupied': bool(overrides[table['id']]['blocked']),
+                             'seats': overrides[table['id']]['seats']} if table['id'] in overrides else {})}
+                for table in rules.TABLES]
+
     def get_booking(booking_id):
         row = db().execute('SELECT * FROM bookings WHERE id=?', (booking_id,)).fetchone()
         if row is None:
@@ -222,7 +242,7 @@ def create_app(database_path=None, *, production=None, clock=None):
 
     def validate():
         try:
-            return rules.validate(g.body, clock())
+            return rules.validate(g.body, clock(), venue_tables(g.body.get('venue')))
         except ValueError as error:
             raise APIError(400, str(error))
 
@@ -245,7 +265,7 @@ def create_app(database_path=None, *, production=None, clock=None):
             raise APIError(400, 'Select a valid venue, date and time.')
         exclude = get_booking(request.args['exclude'])['id'] if 'exclude' in request.args else ''
         return jsonify([{**table, 'available': not table.get('occupied', False) and not bool(conflict(
-            dict(venue=venue, date=date, time=time_value, table=table['id']), exclude))} for table in rules.TABLES])
+            dict(venue=venue, date=date, time=time_value, table=table['id']), exclude))} for table in venue_tables(venue)])
 
     @app.get('/api/bookings')
     def bookings():
@@ -264,10 +284,18 @@ def create_app(database_path=None, *, production=None, clock=None):
 
     @app.post('/api/bookings')
     def create_booking():
+        require_account()
         data = validate()
         booking_id, stamp = str(uuid4()), clock().isoformat()
-        name = valid_name(g.body.get('name', g.user['name'])) if admin() else g.user['name'] if g.user else 'Guest'
+        owner = g.user
+        if admin() and g.body.get('customer_email'):
+            owner = db().execute('SELECT * FROM users WHERE email=? AND role=?',
+                                 (str(g.body['customer_email']).strip().lower(), 'customer')).fetchone()
+            if owner is None:
+                raise APIError(400, 'No customer account has this email. Ask the customer to register first.')
+        name = owner['name']
         with transaction(db()):
+            data = validate()
             if conflict(data):
                 raise APIError(409, 'This table is already reserved during your visit. Choose another table or time.')
             db().execute('''INSERT INTO bookings
@@ -275,11 +303,12 @@ def create_app(database_path=None, *, production=None, clock=None):
                 VALUES (?,?,?,?,?,?,?,?,?,'confirmed',?,?,?,?)''',
                 (booking_id, data['venue'], data['date'], data['time'], minutes(data['time']),
                  minutes(data['time']) + 90, int(data['guests']), data['table'], name,
-                 g.user['id'] if g.user and not admin() else None, g.session['id'], stamp, stamp))
+                 owner['id'], g.session['id'], stamp, stamp))
         return jsonify(public_booking(get_booking(booking_id))), 201
 
     @app.put('/api/bookings/<booking_id>')
     def edit_booking(booking_id):
+        require_account()
         data = validate()
         with transaction(db()):
             previous = get_booking(booking_id)
@@ -289,6 +318,7 @@ def create_app(database_path=None, *, production=None, clock=None):
                 raise APIError(409, 'Past bookings cannot be edited.')
             if type(g.body.get('version')) is not int or g.body['version'] != previous['version']:
                 raise APIError(409, 'This booking changed elsewhere. Reload before editing.')
+            data = validate()
             if conflict(data, booking_id):
                 raise APIError(409, 'This table is already reserved during your visit. Choose another table or time.')
             db().execute('''UPDATE bookings SET venue=?,date=?,time=?,start_minute=?,end_minute=?,guests=?,table_id=?,
@@ -299,6 +329,7 @@ def create_app(database_path=None, *, production=None, clock=None):
 
     @app.post('/api/bookings/<booking_id>/cancel')
     def cancel_booking(booking_id):
+        require_account()
         with transaction(db()):
             previous = get_booking(booking_id)
             if previous['status'] != 'cancelled':
@@ -307,6 +338,52 @@ def create_app(database_path=None, *, production=None, clock=None):
                 db().execute("UPDATE bookings SET status='cancelled',version=version+1,updated_at=? WHERE id=?",
                              (clock().isoformat(), booking_id))
         return jsonify(public_booking(get_booking(booking_id)))
+
+    @app.get('/api/admin/tables')
+    def admin_tables():
+        require_admin()
+        venue = request.args.get('venue')
+        if venue not in rules.CATALOG['venues']:
+            raise APIError(400, 'Choose a venue.')
+        return jsonify(venue_tables(venue))
+
+    @app.patch('/api/admin/tables/<venue>/<table_id>')
+    def update_table(venue, table_id):
+        require_admin()
+        if venue not in rules.CATALOG['venues']:
+            raise APIError(404, 'Venue not found.')
+        with transaction(db()):
+            table = next((t for t in venue_tables(venue) if t['id'] == table_id), None)
+            if not table:
+                raise APIError(404, 'Table not found.')
+            blocked = g.body.get('blocked', table.get('occupied', False))
+            seats = g.body.get('seats', table['seats'])
+            if type(blocked) is not bool or type(seats) is not int or not 1 <= seats <= 6:
+                raise APIError(400, 'Capacity must be 1–6 and blocked must be true or false.')
+            current = clock().astimezone(rules.ALMATY)
+            outstanding = db().execute("""SELECT guests FROM bookings WHERE venue=? AND table_id=?
+                AND status='confirmed' AND (date>? OR (date=? AND end_minute>?))""",
+                (venue, table_id, current.strftime('%Y-%m-%d'), current.strftime('%Y-%m-%d'),
+                 current.hour * 60 + current.minute)).fetchall()
+            if any(blocked or seats < row['guests'] for row in outstanding):
+                raise APIError(409, 'This change conflicts with an upcoming or ongoing reservation. Move or cancel it first.')
+            db().execute("""INSERT INTO venue_tables VALUES (?,?,?,?) ON CONFLICT(venue,table_id)
+                DO UPDATE SET seats=excluded.seats,blocked=excluded.blocked""", (venue, table_id, seats, int(blocked)))
+        return jsonify(venue_tables(venue))
+
+    @app.get('/api/admin/bookings/export')
+    def export_bookings():
+        require_admin()
+        output = io.StringIO(newline='')
+        writer = csv.writer(output)
+        fields = ('id', 'venue', 'date', 'time', 'table_id', 'guests', 'name', 'status')
+        writer.writerow(fields)
+        for row in db().execute('SELECT * FROM bookings ORDER BY date,time'):
+            # Prevent spreadsheet formula interpretation of customer-controlled cells.
+            writer.writerow(["'" + str(row[k]) if str(row[k]).startswith(('=', '+', '-', '@', '\t', '\r'))
+                             else row[k] for k in fields])
+        return Response('\ufeff' + output.getvalue(), mimetype='text/csv', headers={
+            'Content-Disposition': 'attachment; filename="seatsync-bookings.csv"'})
 
     @app.get('/')
     def home():

@@ -46,17 +46,19 @@ Then sign in at `/pages/account.html`; administrators open `/admin.dashbroad.htm
 There are no default admin credentials, public admin signup or browser role switches.
 Existing administrator accounts continue to work after the Python migration.
 
-### Guest and customer accounts
+### Browsing and customer accounts
 
-Guests can book without registering. A server-issued HttpOnly cookie grants access
-to the guest's bookings. Losing the cookie loses guest access, not the database row.
-Register or sign in in that browser to attach its anonymous bookings to the account.
-Customers can sign in on another browser to see their own bookings; administrators
-can manage all prototype bookings. Passwords are stored as salted scrypt hashes.
+Restaurants, menus, search, categories, device favorites and map links are public.
+To book, a visitor registers or signs in first. The chosen venue/date/time is preserved
+through authentication. The API rejects anonymous creation, editing and cancellation.
+Existing guest bookings from earlier versions can still be attached to an account by
+signing in from their original browser. No existing records are deleted.
+Customers see their own reservations across browsers; only database-assigned admins
+can manage all bookings. Passwords are salted scrypt hashes.
 
 ## Booking behavior
 
-Choose venue → date/time → guests → table → accept demo terms → confirm.
+Choose venue → register/sign in → date/time → guests → table → accept demo terms → confirm.
 The backend independently checks all submitted fields and saves inside a SQLite
 transaction. A 90-minute visit cannot overlap another active booking at the same
 venue/table. An adjacent visit starting at the previous visit's end is allowed.
@@ -68,7 +70,22 @@ be cancelled. All booking times use `Asia/Almaty`, regardless of device timezone
 
 Confirmation, My bookings and the admin dashboard poll the API every five seconds
 while visible, and on focus. They retain the existing designs. There is no WebSocket
-or live support chat. Only unfinished form drafts remain in localStorage.
+or live support chat. Unfinished form drafts and device favorites remain in localStorage; bookings stay in SQLite.
+
+## Integrated administration
+
+The shared dashboard retains Malika's layout and adds working venue/date/status/search
+filters, reservation creation for a registered customer email, edit/cancel, CSV download,
+active-booking notifications, date selection and per-venue table block/capacity controls.
+The dashboard metrics describe the selected venue/date; the floor plan uses the selected
+time. Export includes all bookings visible to the administrator.
+
+Table overrides are stored in `venue_tables`, created automatically without changing
+existing reservations. Blocking a table or reducing its capacity is rejected if it conflicts
+with an upcoming or ongoing booking. Settings and reservations use the same SQLite
+write lock. Defaults (including unavailable tables 7–8) apply until an admin overrides them.
+Booking statuses are consistently `confirmed` and `cancelled`; there is no pending-approval
+workflow. Visits last 90 minutes. A cancelled booking is retained for history.
 
 ## Python code map
 
@@ -107,9 +124,13 @@ The API shares the website origin. Cross-origin writes are rejected; CORS is dis
 | `GET /api/availability?venue=skyberry&date=YYYY-MM-DD&time=14:00` | Table availability |
 | `GET /api/bookings` | Authorized bookings (all for admin) |
 | `GET /api/bookings/:id` | Authorized booking details |
-| `POST /api/bookings` | Create `{venue,date,time,guests,table}` |
+| `POST /api/bookings` | Signed-in creation `{venue,date,time,guests,table}`; admins may supply `customer_email` |
 | `PUT /api/bookings/:id` | Edit those fields, with current `version` |
 | `POST /api/bookings/:id/cancel` | Cancel a future booking |
+
+| `GET /api/admin/tables?venue=skyberry` | Administrator: current venue tables |
+| `PATCH /api/admin/tables/:venue/:table` | Administrator: `{blocked,seats}` |
+| `GET /api/admin/bookings/export` | Administrator: CSV attachment |
 
 Server-generated IDs and ownership cannot be set by a customer. Unauthorized IDs
 return 404, invalid input returns 400, occupied slots/stale edits return 409.
@@ -157,8 +178,12 @@ For backups, stop the app and copy the entire data directory, or use SQLite's ba
 
 ## Deployment
 
-**No public deployment has been created.** Localhost is only the local demonstration.
-A public live URL is still a separate midterm requirement.
+Existing public site: https://uuulllluo324932ujdsnanc.pythonanywhere.com/
+
+This integration branch is a local preview until reviewed and merged. The public server
+continues using its previously deployed code. Local and hosted SQLite files are separate;
+Git transfers code, not account or booking data. See [integration notes](docs/TEAM-INTEGRATION.md)
+for the source branches, decisions and verification.
 
 Use a Python 3.11+ host with HTTPS and a persistent writable disk. Install with
 `python -m pip install -r requirements.txt`, start with `python app.py`, one instance.
@@ -169,12 +194,12 @@ proxy trust for that host before publishing. The login rate limiter is process-l
 Multiple independent SQLite files or ephemeral disks are not suitable.
 
 `.env.example` documents variables. The app reads the process environment; copying
-that file does not automatically load it. No hosting service has been purchased or
-provisioned. Add a real public URL only after deployment and external verification.
+that file does not automatically load it. On PythonAnywhere, keep the existing virtualenv and WSGI setup, update the code after
+review, and use Web → Reload. Back up the database with SQLite backup before updating.
 
 ## Team, scope and defense
 
-Darina: original homepage. Malika: original admin UI. Uldana: booking, confirmation,
+Darina: homepage and updated discovery design. Malika: admin UI and management workflows. Uldana: booking, confirmation,
 cancellation and their integration. Each member must explain their own work and
 make their own meaningful commits; do not attribute another person's commits to them.
 

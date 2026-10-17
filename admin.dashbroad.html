@@ -5,7 +5,7 @@
 <script src="js/venues.js?v=backend1" defer></script>
 <script src="js/booking-rules.js?v=backend1" defer></script>
 <script src="js/booking-storage.js?v=backend1" defer></script>
-<script src="js/account.js?v=backend1" defer></script>
+<script src="js/account.js?v=integration1" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SeatSync — Reservation dashboard</title>
@@ -101,7 +101,16 @@
         .table-node:focus-visible { outline:3px solid #635bff; outline-offset:3px; }
         #bookingRows tr.is-selected { background: #f0edff; }
         @media (max-width: 420px) { main > .p-6 { padding:12px; } }
-    </style></head>
+    </style><style>
+main > header { flex-shrink:0; }
+@media(max-width:767px) {
+ main > header { position:static!important; height:auto!important; min-height:118px; flex:0 0 auto; }
+ main > header > .relative { width:100%; }
+ main > header > .flex { width:100%; justify-content:space-between; }
+ #bookingModal { padding:12px; overflow-y:auto; }
+ #bookingModal > div { max-height:90vh; overflow-y:auto; }
+}
+</style></head>
 <body class="min-h-screen flex flex-col antialiased">
 
     <div class="flex flex-1 w-full overflow-hidden">
@@ -137,27 +146,27 @@
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
+                    <a href="#bookingsTable" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
                         <i data-lucide="book-open" class="w-4 h-4 text-slate-500"></i>
                         <span>Bookings</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
+                    <a href="#floor-map" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
                         <i data-lucide="armchair" class="w-4 h-4 text-slate-500"></i>
                         <span>Tables</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
+                    <a href="#shared-date" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
                         <i data-lucide="calendar" class="w-4 h-4 text-slate-500"></i>
                         <span>Calendar</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
+                    <a href="#bookingsTable" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
                         <i data-lucide="users" class="w-4 h-4 text-slate-500"></i>
                         <span>Customers</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
+                    <a href="#metric-0" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
                         <i data-lucide="bar-chart-3" class="w-4 h-4 text-slate-500"></i>
                         <span>Analytics</span>
                     </a>
-                    <a href="#" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
+                    <a href="pages/account.html" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-white/60 transition-all">
                         <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
                         <span>Settings</span>
                     </a>
@@ -203,7 +212,7 @@
                 <!-- Right Header Tools -->
                 <div class="flex items-center gap-4">
                     <!-- Notification Icon -->
-                    <button class="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all">
+                    <button id="admin-notifications" aria-label="Show active booking count" class="relative p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-all">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></span>
                     </button>
@@ -214,17 +223,17 @@
                             <i data-lucide="user" class="w-5 h-5 text-brand-600"></i>
                         </div>
                         <div class="text-left hidden sm:block">
-                            <div class="text-xs font-bold text-slate-800">Hello, Malika</div>
+                            <div class="text-xs font-bold text-slate-800" id="admin-greeting">Administrator</div>
                             <div class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">owner</div>
                         </div>
                     </div>
 
                     <!-- Date Selector -->
-                    <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-200/70 transition-all">
+                    <button id="header-calendar" type="button" aria-label="Choose dashboard date" class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer hover:bg-slate-200/70 transition-all">
                         <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-500"></i>
                         <span><span id="admin-date-label"></span></span>
                         <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
-                    </div>
+                    </button>
                 </div>
             </header>
 
@@ -233,8 +242,8 @@
 
                 <!-- Welcome Greeting -->
                 <div>
-                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Good evening, Malika!</h1>
-                    <p class="text-xs font-medium text-brand-600/80 mt-0.5">Manage reservations, tables and guests in one place. <a href="index.html" class="underline">Home</a> · <a href="pages/account.html" class="underline">Profile / switch role</a></p>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight" id="admin-title">Reservations dashboard</h1>
+                    <p class="text-xs font-medium text-brand-600/80 mt-0.5">Manage reservations, tables and guests in one place. <a href="index.html" class="underline">Home</a> · <a href="pages/account.html" class="underline">Profile / sign out</a></p>
                 </div>
 
                 <section class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
@@ -539,15 +548,15 @@
                                     <i data-lucide="calendar-plus" class="w-4 h-4 text-brand-600"></i>
                                     <span class="text-[10px] font-semibold text-slate-700 group-hover:text-brand-600">Add booking</span>
                                 </button>
-                                <button class="p-2 border border-slate-200/80 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:bg-brand-50 hover:border-brand-200 transition-all group">
+                                <button id="block-table" class="p-2 border border-slate-200/80 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:bg-brand-50 hover:border-brand-200 transition-all group">
                                     <i data-lucide="ban" class="w-4 h-4 text-brand-600"></i>
                                     <span class="text-[10px] font-semibold text-slate-700 group-hover:text-brand-600">Block table</span>
                                 </button>
-                                <button class="p-2 border border-slate-200/80 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:bg-brand-50 hover:border-brand-200 transition-all group">
+                                <button id="view-calendar" class="p-2 border border-slate-200/80 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:bg-brand-50 hover:border-brand-200 transition-all group">
                                     <i data-lucide="calendar" class="w-4 h-4 text-brand-600"></i>
                                     <span class="text-[10px] font-semibold text-slate-700 group-hover:text-brand-600">View calendar</span>
                                 </button>
-                                <button class="p-2 border border-slate-200/80 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:bg-brand-50 hover:border-brand-200 transition-all group">
+                                <button id="export-report" class="p-2 border border-slate-200/80 rounded-xl flex flex-col items-center justify-center text-center gap-1 hover:bg-brand-50 hover:border-brand-200 transition-all group">
                                     <i data-lucide="file-text" class="w-4 h-4 text-brand-600"></i>
                                     <span class="text-[10px] font-semibold text-slate-700 group-hover:text-brand-600">Export report</span>
                                 </button>
@@ -556,6 +565,9 @@
 
                         <!-- Handwritten Decorative Note -->
                         <div class="pl-2">
+ <label for="table-capacity" class="block text-sm font-semibold">Selected table capacity</label>
+ <input id="table-capacity" type="number" min="1" max="6" class="border rounded-xl p-2 w-20">
+ <button id="save-capacity" type="button" class="border rounded-xl p-2">Save capacity</button>
                             <p class="font-hand text-2xl font-bold text-brand-900 leading-tight transform rotate-2">
                                 More good moments await! <span class="text-pink-500">♡</span>
                             </p>
@@ -577,8 +589,8 @@
             </div>
             <p id="admin-form-error" class="text-xs text-rose-700" role="alert"></p><form id="addBookingForm" onsubmit="handleFormSubmit(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Customer Name</label>
-                    <input type="text" id="custName" maxlength="60" required placeholder="e.g. Aigerim S." class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                    <label for="custName" class="block font-semibold text-slate-700 mb-1">Registered customer email</label>
+                    <input type="email" id="custName" maxlength="254" required placeholder="customer@example.com" class="w-full px-3 py-2 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -611,6 +623,6 @@
     
     
     
-    <script src="js/admin-bookings.js?v=backend1" defer></script>
+    <script src="js/admin-bookings.js?v=integration1" defer></script>
 </body>
 </html>

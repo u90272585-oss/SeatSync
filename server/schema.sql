@@ -22,3 +22,9 @@ PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000;
     CREATE INDEX IF NOT EXISTS booking_user ON bookings(user_id);
     CREATE INDEX IF NOT EXISTS booking_guest ON bookings(guest_session);
   
+
+CREATE TABLE IF NOT EXISTS venue_tables (
+  venue TEXT NOT NULL REFERENCES venues(id), table_id TEXT NOT NULL REFERENCES tables(id),
+  seats INTEGER NOT NULL CHECK(seats BETWEEN 1 AND 6), blocked INTEGER NOT NULL CHECK(blocked IN (0,1)),
+  PRIMARY KEY (venue, table_id)
+);

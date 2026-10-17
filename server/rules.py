@@ -23,7 +23,7 @@ def is_future(date, time, now):
     return f'{date}T{time}' > now.astimezone(ALMATY).strftime('%Y-%m-%dT%H:%M')
 
 
-def validate(body, now):
+def validate(body, now, tables=None):
     booking = {key: body.get(key) for key in ('venue', 'date', 'time')}
     booking.update(guests=str(body.get('guests', '')), table=str(body.get('table', '')))
     if not isinstance(booking['venue'], str) or booking['venue'] not in CATALOG['venues']:
@@ -35,7 +35,7 @@ def validate(body, now):
         raise ValueError('Choose a future time between 09:00 and 18:30 (Almaty time).')
     if not re.fullmatch(r'[1-6]', booking['guests']):
         raise ValueError('Please choose between 1 and 6 guests.')
-    table = next((t for t in TABLES if t['id'] == booking['table']), None)
+    table = next((t for t in (TABLES if tables is None else tables) if t['id'] == booking['table']), None)
     if not table or table.get('occupied') or table['seats'] < int(booking['guests']):
         raise ValueError('Please select an available table with enough seats for your group.')
     return booking

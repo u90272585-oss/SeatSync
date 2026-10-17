@@ -5,7 +5,7 @@
 <script src="../js/venues.js?v=backend1" defer></script>
 <script src="../js/booking-rules.js?v=backend1" defer></script>
 <script src="../js/booking-storage.js?v=backend1" defer></script>
-<script src="../js/account.js?v=password1" defer></script>
+<script src="../js/account.js?v=integration1" defer></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Your profile — SeatSync</title>
@@ -49,7 +49,7 @@
         <span class="eyebrow">Your plans, in one place</span>
         <h1>Welcome to SeatSync.</h1>
         <p class="muted">
-          Sign in with your email and password, or create a customer account.
+          Create an account to book a table, or sign in if you already have one. Your selected venue will be kept.
         </p>
         <div class="notice">
           <strong>Your account</strong><p>Bookings are saved on the server. Administrator access is assigned separately by the project owner.</p>
@@ -103,13 +103,13 @@
             </button>
           </div>
           <p class="privacy-note">Use at least 10 characters.</p><p id="signin-message" class="form-message" role="alert" hidden></p>
-          <button class="button" type="submit">Continue as guest →</button>
+          <button class="button" type="submit">Sign in →</button>
         </form>
         <p class="privacy-note">
           Email verification and password recovery are not available in this university prototype.
         </p>
-        <a id="guest-continue" class="text-link" href="booking.html">
-          Continue booking as a guest
+        <a id="browse-venues" class="text-link" href="../index.html#venues">
+          Browse restaurants and menus
         </a>
       </section>
       <section id="profile-section" hidden>
@@ -134,7 +134,7 @@
           </p>
           <div class="role-actions">
             <button type="button" class="button" data-demo-role="guest">
-              Guest — book a table →
+              Book a table →
             </button>
             <button
               type="button"
@@ -196,7 +196,7 @@
             <div class="notice">
               <strong>Saved on the server</strong>
               <p>
-                Sign in with the same account on another browser to see your bookings. Guest bookings are linked to the current browser session until you sign in.
+                Sign in with the same account on another browser to see your bookings. An account is required to create a booking.
               </p>
             </div>
             <button id="signout" class="button button-secondary" type="button">

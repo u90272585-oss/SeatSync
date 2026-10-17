@@ -9,6 +9,10 @@ try { await window.SeatSyncBookingStorage.ready; } catch (error) {
   const message = document.querySelector('#form-error'); message.textContent = error.message; message.hidden = false; return;
 }
 
+if (!window.SeatSyncAPI.user) {
+  location.replace(`account.html?mode=register&next=${encodeURIComponent(location.pathname + location.search)}`);
+  return;
+}
 const rules = window.SeatSyncBooking;
 const tables = rules.tables;
 const form = document.querySelector('#booking-form');
@@ -118,11 +122,15 @@ async function update() {
   let selectionRemoved = false;
   for (const input of form.elements.table) {
     const table = tables.find(table => table.id === input.value);
+    const live = availability?.find(item => item.id === table.id);
+    if (live) Object.assign(table, live);
+    input.closest('.table-option').querySelector('.table-card small').textContent = `Table ${table.id} · ${table.seats} seats`;
+    input.setAttribute('aria-label', `Table ${table.id}, ${table.name}, up to ${table.seats} guests`);
     const reserved = availability && !availability.find(item => item.id === table.id)?.available;
     input.disabled = !availability || Boolean(table.occupied) || reserved || table.seats < Number(guestsInput.value);
     if (input.disabled && input.checked) { input.checked = false; selectionRemoved = true; }
     input.closest('.table-option').classList.toggle('is-occupied', Boolean(table.occupied || reserved));
-    document.querySelector(`#table-state-${table.id}`).textContent = table.occupied ? 'Unavailable (demo)' : !availability ? 'Choose date and time' : reserved ? 'Reserved' : input.disabled ? 'Too small' : input.checked ? 'Selected' : 'Available';
+    document.querySelector(`#table-state-${table.id}`).textContent = table.occupied ? 'Unavailable' : !availability ? 'Choose date and time' : reserved ? 'Reserved' : input.disabled ? 'Too small' : input.checked ? 'Selected' : 'Available';
   }
   const availableCount = [...form.elements.table].filter(input => !input.disabled).length;
   document.querySelector('#table-status').textContent = `${selectionRemoved ? 'Your previous table is unavailable for this selection. Please choose again. ' : ''}${availableCount} tables available for this selection. Checked with the server.`;
@@ -190,6 +198,7 @@ form.addEventListener('submit', async event => {
     try { localStorage.removeItem(draftKey); } catch {}
     location.href = `confirmation.html?${new URLSearchParams({id:saved.id})}`;
   } catch (problem) {
+    if (problem.status === 401) { saveDraft(); location.href = `account.html?next=${encodeURIComponent(location.pathname + location.search)}`; return; }
     await update(); error.textContent = problem.message; error.hidden = false;
   }
 
