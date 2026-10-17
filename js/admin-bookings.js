@@ -12,6 +12,7 @@
   const venue = $('shared-venue'), date = $('shared-date'), time = $('shared-time');
   const status = $('shared-status'), search = $('searchInput');
   let selectedId = null, selectedTable = '1';
+  let showAllBookings = false;
   $('admin-greeting').textContent = `Hello, ${api.user.name}`;
   $('admin-title').textContent = `Welcome, ${api.user.name}!`;
   const minute = value => Number(value.slice(0, 2)) * 60 + Number(value.slice(3));
@@ -31,7 +32,9 @@
   time.value = initial?.time || '12:00'; selectedId = initial?.id || null; selectedTable = initial?.table || '1';
 
   function selectBooking(booking) {
-    selectedId = booking.id; selectedTable = booking.table; time.value = booking.time; render();
+    selectedId = booking.id; selectedTable = booking.table; time.value = booking.time;
+    venue.value = booking.venue; date.value = booking.date;
+    void refresh();
   }
   window.selectTable = id => {
     selectedTable = String(id);
@@ -49,19 +52,26 @@
     setText('admin-venue-name', window.SEATSYNC_VENUES[venue.value].name);
     setText('admin-date-label', date.value);
     setText('shared-summary', `${window.SEATSYNC_VENUES[venue.value].name} · ${date.value} · Floor plan at ${time.value} (Almaty). Visits last 90 minutes. Table settings apply only to this venue. Demo reservations.`);
-    const visible = bookings.filter(b => (!status.value || b.status === status.value)
-      && `${customer(b)} ${b.id} ${b.time} table ${b.table}`.toLowerCase().includes(search.value.toLowerCase()));
+    setText('bookings-heading', showAllBookings ? 'All bookings · all venues and dates' : 'Bookings for selected date');
+    setText('view-all-bookings', showAllBookings ? 'Selected date' : 'View all');
+    const listBookings = showAllBookings ? storage.list().slice().sort((a,b) => `${b.date}${b.time}`.localeCompare(`${a.date}${a.time}`)) : bookings;
+    const visible = listBookings.filter(b => (!status.value || b.status === status.value)
+      && `${customer(b)} ${b.id} ${b.date} ${b.venue} ${window.SEATSYNC_VENUES[b.venue]?.name || ''} ${b.time} table ${b.table}`.toLowerCase().includes(search.value.toLowerCase()));
     const rows = $('bookingRows'); rows.replaceChildren();
     for (const booking of visible) {
       const row = document.createElement('tr');
       row.className = `hover:bg-slate-50/80 transition-colors ${selectedId === booking.id ? 'is-selected' : ''}`;
       row.dataset.bookingId = booking.id;
-      for (const [index, value] of [booking.time, customer(booking), booking.guests, booking.table, booking.status].entries()) {
+      for (const [index, value] of [showAllBookings ? `${booking.date} · ${booking.time}` : booking.time, customer(booking), booking.guests, booking.table, booking.status].entries()) {
         const cell = document.createElement('td'); cell.className = 'py-2.5';
         if (index > 1) cell.classList.add('text-center');
         if (index === 1) {
           const button = document.createElement('button'); button.className = 'font-bold text-slate-800 text-left';
           button.textContent = value; button.addEventListener('click', () => selectBooking(booking)); cell.append(button);
+          if (showAllBookings) {
+            const label = document.createElement('div'); label.className = 'text-xs text-slate-500';
+            label.textContent = window.SEATSYNC_VENUES[booking.venue]?.name || booking.venue; cell.append(label);
+          }
         } else if (index === 4) {
           const pill = document.createElement('span'); pill.className = `px-2.5 py-1 rounded-full text-[11px] font-semibold ${booking.status === 'cancelled' ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'}`;
           pill.textContent = booking.status === 'cancelled' ? 'Cancelled' : 'Confirmed'; cell.append(pill);
@@ -74,7 +84,7 @@
     }
     if (!visible.length) {
       const row = rows.insertRow(), cell = row.insertCell(); cell.colSpan = 6; cell.className = 'py-8 text-center text-slate-500';
-      cell.textContent = 'No bookings match this venue, date and search.';
+      cell.textContent = showAllBookings ? 'No bookings match this search and status.' : 'No bookings match this venue, date and search. Try View all.';
     }
     for (const table of tables) {
       const node = $(`table-node-${table.id}`);
@@ -144,9 +154,9 @@
   for (const control of [venue,date,time]) control.addEventListener('change', () => {
     if (!date.value) date.value = rules.nowInAlmaty().date;
     if (!time.value) time.value = '12:00';
-    selectedId = null; void refresh();
+    showAllBookings = false; selectedId = null; void refresh();
   });
-  $('view-all-bookings').closest('button').addEventListener('click', () => { status.value = ''; search.value = ''; render(); });
+  $('view-all-bookings').closest('button').addEventListener('click', () => { showAllBookings = !showAllBookings; status.value = ''; search.value = ''; render(); void refresh(); });
   $('list-view').addEventListener('click', () => { $('bookingsTable').scrollIntoView({behavior:'smooth',block:'center'}); search.focus(); });
   $('floor-view').addEventListener('click', () => $('floor-map').scrollIntoView({behavior:'smooth',block:'center'}));
   status.addEventListener('change',render); search.addEventListener('input',render);
