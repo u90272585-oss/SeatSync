@@ -1,0 +1,18 @@
+.demo-payment-page{min-height:100vh;background:radial-gradient(ellipse at 50% 5%,#ebe5ff 0,#f4f5fc 43%,#f4f5fc 100%)}
+.demo-main{max-width:760px!important;padding-top:25px!important}
+.demo-card{max-width:620px;margin:12px auto 36px;padding:clamp(22px,5vw,42px);background:#fff;border:1px solid #e7e1f4;border-radius:24px;box-shadow:0 22px 70px #34245b16}
+.demo-card-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.demo-card-header h1{font-size:clamp(25px,5vw,34px)!important;margin:5px 0!important}
+.demo-card-header .brand-mark{display:grid;place-items:center;width:54px;height:54px;flex:none;border-radius:17px;color:white;font:700 25px Poppins,Arial,sans-serif;background:linear-gradient(135deg,#5b3fa3,#a78bfa);box-shadow:0 8px 18px #5b3fa344}
+.demo-banner{padding:12px 15px;border:1px solid #d8cafa;border-radius:12px;background:#f4f0ff;color:#4b2f91;text-align:center;font-size:12px;font-weight:800;letter-spacing:1.1px}
+.demo-intro{max-width:490px;margin:15px auto 22px;text-align:center;color:#6e6b83;font-size:13px;line-height:1.65}
+.demo-summary{padding:20px;background:#fbfaff;border:1px solid #eeeaf7;border-radius:16px}
+.summary-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.summary-heading h2{margin:4px 0 0!important;font-size:19px!important}
+.summary-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#eee9fc;color:#5b3fa3;font-size:23px}
+.demo-summary dl{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;margin:19px 0 0;padding-top:16px;border-top:1px solid #e9e5f2}
+.demo-summary dt,.amount-row>span,.expiry-row>span{font-size:11px;color:#77738a}.demo-summary dd{margin:4px 0 0;font-size:13px;font-weight:700;color:#292343}
+.amount-row,.expiry-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:17px 2px;border-bottom:1px solid #efedf5}.amount-row strong{font-size:23px;color:#382665}.expiry-row strong{font-variant-numeric:tabular-nums;color:#5b3fa3}
+.payment-message{min-height:22px;margin:17px 0;color:#5e5972;font-size:13px;line-height:1.5}.payment-message[data-kind="success"]{color:#18734a}.payment-message[data-kind="error"]{color:#b42342}.payment-message[data-kind="warning"]{color:#805b0b}
+.payment-actions{display:grid;gap:10px}.payment-actions .button,.retry-payment,.new-booking{width:100%;min-height:48px}.payment-actions .button-secondary{background:#fff;color:#4c3a7d;border:1px solid #ddd5ef}.payment-actions .expiry-action{color:#8b4151;border-color:#f0d4da}
+.retry-payment,.new-booking{margin-top:10px}.payment-footnote{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;color:#868197;font-size:10px;text-align:center}.payment-footnote span:first-child{color:#5b3fa3;font-size:18px}
+@media(max-width:650px){.demo-main{padding:20px 18px 45px!important}.demo-card{margin-top:2px;border-radius:19px}.demo-card-header{align-items:flex-start}.demo-summary{padding:16px}.demo-summary dl{gap:12px}}

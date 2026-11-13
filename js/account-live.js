@@ -27,6 +27,7 @@
       const target = new URL(next, location.href);
       const allowedPaths = [
         new URL("booking.html", location.href).pathname,
+        new URL("demo-payment.html", location.href).pathname,
         new URL("confirmation.html", location.href).pathname,
       ];
       return target.origin === location.origin && allowedPaths.includes(target.pathname)
@@ -121,8 +122,22 @@
         card.querySelector("[data-table]").textContent =
           table ? `${table.display_name} · Table ${table.table_number}` : `Table ${booking.table_id}`;
         card.querySelector("[data-status]").textContent = booking.status;
+        const continuePayment = card.querySelector("[data-continue-payment]");
+        const paymentNotice = card.querySelector("[data-payment-notice]");
+        const idempotencyKey = localStorage.getItem(`seatsync.demo-payment.idempotency.${booking.id}`);
+        const paymentEligible = ["pending", "pending_payment"].includes(booking.status);
+        continuePayment.hidden = !paymentEligible || !idempotencyKey;
+        continuePayment.href = `demo-payment.html?booking_id=${encodeURIComponent(booking.id)}`;
+        paymentNotice.hidden = !((paymentEligible && !idempotencyKey) || booking.status === "expired");
+        paymentNotice.textContent = booking.status === "expired"
+          ? "This booking hold expired. Please start a new booking."
+          : "This booking has no saved payment session. Please start a new booking.";
+        const feeLabel = card.querySelector("[data-fee-label]");
+        const feeNote = card.querySelector("[data-fee-note]");
+        if (feeLabel) feeLabel.textContent = "100.00 KZT";
+        if (feeNote) feeNote.textContent = paymentEligible ? "Demo only · no real money" : "Demo payment fee";
         const edit = card.querySelector("[data-edit]");
-        const canEdit = booking.status !== "cancelled" && startsAt > new Date();
+        const canEdit = !paymentEligible && !["cancelled", "expired"].includes(booking.status) && startsAt > new Date();
         edit.hidden = !canEdit;
         edit.href = `booking.html?${new URLSearchParams({
           venue: booking.venue_id,

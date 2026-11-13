@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#5b3fa3" />
+    <title>Demo payment — SeatSync</title>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/booking.css" />
+    <link rel="stylesheet" href="../css/demo-payment.css" />
+    <script src="../js/venues.js" defer></script>
+    <script src="../js/account-live.js" defer></script>
+    <script src="../js/demo-payment-live.js" defer></script>
+  </head>
+  <body class="booking-experience demo-payment-page">
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="../index.html" aria-label="SeatSync home">
+          <span class="brand-symbol" aria-hidden="true"></span>
+          <span class="brand-word">Seat<span>Sync</span></span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a class="header-link" href="../index.html#venues">Restaurants</a>
+          <a class="header-link" href="my-bookings.html">My bookings</a>
+          <a class="header-link account-link" data-account-link href="account.html">Sign in</a>
+        </nav>
+        <span class="demo-badge">Sandbox simulation</span>
+      </div>
+    </header>
+    <main class="demo-main">
+      <a class="back-link" href="my-bookings.html">← My bookings</a>
+      <ol class="steps centered" aria-label="Booking progress">
+        <li class="active"><span>✓</span>Choose & select</li>
+        <li class="active" aria-current="step"><span>2</span>Payment</li>
+        <li><span>3</span>Confirmation</li>
+      </ol>
+      <section class="demo-card" aria-labelledby="payment-title">
+        <div class="demo-card-header">
+          <div class="brand-mark" aria-hidden="true">S</div>
+          <div>
+            <span class="eyebrow">SeatSync secure demo</span>
+            <h1 id="payment-title">Complete your booking</h1>
+          </div>
+        </div>
+        <div class="demo-banner" role="note">DEMO — NO REAL PAYMENT</div>
+        <p class="demo-intro">This page simulates a payment outcome for testing. No card details or real payment credentials are requested.</p>
+        <div class="demo-summary">
+          <div class="summary-heading"><div><span class="eyebrow">Your reservation</span><h2 id="venue-name">Loading booking…</h2></div><span class="summary-icon" aria-hidden="true">⌂</span></div>
+          <dl>
+            <div><dt>Date</dt><dd id="booking-date">—</dd></div>
+            <div><dt>Time</dt><dd id="booking-time">—</dd></div>
+            <div><dt>Guests</dt><dd id="booking-guests">—</dd></div>
+            <div><dt>Table</dt><dd id="booking-table">—</dd></div>
+          </dl>
+        </div>
+        <div class="amount-row"><span>Booking fee</span><strong id="payment-amount">100.00 KZT</strong></div>
+        <div class="expiry-row"><span>Time left to complete</span><strong id="countdown" aria-live="polite">Connecting…</strong></div>
+        <p id="payment-message" class="payment-message" role="status" aria-live="polite">Connecting to the SeatSync demo payment service…</p>
+        <div class="payment-actions" id="payment-actions" hidden>
+          <button class="button" type="button" data-scenario="success">Simulate successful payment</button>
+          <button class="button button-secondary" type="button" data-scenario="failure">Simulate payment failure</button>
+          <button class="button button-secondary expiry-action" type="button" data-scenario="expiry">Simulate payment expiry</button>
+        </div>
+        <button class="button retry-payment" id="retry-payment" type="button" hidden>Try payment again</button>
+        <a class="button button-secondary new-booking" id="new-booking" href="booking.html" hidden>Start a new booking</a>
+        <div class="payment-footnote"><span aria-hidden="true">♧</span><span>Test mode only · Fixed fee 100.00 KZT · No real money is charged</span></div>
+      </section>
+    </main>
+    <footer class="site-footer"><a class="brand" href="../index.html">SeatSync</a><span>Good food. Better moments.</span><span>Demo payment · No real charge</span></footer>
+  </body>
+</html>

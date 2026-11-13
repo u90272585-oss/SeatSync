@@ -62,7 +62,7 @@
       <section id="bookings-signed-in" hidden>
         <div class="list-heading">
           <strong id="bookings-count"></strong>
-          <span class="demo-badge">Reservations · No payments made</span>
+          <span class="demo-badge">Bookings · Demo payments only</span>
         </div>
         <p id="bookings-message" class="form-message" role="status" aria-live="polite"></p>
         <div id="booking-list" class="saved-bookings"></div>
@@ -105,14 +105,16 @@
           <div class="saved-booking-bottom">
             <span>
               Booking fee
-              <strong>None</strong>
-              <small>No payment collected</small>
+              <strong data-fee-label>100.00 KZT</strong>
+              <small data-fee-note>Demo only · no real money</small>
             </span>
+            <a class="button" data-continue-payment hidden href="demo-payment.html">Continue payment</a>
             <a class="button button-secondary" data-edit href="booking.html">
               Edit booking
             </a>
             <button class="button button-secondary" data-cancel type="button">Cancel booking</button>
           </div>
+          <p class="form-message" data-payment-notice hidden></p>
         </article>
       </template>
     </main>

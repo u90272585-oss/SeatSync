@@ -208,8 +208,14 @@ def test_admin_endpoints_reject_guests_and_validate_updates():
         headers=admin_headers,
         json={"status": "pending", "notes": "Call to confirm"},
     )
-    assert updated.status_code == 200, updated.text
-    assert updated.json()["status"] == "pending"
+    assert updated.status_code == 422, updated.text
+    notes_updated = client.patch(
+        f"/api/admin/bookings/{created.json()['id']}",
+        headers=admin_headers,
+        json={"notes": "Call to confirm"},
+    )
+    assert notes_updated.status_code == 200, notes_updated.text
+    assert notes_updated.json()["notes"] == "Call to confirm"
 
     invalid = client.patch(
         f"/api/admin/bookings/{created.json()['id']}",

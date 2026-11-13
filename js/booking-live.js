@@ -234,7 +234,18 @@
       const saved = bookingId
         ? await window.SEATSYNC_API.updateBooking(bookingId, payload)
         : await window.SEATSYNC_API.createBooking(payload);
-      location.href = `confirmation.html?id=${encodeURIComponent(saved.id)}`;
+      if (bookingId) {
+        location.href = `my-bookings.html`;
+      } else {
+        const storageKey = `seatsync.demo-payment.idempotency.${saved.id}`;
+        if (!localStorage.getItem(storageKey)) {
+          const key = crypto.randomUUID
+            ? crypto.randomUUID()
+            : [...crypto.getRandomValues(new Uint8Array(16))].map((value) => value.toString(16).padStart(2, "0")).join("");
+          localStorage.setItem(storageKey, key);
+        }
+        location.href = `demo-payment.html?booking_id=${encodeURIComponent(saved.id)}`;
+      }
     } catch (requestError) {
       showError(requestError.message || "The reservation could not be saved.");
     } finally {

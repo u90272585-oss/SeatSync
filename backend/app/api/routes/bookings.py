@@ -1,10 +1,18 @@
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
-from app.core.booking_rules import ensure_booking_allowed
+from app.core.booking_rules import (
+    BOOKING_HOLD_DURATION,
+    begin_serialized_write,
+    ensure_booking_allowed,
+    lock_booking_for_update,
+)
 from app.db.session import get_db
 from app.models.booking import Booking
+from app.models.payment import Payment
 from app.models.table import DiningTable
 from app.models.user import User
 from app.models.venue import Venue
@@ -20,6 +28,7 @@ def _booking_access(current_user: User, booking: Booking):
 
 @router.post("", response_model=BookingRead, status_code=status.HTTP_201_CREATED)
 def create_booking(payload: BookingCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    begin_serialized_write(db)
     venue = db.query(Venue).filter(Venue.id == payload.venue_id).first()
     table = db.query(DiningTable).filter(DiningTable.id == payload.table_id, DiningTable.venue_id == payload.venue_id).first()
     if table is None:
@@ -34,8 +43,11 @@ def create_booking(payload: BookingCreate, current_user: User = Depends(get_curr
         start_time=payload.start_time,
         end_time=payload.end_time,
         guest_count=payload.guest_count,
-        status="confirmed",
+        # A pre-checkout hold lasts ten minutes. Payment initiation calculates
+        # a fresh deadline once and assigns it to both booking and payment.
+        status="pending",
         notes=payload.notes,
+        expires_at=datetime.now(timezone.utc) + BOOKING_HOLD_DURATION,
     )
     db.add(booking)
     db.commit()
@@ -70,6 +82,8 @@ def update_booking(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    begin_serialized_write(db)
+    lock_booking_for_update(db, booking_id)
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found.")
@@ -86,6 +100,11 @@ def update_booking(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No booking changes were provided.")
     if "status" in update_data and current_user.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only administrators can change booking status.")
+    if update_data.get("status") in {"pending", "confirmed"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Booking status can only be confirmed by a successful demo payment.",
+        )
     if any(
         update_data.get(field) is None
         for field in ("venue_id", "table_id", "reservation_date", "start_time", "end_time", "guest_count")
@@ -125,6 +144,11 @@ def update_booking(
 
     for field, value in update_data.items():
         setattr(booking, field, value)
+    if booking.status == "cancelled":
+        db.query(Payment).filter(
+            Payment.booking_id == booking.id,
+            Payment.status == "pending",
+        ).update({Payment.status: "cancelled"}, synchronize_session=False)
 
     db.commit()
     db.refresh(booking)
@@ -133,11 +157,17 @@ def update_booking(
 
 @router.post("/{booking_id}/cancel", response_model=BookingRead)
 def cancel_booking(booking_id: str, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    begin_serialized_write(db)
+    lock_booking_for_update(db, booking_id)
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found.")
     _booking_access(current_user, booking)
     booking.status = "cancelled"
+    db.query(Payment).filter(
+        Payment.booking_id == booking.id,
+        Payment.status == "pending",
+    ).update({Payment.status: "cancelled"}, synchronize_session=False)
     db.commit()
     db.refresh(booking)
     return booking

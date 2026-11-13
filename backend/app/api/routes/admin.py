@@ -1,17 +1,25 @@
 import csv
 import io
-from datetime import date as date_type
+from datetime import date as date_type, datetime, timezone
 from typing import Literal, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import PlainTextResponse
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session, joinedload
 
 from app.api.deps import require_admin
-from app.core.booking_rules import ensure_booking_allowed
+from app.core.booking_rules import (
+    BOOKING_HOLD_DURATION,
+    begin_serialized_write,
+    booking_blocks_slot,
+    ensure_booking_allowed,
+    lock_booking_for_update,
+    lock_table_for_booking,
+)
 from app.db.session import get_db
 from app.models.booking import Booking
+from app.models.payment import Payment
 from app.models.table import DiningTable
 from app.models.user import User
 from app.models.venue import Venue
@@ -25,7 +33,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 def list_admin_bookings(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    status: Optional[Literal["pending", "confirmed", "cancelled"]] = None,
+    status: Optional[Literal["pending", "pending_payment", "confirmed", "cancelled", "expired"]] = None,
     date: Optional[date_type] = None,
     search: Optional[str] = None,
     venue_id: Optional[str] = None,
@@ -97,6 +105,7 @@ def create_admin_booking(
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ):
+    begin_serialized_write(db)
     user = db.query(User).filter(User.email == payload.guest_email.lower().strip()).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found.")
@@ -116,8 +125,9 @@ def create_admin_booking(
         start_time=payload.start_time,
         end_time=payload.end_time,
         guest_count=payload.guest_count,
-        status="confirmed",
+        status="pending",
         notes=payload.notes,
+        expires_at=datetime.now(timezone.utc) + BOOKING_HOLD_DURATION,
     )
     db.add(booking)
     db.commit()
@@ -129,6 +139,8 @@ def create_admin_booking(
 
 @router.patch("/bookings/{booking_id}")
 def update_admin_booking(booking_id: str, updates: BookingUpdate, db: Session = Depends(get_db), _: User = Depends(require_admin)):
+    begin_serialized_write(db)
+    lock_booking_for_update(db, booking_id)
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found.")
@@ -137,6 +149,11 @@ def update_admin_booking(booking_id: str, updates: BookingUpdate, db: Session = 
     update_data = updates.model_dump(exclude_unset=True)
     if not update_data:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No booking changes were provided.")
+    if update_data.get("status") in {"pending", "confirmed"}:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Booking status can only be confirmed by a successful demo payment.",
+        )
     if any(update_data.get(field) is None for field in ("venue_id", "table_id", "reservation_date", "start_time", "end_time", "guest_count") if field in update_data):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Booking fields cannot be null.")
     venue_id = update_data.get("venue_id", booking.venue_id)
@@ -163,6 +180,11 @@ def update_admin_booking(booking_id: str, updates: BookingUpdate, db: Session = 
         )
     for field, value in update_data.items():
         setattr(booking, field, value)
+    if booking.status == "cancelled":
+        db.query(Payment).filter(
+            Payment.booking_id == booking.id,
+            Payment.status == "pending",
+        ).update({Payment.status: "cancelled"}, synchronize_session=False)
     db.commit()
     db.refresh(booking)
     return BookingRead.model_validate(booking).model_dump()
@@ -170,10 +192,16 @@ def update_admin_booking(booking_id: str, updates: BookingUpdate, db: Session = 
 
 @router.post("/bookings/{booking_id}/cancel")
 def cancel_admin_booking(booking_id: str, db: Session = Depends(get_db), _: User = Depends(require_admin)):
+    begin_serialized_write(db)
+    lock_booking_for_update(db, booking_id)
     booking = db.query(Booking).filter(Booking.id == booking_id).first()
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found.")
     booking.status = "cancelled"
+    db.query(Payment).filter(
+        Payment.booking_id == booking.id,
+        Payment.status == "pending",
+    ).update({Payment.status: "cancelled"}, synchronize_session=False)
     db.commit()
     return {"message": "Booking cancelled successfully.", "booking": BookingRead.model_validate(booking).model_dump()}
 
@@ -206,6 +234,8 @@ def update_admin_table(
     db: Session = Depends(get_db),
     _: User = Depends(require_admin),
 ):
+    begin_serialized_write(db)
+    lock_table_for_booking(db, table_id)
     table = db.query(DiningTable).filter(DiningTable.id == table_id).first()
     if not table:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Table not found.")
@@ -219,7 +249,7 @@ def update_admin_table(
     active_bookings = db.query(Booking).filter(
         Booking.table_id == table.id,
         Booking.reservation_date >= date_type.today(),
-        Booking.status != "cancelled",
+        booking_blocks_slot(),
     ).all()
     new_capacity = update_data.get("seat_capacity", table.seat_capacity)
     if any(booking.guest_count > new_capacity for booking in active_bookings):
@@ -237,10 +267,20 @@ def update_admin_table(
 def get_admin_stats(db: Session = Depends(get_db), _: User = Depends(require_admin)):
     bookings = db.query(Booking.status, Booking.guest_count).all()
     tables = db.query(DiningTable.active, DiningTable.blocked).all()
+    now = datetime.now(timezone.utc)
+    active_pending = db.query(Booking.id).filter(
+        or_(
+            and_(
+                Booking.status == "pending",
+                or_(Booking.expires_at.is_(None), Booking.expires_at > now),
+            ),
+            and_(Booking.status == "pending_payment", Booking.expires_at > now),
+        )
+    ).count()
     return {
         "total_bookings": len(bookings),
         "confirmed_bookings": sum(1 for booking_status, _ in bookings if booking_status == "confirmed"),
-        "pending_bookings": sum(1 for booking_status, _ in bookings if booking_status == "pending"),
+        "pending_bookings": active_pending,
         "cancelled_bookings": sum(1 for booking_status, _ in bookings if booking_status == "cancelled"),
         "total_guests": sum(guest_count for booking_status, guest_count in bookings if booking_status != "cancelled"),
         "active_tables": sum(1 for active, blocked in tables if active and not blocked),

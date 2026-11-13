@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     FIRST_ADMIN_EMAIL: str = "admin@seatsync.com"
     FIRST_ADMIN_NAME: str = "SeatSync Admin"
     FIRST_ADMIN_PASSWORD: str = ""
+    HALYK_CLIENT_ID: str = ""
+    HALYK_CLIENT_SECRET: SecretStr = SecretStr("")
+    HALYK_TERMINAL_ID: str = ""
+    DEMO_PAYMENTS_ENABLED: bool = False
 
     model_config = SettingsConfigDict(
         env_prefix="SEATSYNC_",

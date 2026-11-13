@@ -1,13 +1,49 @@
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timedelta, timezone
 from typing import Optional
 
 from fastapi import HTTPException, status
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
 from app.models.booking import Booking
 from app.models.table import DiningTable
 from app.models.venue import Venue
 from app.schemas.booking import BookingCreate
+
+
+BOOKING_HOLD_DURATION = timedelta(minutes=10)
+
+
+def booking_blocks_slot(now: Optional[datetime] = None):
+    """SQL predicate for bookings that currently hold a table."""
+    current_time = now or datetime.now(timezone.utc)
+    return or_(
+        Booking.status == "confirmed",
+        and_(
+            Booking.status == "pending",
+            or_(Booking.expires_at.is_(None), Booking.expires_at > current_time),
+        ),
+        and_(Booking.status == "pending_payment", Booking.expires_at > current_time),
+    )
+
+
+def begin_serialized_write(db: Session) -> None:
+    """Serialize booking/payment writes on SQLite, which ignores FOR UPDATE."""
+    if db.get_bind().dialect.name == "sqlite":
+        # Must be called before this session issues its first statement. SQLite
+        # then reserves the writer lock before availability is checked.
+        db.connection().exec_driver_sql("BEGIN IMMEDIATE")
+
+
+def lock_table_for_booking(db: Session, table_id: int) -> None:
+    """Take a row lock on databases that support it before checking conflicts."""
+    if db.get_bind().dialect.name != "sqlite":
+        db.query(DiningTable).filter(DiningTable.id == table_id).with_for_update().first()
+
+
+def lock_booking_for_update(db: Session, booking_id: str) -> None:
+    if db.get_bind().dialect.name != "sqlite":
+        db.query(Booking).filter(Booking.id == booking_id).with_for_update().first()
 
 
 def ensure_booking_allowed(
@@ -40,10 +76,12 @@ def ensure_booking_allowed(
     if payload.start_time < opening_time or payload.end_time > closing_time:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="The selected time is outside venue opening hours.")
 
+    now = datetime.now(timezone.utc)
+    lock_table_for_booking(db, table.id)
     conflict_query = db.query(Booking).filter(
         Booking.table_id == table.id,
         Booking.reservation_date == payload.reservation_date,
-        Booking.status != "cancelled",
+        booking_blocks_slot(now),
         Booking.start_time < payload.end_time,
         Booking.end_time > payload.start_time,
     )
@@ -62,7 +100,8 @@ def ensure_booking_allowed(
             Booking.start_time == payload.start_time,
             Booking.end_time == payload.end_time,
             Booking.guest_count == payload.guest_count,
-            Booking.status != "cancelled",
+            Booking.status.notin_(["cancelled", "expired"]),
+            or_(Booking.expires_at.is_(None), Booking.expires_at > now),
         )
         if exclude_booking_id:
             duplicate_query = duplicate_query.filter(Booking.id != exclude_booking_id)

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.routes.admin import router as admin_router
 from app.api.routes.auth import router as auth_router
 from app.api.routes.bookings import router as bookings_router
+from app.api.routes.demo_payments import router as demo_payments_router
 from app.api.routes.venues import router as venues_router
 from app.core.config import settings
 from app.db.base import Base
@@ -27,6 +28,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api")
 app.include_router(venues_router, prefix="/api")
 app.include_router(bookings_router, prefix="/api")
+app.include_router(demo_payments_router, prefix="/api")
 app.include_router(admin_router, prefix="/api")
 
 

@@ -28,7 +28,7 @@ class BookingUpdate(BaseModel):
     end_time: Optional[time] = None
     guest_count: Optional[int] = Field(default=None, gt=0, le=24)
     notes: Optional[str] = Field(default=None, max_length=255)
-    status: Optional[Literal["pending", "confirmed", "cancelled"]] = None
+    status: Optional[Literal["cancelled"]] = None
 
     model_config = ConfigDict(extra="forbid")
 

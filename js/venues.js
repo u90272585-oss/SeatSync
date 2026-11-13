@@ -27,7 +27,9 @@ window.SEATSYNC_API = {
       const readable = detail.includes("Unsupported method") || detail.includes("Error response")
         ? "The SeatSync API is not accepting this request. Check that the backend is running on http://127.0.0.1:8001 and that the endpoint and method are correct."
         : detail;
-      throw new Error(readable);
+      const error = new Error(readable);
+      error.status = response.status;
+      throw error;
     }
     return data;
   },
@@ -81,6 +83,18 @@ window.SEATSYNC_API = {
     return this.request("/bookings", {
       method: "POST",
       body: JSON.stringify(payload),
+    });
+  },
+  async initiateDemoPayment(bookingId, idempotencyKey) {
+    return this.request(`/demo-payments/bookings/${encodeURIComponent(bookingId)}`, {
+      method: "POST",
+      body: JSON.stringify({ idempotency_key: idempotencyKey }),
+    });
+  },
+  async simulateDemoPayment(paymentId, scenario) {
+    return this.request(`/demo-payments/${encodeURIComponent(paymentId)}/simulate`, {
+      method: "POST",
+      body: JSON.stringify({ scenario }),
     });
   },
   async myBookings() {

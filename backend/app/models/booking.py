@@ -1,5 +1,6 @@
 import uuid
 from datetime import date, datetime, time
+from typing import Optional
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Time, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,6 +21,9 @@ class Booking(Base):
     guest_count: Mapped[int] = mapped_column(Integer, nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending", index=True)
     notes: Mapped[str] = mapped_column(String(255), nullable=True)
+    # Nullable so existing reservations remain valid; booking flow will populate
+    # this with the 10-minute payment hold when that flow is implemented.
+    expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

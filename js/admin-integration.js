@@ -4,11 +4,13 @@
   const shell = document.querySelector(".admin-shell");
   const toast = document.querySelector("#adminToast");
   const state = { authorized: false, user: null, bookings: [], tables: [], stats: {}, selectedTableId: null };
-  const statusLabels = { confirmed: "Confirmed", pending: "Pending", cancelled: "Cancelled" };
+  const statusLabels = { confirmed: "Confirmed", pending: "Pending", pending_payment: "Pending payment", cancelled: "Cancelled", expired: "Expired" };
   const statusClasses = {
     confirmed: "admin-status-confirmed",
     pending: "admin-status-pending",
+    pending_payment: "admin-status-pending-payment",
     cancelled: "admin-status-cancelled",
+    expired: "admin-status-expired",
   };
 
   function notify(text, isError = false) {
@@ -93,7 +95,7 @@
       const statusCell = document.createElement("td");
       statusCell.className = "py-2.5 text-center";
       const status = document.createElement("span");
-      status.className = `admin-status-pill ${statusClasses[booking.status.toLowerCase()] || "admin-status-pending"}`;
+      status.className = `admin-status-pill ${statusClasses[booking.status.toLowerCase().replace(/\s+/g, "_")] || "admin-status-pending"}`;
       status.textContent = booking.status;
       statusCell.append(status);
       row.append(statusCell);
@@ -139,7 +141,7 @@
 
   function tableInfo(table) {
     const booking = state.bookings.find((item) =>
-      Number(item.table_id) === table.id && item.status !== "Cancelled",
+      Number(item.table_id) === table.id && !["Cancelled", "Expired"].includes(item.status),
     );
     if (booking) {
       return {
@@ -303,7 +305,6 @@
     document.querySelector("#custTime").value = booking?.start_time.slice(0, 5) || "19:00";
     document.querySelector("#custGuests").value = String(booking?.guest_count || 2);
     document.querySelector("#custVenue").value = booking?.venue_id || "cafe";
-    document.querySelector("#custStatus").value = booking?.status.toLowerCase() || "confirmed";
     populateModalTables(booking?.table_id);
     modal.classList.remove("hidden");
   }
@@ -338,17 +339,13 @@
       guest_count: Number(document.querySelector("#custGuests").value),
     };
     const bookingId = form.dataset.bookingId;
-    const status = document.querySelector("#custStatus").value;
     const submit = form.querySelector('[type="submit"]');
     submit.disabled = true;
     try {
       if (bookingId) {
-        await window.SEATSYNC_API.updateAdminBooking(bookingId, { ...payload, status });
+        await window.SEATSYNC_API.updateAdminBooking(bookingId, payload);
       } else {
         payload.guest_email = document.querySelector("#custEmail").value.trim().toLowerCase();
-        if (status === "cancelled") {
-          throw new Error("Create a booking first, then cancel it if needed.");
-        }
         await window.SEATSYNC_API.createAdminBooking(payload);
       }
       document.querySelector("#bookingModal").classList.add("hidden");

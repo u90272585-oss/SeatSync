@@ -12,7 +12,7 @@ if config.config_file_name is not None:
 
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
-from app.models import Booking, DiningTable, User, Venue  # noqa: F401
+from app.models import Booking, DiningTable, Payment, User, Venue  # noqa: F401
 
 target_metadata = Base.metadata
 

@@ -1,8 +1,9 @@
-from datetime import date as date_type, datetime, time as time_cls
+from datetime import date as date_type, datetime, time as time_cls, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.core.booking_rules import booking_blocks_slot
 from app.db.session import get_db
 from app.models.booking import Booking
 from app.models.table import DiningTable
@@ -86,7 +87,7 @@ def get_availability(
             .filter(
                 Booking.table_id == table.id,
                 Booking.reservation_date == date,
-                Booking.status != "cancelled",
+                booking_blocks_slot(datetime.now(timezone.utc)),
                 Booking.start_time < end_dt,
                 Booking.end_time > time_value,
             )
