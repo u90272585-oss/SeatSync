@@ -72,6 +72,52 @@ Confirmation, My bookings and the admin dashboard poll the API every five second
 while visible, and on focus. They retain the existing designs. There is no WebSocket
 or live support chat. Unfinished form drafts and device favorites remain in localStorage; bookings stay in SQLite.
 
+## Demo payments (Halyk ePay test + simulated Kaspi/card)
+
+Every customer booking also gets a `payments` row (`pending`, 100 KZT, 10-minute hold).
+The `bookings` table is unchanged; payments live in a separate table so the booking
+state machine stays `confirmed`/`cancelled`. Admin-created bookings need no payment.
+
+The 10-minute hold is enforced server-side: `payments.sweep()` runs in a
+`before_request` hook on every `/api/*` call (except `/api/health`). When
+`expires_at` passes, the payment becomes `expired` **and** the booking becomes
+`cancelled`, which frees the table. Closing the tab does not bypass the sweep.
+
+Endpoints:
+
+- `GET /api/bookings/:id/payment` — `{payment: {status, method, amount, currency, secondsLeft} | null}`.
+- `POST /api/bookings/:id/payment/pay` — **demo only**, body `{method: 'kaspi'|'card', outcome: 'success'|'failure'|'expire'}`.
+  `failure` returns HTTP 402 and changes nothing (retry within the hold); `expire` marks expired and cancels the booking;
+  `success` is idempotent; a finished payment returns 409. The client trusts the chosen outcome — acceptable **only**
+  because it is a simulation, and no real money moves.
+- `POST /api/bookings/:id/payment/halyk/start` — gets an OAuth token from Halyk ePay **TEST** and returns
+  `{script, payment}` (the browser script URL and `halyk.pay()` params). The client secret stays on the server.
+- `POST /api/bookings/:id/payment/halyk/verify` — the server asks Halyk's check-status API and marks the payment
+  `paid` only if `resultCode == '100'`, `statusName in ('CHARGE','AUTH')`, and the invoice ID and amount match.
+  Returns 202 `{result:'processing'}` for codes 102/107 or NEW/FINGERPRINT; 402 otherwise; 409 if the hold already expired.
+
+Halyk runs in the bank's **sandbox** (`https://test-epay.epayment.kz`), not in production.
+Test cards are on the [Test credentials page](https://epayment.kz/docs/Test-credentials)
+(use a card with status *unlock*). Sandbox credentials are public in the docs and are the
+code defaults; they can be overridden with environment variables:
+
+- `HALYK_CLIENT_ID`, `HALYK_CLIENT_SECRET`, `HALYK_TERMINAL_ID`
+- `HALYK_OAUTH_URL`, `HALYK_STATUS_URL`, `HALYK_SCRIPT_URL`
+
+**Kaspi and bank-card forms are visual simulations.** Kaspi has no public free sandbox;
+the card form is a demo. No real money moves and nothing is charged to a real card.
+The page says so and is not affiliated with Kaspi.kz.
+
+**Why postlink is not used locally.** Halyk's server callback (postlink) cannot reach
+`127.0.0.1`, so the design does not depend on it. A dummy postLink URL is sent because
+the token request requires the field, but verification happens **after** the bank
+redirects the user back, by calling Halyk's status API server-to-server. This is why
+the Halyk path is the only one that cannot be spoofed from the browser.
+
+**What a real integration needs.** A registered ИП/ТОО, a signed contract with the bank,
+production keys, and a public HTTPS URL for postlink/webhook. Late payments after the
+10-minute hold would need a refund path — not implemented here.
+
 ## Integrated administration
 
 The shared dashboard retains Malika's layout and adds working venue/date/status/search
@@ -97,6 +143,7 @@ workflow. Visits last 90 minutes. A cancelled booking is retained for history.
 | `server/schema.sql` | SQL tables and indexes |
 | `server/rules.py` | Server-side input validation and Almaty time |
 | `server/auth.py` | Password hashing and verification |
+| `server/payments.py` | Demo payments: 10-minute hold, Halyk ePay test, sweep |
 | `server/create_admin.py` | Create an admin locally |
 | `server/catalog.json` | Initial venue/table catalogue |
 | `js/api.js` | Browser requests to the Python API |
@@ -127,6 +174,10 @@ The API shares the website origin. Cross-origin writes are rejected; CORS is dis
 | `POST /api/bookings` | Signed-in creation `{venue,date,time,guests,table}`; admins may supply `customer_email` |
 | `PUT /api/bookings/:id` | Edit those fields, with current `version` |
 | `POST /api/bookings/:id/cancel` | Cancel a future booking |
+| `GET /api/bookings/:id/payment` | Payment status for one booking (`null` if none) |
+| `POST /api/bookings/:id/payment/pay` | **Demo only:** `{method:'kaspi'\|'card', outcome:'success'\|'failure'\|'expire'}` |
+| `POST /api/bookings/:id/payment/halyk/start` | Halyk ePay TEST: server gets an OAuth token, returns `{script, payment}` |
+| `POST /api/bookings/:id/payment/halyk/verify` | Halyk ePay TEST: server verifies invoice via status API |
 
 | `GET /api/admin/tables?venue=skyberry` | Administrator: current venue tables |
 | `PATCH /api/admin/tables/:venue/:table` | Administrator: `{blocked,seats}` |
@@ -208,9 +259,10 @@ See [Russian defense walkthrough](docs/BACKEND-GUIDE-RU.md) and
 localStorage instructions are historical and do not apply to this version.
 
 Venue names come from team references. Opening hours, table layouts and capacities
-are illustrative; generated atmosphere images are not real venue photographs. No
-payment, real venue reservation, live chat, email verification or password recovery
-is connected. Existing admin CDN styles/icons/fonts still require internet.
+are illustrative; generated atmosphere images are not real venue photographs. Halyk
+ePay runs in the bank's **test sandbox** with test cards — no real money moves. Kaspi
+and the card form are **visual simulations**. No real venue reservation, live chat,
+email verification or password recovery is connected. Existing admin CDN styles/icons/fonts still require internet.
 
 Framework references: [Flask installation](https://flask.palletsprojects.com/en/stable/installation/)
 and [Flask SQLite pattern](https://flask.palletsprojects.com/en/stable/patterns/sqlite3/).
