@@ -28,3 +28,17 @@ CREATE TABLE IF NOT EXISTS venue_tables (
   seats INTEGER NOT NULL CHECK(seats BETWEEN 1 AND 6), blocked INTEGER NOT NULL CHECK(blocked IN (0,1)),
   PRIMARY KEY (venue, table_id)
 );
+
+CREATE TABLE IF NOT EXISTS payments (
+  id TEXT PRIMARY KEY,
+  booking_id TEXT NOT NULL UNIQUE REFERENCES bookings(id),
+  user_id TEXT REFERENCES users(id),
+  amount INTEGER NOT NULL,
+  currency TEXT NOT NULL,
+  method TEXT CHECK(method IN ('halyk','kaspi','card')),
+  status TEXT NOT NULL CHECK(status IN ('pending','paid','expired')),
+  expires_at INTEGER NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS payment_pending ON payments(status, expires_at);
