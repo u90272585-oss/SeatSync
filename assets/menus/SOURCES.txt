@@ -1,0 +1,24 @@
+Menu sources supplied by the project owner on 2026-10-16.
+
+Qarlygash:
+main.pdf = меню_ru (195х295).pdf (8 pages; Qarlygash logo)
+pizza.pdf = Пицца (15х25) ru.pdf (2 pages; Qarlygash name)
+wine.pdf = Винная карта (195х295).pdf (28 pages; Qarlygash logo)
+breakfast.pdf = завтрак (230х340) ru_kz.pdf (2 pages; matching supplied menu collection)
+
+Gulfairus:
+main.pdf = Меню.pdf (12 pages; Gulfairus cover)
+JPEG previews are renders of the original PDFs. Original PDFs are preserved.
+
+Procoffee:
+menu-01 through menu-18.png are unchanged screenshots supplied by the owner,
+from Instagram menu highlights on 2026-10-16. CSS frames the central menu.
+Order: breakfast, snacks/salads/bowls, soups/mains, pasta/pizza, drinks,
+pastries/desserts, protein omelette, fitness breakfast, chicken bowl,
+green salad, salad extras, salmon, chicken cutlets, doner, cold tea,
+sagan-dailya tea, protein latte, protein milkshake.
+The unrelated Teams/math screenshot and repeated food photos are not included.
+
+No missing language editions, prices or dishes have been invented.
+Menus are snapshots, not a live feed. Historical offers may have expired.
+External menu sources are linked from each venue page, without tracking parameters.

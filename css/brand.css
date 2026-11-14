@@ -1,0 +1,20 @@
+/* Shared SeatSync identity from the original booking header and brandbook. */
+.seatsync-brand {
+  display:inline-flex; align-items:center; gap:9px; flex-shrink:0;
+  text-decoration:none; font-family:Poppins,Arial,sans-serif;
+  font-size:26px; font-weight:700; letter-spacing:-1px; line-height:1.2;
+}
+.seatsync-brand .seatsync-brand-icon {
+  display:block; width:48px; height:48px; flex-shrink:0; border-radius:13px;
+  background-image:url('../assets/images/seatsync-brandbook.png');
+  background-size:491.52px 282.48px; background-position:-80.4px -195.84px;
+  background-repeat:no-repeat;
+}
+.seatsync-brand .seatsync-brand-word { color:#291166; }
+.seatsync-brand .seatsync-brand-word > span { color:#4f65e5; }
+.seatsync-brand:focus-visible { outline:3px solid #4f7cff; outline-offset:4px; border-radius:8px; }
+@media(max-width:600px) {
+ .seatsync-brand { font-size:22px; gap:6px; }
+ .seatsync-brand .seatsync-brand-icon { width:42px; height:42px; background-size:430.08px 247.17px; background-position:-70.35px -171.36px; }
+ .navbar > .seatsync-brand { width:100%; justify-content:center; }
+}

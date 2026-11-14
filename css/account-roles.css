@@ -1,0 +1,68 @@
+.role-picker {
+  border: 0;
+  padding: 0;
+  margin: 0 0 16px;
+  display: grid;
+  gap: 12px;
+}
+.role-picker legend {
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.account-card .role-choice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  cursor: pointer;
+  margin: 0;
+}
+.account-card .role-choice input {
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+}
+.role-choice:has(input:checked) {
+  background: var(--soft);
+  border-color: var(--primary);
+}
+.role-choice small {
+  display: block;
+  margin-top: 6px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.demo-role-panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 24px;
+  margin: 24px 0;
+}
+.role-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.role-actions .button {
+  white-space: normal;
+  text-align: center;
+}
+.demo-role-panel h2 {
+  margin-bottom: 12px;
+}
+@media (max-width: 550px) {
+  .role-actions {
+    flex-direction: column;
+  }
+  .role-actions .button {
+    width: 100%;
+  }
+  .demo-role-panel {
+    padding: 20px;
+  }
+}

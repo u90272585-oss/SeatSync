@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payment — SeatSync</title>
+<link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/booking.css"><link rel="stylesheet" href="../css/payment.css">
+<script src="../js/api.js?v=backend1" defer></script><script src="../js/payment.js?v=pay2" defer></script>
+</head><body class="booking-experience">
+<header class="site-header"><div class="header-inner"><a class="brand" href="../index.html"><span class="brand-symbol" aria-hidden="true"></span><span class="brand-word">Seat<span>Sync</span></span></a><nav aria-label="Main navigation"><a class="header-link" href="../index.html">Restaurants</a><a class="header-link current" href="booking.html">Book a table</a><a class="header-link account-link" data-account-link href="account.html">Sign in</a></nav><span class="demo-badge">Homework demo</span></div></header>
+<main class="pay-wrap">
+  <ol class="steps centered" aria-label="Booking progress"><li class="active"><span>✓</span> Choose &amp; select</li><li class="active" aria-current="step"><span>2</span> Payment</li><li><span>3</span> Confirmation</li></ol>
+
+  <section id="pay-summary" class="pay-card" hidden>
+    <span class="eyebrow">Your reservation</span>
+    <h1 id="pay-venue">SeatSync</h1>
+    <dl class="pay-details">
+      <div><dt>Date</dt><dd id="pay-date"></dd></div>
+      <div><dt>Time</dt><dd id="pay-time"></dd></div>
+      <div><dt>Guests</dt><dd id="pay-guests"></dd></div>
+      <div><dt>Table</dt><dd id="pay-table"></dd></div>
+    </dl>
+    <div class="pay-row"><span>SeatSync service fee</span><strong id="pay-amount"></strong></div>
+    <div class="pay-row"><span>Your table is held for</span><strong id="pay-timer" role="timer" aria-live="off">10:00</strong></div>
+  </section>
+
+  <section data-state="loading" class="pay-card"><p>Loading your booking…</p></section>
+
+  <section data-state="error" class="pay-card" hidden>
+    <h2>We couldn’t open this payment</h2>
+    <p id="pay-error-text"></p>
+    <a class="button" href="my-bookings.html">My bookings</a>
+  </section>
+
+  <section data-state="methods" class="pay-card" hidden>
+    <h2>Choose how to pay</h2>
+    <p class="muted">Kaspi and card are simulations. Halyk opens the bank test payment page: no real money moves.</p>
+    <p id="methods-note" class="pay-error" role="alert" hidden></p>
+    <div class="pay-methods">
+      <button type="button" class="pay-method" data-method-choice="halyk"><span class="pay-badge pay-badge-halyk">H</span><span><strong>Halyk Bank</strong><small>Real Halyk test payment page</small></span></button>
+      <button type="button" class="pay-method" data-method-choice="kaspi"><span class="pay-badge pay-badge-kaspi">K</span><span><strong>Kaspi.kz</strong><small>Confirm in the Kaspi app (demo)</small></span></button>
+      <button type="button" class="pay-method" data-method-choice="card"><span class="pay-badge pay-badge-card">▭</span><span><strong>Bank card</strong><small>Visa / Mastercard (demo)</small></span></button>
+    </div>
+  </section>
+
+  <section data-state="bank" id="pay-bank" class="pay-card pay-bank" data-method="" hidden>
+    <div class="pay-bank-head"><strong id="bank-name"></strong><span id="bank-tag"></span></div>
+    <div class="pay-bank-body">
+      <p class="pay-merchant">Merchant: <strong>SeatSync</strong> · Amount: <strong id="bank-amount"></strong></p>
+      <div id="bank-card-form" hidden>
+        <label>Card number<input value="4111 1111 1111 1111" readonly tabindex="-1" autocomplete="off"></label>
+        <div class="pay-two">
+          <label>Expiry<input value="12/30" readonly tabindex="-1" autocomplete="off"></label>
+          <label>CVC<input value="123" readonly tabindex="-1" autocomplete="off"></label>
+        </div>
+        <p class="pay-fineprint">Test card. Nothing on this page is sent anywhere. Never enter real card data.</p>
+      </div>
+      <div id="bank-app" hidden>
+        <p class="pay-app-line">A payment request was sent to your Kaspi.kz app.</p>
+        <p class="pay-app-phone">+7 700 000 00 00</p>
+        <p class="pay-fineprint">Open the app, check the amount, then confirm.</p>
+      </div>
+      <p id="bank-error" class="pay-error" role="alert" hidden></p>
+      <button id="pay-now" class="button pay-primary" type="button"></button>
+      <button id="pay-back" class="pay-link" type="button">← Choose another method</button>
+      <details class="pay-demo">
+        <summary>Demo controls</summary>
+        <p class="pay-fineprint">For testing the other outcomes.</p>
+        <button type="button" class="button button-secondary" data-outcome="failure">Simulate decline</button>
+        <button type="button" class="button button-secondary" data-outcome="expire">Simulate timeout</button>
+      </details>
+    </div>
+    <p class="pay-fineprint pay-disclaimer">Demo imitation of a payment page. Not affiliated with Kaspi.kz. No real payment is made.</p>
+  </section>
+
+  <section data-state="paid" class="pay-card pay-center" hidden>
+    <div class="success-mark" aria-hidden="true">✓</div>
+    <h2>Payment successful</h2>
+    <p class="muted">Opening your confirmation…</p>
+    <a id="pay-continue" class="button" href="confirmation.html">Continue →</a>
+  </section>
+
+  <section data-state="expired" class="pay-card pay-center" hidden>
+    <h2>Time ran out</h2>
+    <p class="muted">The payment was not completed, so your table was released.</p>
+    <a class="button" href="booking.html">Book again</a>
+  </section>
+</main>
+<footer class="site-footer"><a class="brand" href="../index.html">SeatSync</a><span>Good food. Better moments.</span><span>Demo experience · No real reservation</span></footer>
+</body></html>
