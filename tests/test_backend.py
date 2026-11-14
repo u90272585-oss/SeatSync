@@ -187,6 +187,11 @@ class BackendTests(unittest.TestCase):
 
     def test_past_booking_remains_readable_but_not_editable(self):
         record = self.create().json
+        # Mark the payment as paid so the sweep does not auto-cancel this booking
+        # when the clock moves to 2030 (sweep only touches 'pending' payments).
+        with connect(self.path) as db:
+            db.execute("UPDATE payments SET status='paid', method='kaspi' WHERE booking_id=?", (record['id'],))
+            db.commit()
         future_app = create_app(self.path, clock=lambda: datetime(2030,1,1,tzinfo=timezone.utc))
         client = future_app.test_client()
         client.set_cookie('seatsync_session', self.a.get_cookie('seatsync_session').value)

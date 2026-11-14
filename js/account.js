@@ -91,11 +91,43 @@
   if (!user) return;
   document.querySelector('#bookings-signed-out').hidden = true;
   document.querySelector('#bookings-signed-in').hidden = false;
-  function render() {
+  async function loadPayment(bookingId) {
+    try { const data = await api.request(`/bookings/${encodeURIComponent(bookingId)}/payment`); return data.payment || null; }
+    catch (error) { if (error.status === 404) return null; throw error; }
+  }
+  const METHOD_LABEL = { halyk: 'Halyk test', kaspi: 'Kaspi demo', card: 'Card demo' };
+  function applyPayment(card, payment, cancelled, upcoming) {
+    const badge = card.querySelector('[data-status]');
+    const feeLine = card.querySelector('#fee-line');
+    const payBtn = card.querySelector('[data-pay]');
+    const editBtn = card.querySelector('[data-edit]');
+    if (!payment) return;
+    if (payment.status === 'paid') {
+      badge.textContent = `Paid · ${METHOD_LABEL[payment.method] || payment.method || 'demo'}`;
+      if (feeLine) feeLine.innerHTML = `Service fee <strong>${payment.amount} ${payment.currency}</strong><small>Paid via ${METHOD_LABEL[payment.method] || payment.method}</small>`;
+      return;
+    }
+    if (payment.status === 'pending' && !cancelled) {
+      badge.textContent = 'Awaiting payment';
+      if (feeLine) feeLine.innerHTML = `Service fee <strong>${payment.amount} ${payment.currency}</strong><small>Payment pending</small>`;
+      if (payBtn) { payBtn.hidden = false; payBtn.href = `payment.html?id=${encodeURIComponent(payment.bookingId)}`; }
+      if (editBtn) editBtn.hidden = true;
+      return;
+    }
+    if (payment.status === 'expired' || (payment.status === 'pending' && cancelled)) {
+      badge.textContent = 'Released (time ran out)';
+      if (feeLine) feeLine.innerHTML = `Service fee <strong>${payment.amount} ${payment.currency}</strong><small>Released after 10-minute hold</small>`;
+      if (payBtn) payBtn.hidden = true;
+      if (editBtn) editBtn.hidden = true;
+    }
+  }
+  async function render() {
     list.replaceChildren();
+
     const bookings = storage.list().sort((a,b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`));
     document.querySelector('#bookings-count').textContent = `${bookings.length} bookings`;
     document.querySelector('#bookings-empty').hidden = bookings.length > 0;
+    const pending = [];
     for (const booking of bookings) {
       const card = document.querySelector('#booking-template').content.cloneNode(true);
       const upcoming = window.SeatSyncBooking.isFuture(booking.date, booking.time);
@@ -105,6 +137,16 @@
       edit.href = `booking.html?id=${encodeURIComponent(booking.id)}`;
       card.querySelector('[data-manage]').href = `confirmation.html?id=${encodeURIComponent(booking.id)}`;
       list.append(card);
+      pending.push((async () => {
+        try { const payment = await loadPayment(booking.id); applyPayment(card, payment, cancelled, upcoming); }
+        catch (error) { /* keep base badge if payment lookup fails */ }
+      })());
+    }
+    await Promise.all(pending);
+    const badge = document.querySelector('#bookings-badge');
+    if (badge) {
+      const anyPending = bookings.some(b => b.status === 'confirmed') && list.querySelectorAll('[data-status]').length && Array.from(list.querySelectorAll('[data-pay]')).some(p => !p.hidden);
+      badge.textContent = anyPending ? 'Action needed' : 'Demo';
     }
   }
   render();

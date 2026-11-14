@@ -17,6 +17,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 from . import rules
 from .auth import hash_password, verify_password
+from . import payments
 from .database import ROOT, connect, initialize, transaction
 
 
@@ -304,6 +305,8 @@ def create_app(database_path=None, *, production=None, clock=None):
                 (booking_id, data['venue'], data['date'], data['time'], minutes(data['time']),
                  minutes(data['time']) + 90, int(data['guests']), data['table'], name,
                  owner['id'], g.session['id'], stamp, stamp))
+            if not admin():
+                payments.create_pending(db(), booking_id, owner['id'], clock)
         return jsonify(public_booking(get_booking(booking_id))), 201
 
     @app.put('/api/bookings/<booking_id>')
@@ -400,5 +403,8 @@ def create_app(database_path=None, *, production=None, clock=None):
         if filename not in root_files and (len(parts) < 2 or parts[0] not in {'css', 'js', 'assets', 'pages'}):
             raise APIError(404, 'Not found.')
         return send_from_directory(ROOT, filename)
+
+    payments.register(app, db=db, transaction=transaction, APIError=APIError,
+                      get_booking=get_booking, require_account=require_account, clock=clock)
 
     return app
