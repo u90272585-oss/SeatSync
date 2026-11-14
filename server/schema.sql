@@ -42,3 +42,10 @@ CREATE TABLE IF NOT EXISTS payments (
   updated_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS payment_pending ON payments(status, expires_at);
+
+CREATE TABLE IF NOT EXISTS halyk_invoices (
+  invoice_id TEXT PRIMARY KEY,
+  tail TEXT NOT NULL UNIQUE,
+  payment_id TEXT NOT NULL UNIQUE REFERENCES payments(id),
+  created_at TEXT NOT NULL
+);

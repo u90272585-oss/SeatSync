@@ -196,7 +196,7 @@ form.addEventListener('submit', async event => {
     if (initial.get('id')) { data.id = initial.get('id'); data.version = editingVersion; }
     const saved = await window.SeatSyncBookingStorage.saveShared(data);
     try { localStorage.removeItem(draftKey); } catch {}
-    location.href = `confirmation.html?${new URLSearchParams({id:saved.id})}`;
+    location.href = `${initial.get('id') ? 'confirmation' : 'payment'}.html?${new URLSearchParams({id:saved.id})}`;
   } catch (problem) {
     if (problem.status === 401) { saveDraft(); location.href = `account.html?next=${encodeURIComponent(location.pathname + location.search)}`; return; }
     await update(); error.textContent = problem.message; error.hidden = false;
